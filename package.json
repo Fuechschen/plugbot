@@ -1,0 +1,28 @@
+{
+  "name": "plugbot",
+  "version": "0.0.1",
+  "main": "bot.js",
+  "description": "A simple bot for plug.dj",
+  "author": "Fuechschen <me@fuechschen.org>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fuechschen/plugbot.git"
+  },
+  "dependencies": {
+    "ioredis": "^1.15.1",
+    "moment": "^2.12.0",
+    "mysql": "^2.10.2",
+    "path": "^0.12.7",
+    "plugged": "^2.5.3",
+    "pm2": "^1.0.2",
+    "request": "^2.69.0",
+    "sequelize": "^3.19.3",
+    "shortid": "^2.2.4",
+    "string": "^3.3.1",
+    "underscore": "^1.8.3"
+  }
+}

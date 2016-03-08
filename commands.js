@@ -1,0 +1,392 @@
+var commands = {};
+
+commands.skip = commands.fs = {
+    handler: function (msg) {
+        redis.get('user:role:save:' + msg.id).then(function (perm) {
+            if (perm > 1) {
+                var booth = plugged.getBooth();
+                var media = plugged.getCurrentMedia();
+                plugged.sendChat(utils.replace(langfile.skip.default, {username: msg.username}), 70);
+                plugged.skipDJ(booth.dj);
+                setTimeout(function () {
+                    var split = msg.message.trim().split(' ');
+                    if (langfile.skip.reasons[split[1]] !== undefined) {
+                        plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
+                            username: plugged.getUserByID(booth.id),
+                            song: utils.songtitle(media.author, media.title)
+                        }), 60);
+                    }
+                }, 4 * 1000);
+            }
+        });
+        plugged.deleteMessage(msg.cid);
+    }
+};
+
+commands.bl = commands.blacklist = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                var booth = plugged.getBooth();
+                var media = plugged.getCurrentMedia();
+                plugged.sendChat(utils.replace(langfile.blacklist.default, {username: data.username}), 60);
+                plugged.skipDJ(booth.dj);
+                var split = data.message.trim().split(' ');
+                var reason = utils.blacklistReason(_.rest(split, 1));
+                redis.set('media:blacklist:' + media.format + ':' + media.id, ((split.length > 1 ? reason : 1))).then(function () {
+                    setTimeout(function () {
+                        if (split.length > 1) {
+                            plugged.sendChat(utils.replace(langfile.blacklist.with_reason, {
+                                username: plugged.getUserByID(booth.dj).username,
+                                mod: data.username,
+                                song: utils.songtitle(media.author, media.title),
+                                reason: reason
+                            }), 60);
+                            models.Song.update({isBanned: true, reason: reason}, {where: {plug_id: media.id}});
+                        } else {
+                            plugged.sendChat(utils.replace(langfile.blacklist.without_reason, {
+                                username: plugged.getUserByID(booth.dj).username,
+                                song: utils.songtitle(media.author, media.title),
+                                mod: data.username
+                            }), 60);
+                            models.Song.update({isBanned: true}, {where: {plug_id: media.id}});
+                        }
+                    }, 4 * 1000);
+                });
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.ls = commands.lockskip = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                plugged.sendChat(utils.replace(langfile.skip.lockskip, {username: data.username}), 70);
+                var booth = plugged.getBooth();
+                var media = plugged.getCurrentMedia();
+                plugged.setLock(true, false);
+                plugged.setCycle(true);
+                plugged.skipDJ(booth.dj);
+                if (booth.shouldCycle !== plugged.doesWaitlistCycle) plugged.setCycle(booth.shouldCycle);
+                if (booth.isLocked !== plugged.isWaitlistLocked) plugged.setLock(booth.isLocked, false);
+                if (config.lockskip.move_pos !== undefined) plugged.moveDJ(booth.dj, config.lockskip.move_pos);
+                setTimeout(function () {
+                    var split = data.message.trim().split(' ');
+                    if (langfile.skip.reasons[split[1]] !== undefined) {
+                        plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
+                            username: plugged.getUserByID(booth.dj).username,
+                            song: utils.songtitle(media.author, media.title)
+                        }), 60);
+                    }
+                }, 4 * 1000)
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.add = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                var split = data.message.split(' ');
+                var user = plugged.getUserByName(S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s);
+                if (user !== undefined) {
+                    if (_.findIndex(plugged.getWaitlist(), {id: user.id}) === -1 && (plugged.getCurrentDJ() !== undefined ? plugged.getCurrentDJ().id !== user.id : true )) {
+                        plugged.sendChat(utils.replace(langfile.bp_actions.add, {username: data.username}), 45);
+                        plugged.addToWaitlist(user.id);
+                    }
+                } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                    username: plugged.getUserByID(data.id),
+                    value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.rem = commands.remove = commands.rm = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                var split = data.message.split(' ');
+                var user = plugged.getUserByName(S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s);
+                if (user !== undefined) {
+                    if (_.findIndex(plugged.getWaitlist(), {id: user.id}) !== -1 || plugged.getCurrentDJ().id === user.id) {
+                        plugged.sendChat(utils.replace(langfile.bp_actions.remove, {username: data.username}), 45);
+                        plugged.removeDJ(user.id);
+                    }
+                } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                    username: plugged.getUserByID(data.id),
+                    value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.lock = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                plugged.sendChat(utils.replace(langfile.bp_actions.lock, {username: data.username}), 70);
+                plugged.setLock(true, false);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.unlock = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if ((config.options.bouncer_plus ? (perm > 1) : (perm > 2))) {
+                plugged.sendChat(utils.replace(langfile.bp_actions.unlock, {username: data.username}), 70);
+                plugged.setLock(false, false);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.clear = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if ((config.options.bouncer_plus ? (perm > 1) : (perm > 2))) {
+                plugged.sendChat(utils.replace(langfile.bp_actions.clear, {username: data.username}), 70);
+                plugged.setLock(true, true);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.cycle = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                plugged.sendChat(utils.replace(langfile.bp_actions.cycle, {username: data.username}), 70);
+                plugged.setCycle(!plugged.doesWaitlistCycle());
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.delchat = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                var split = data.message.split(' ');
+                if (split.length === 1) {
+                    var chats = plugged.getChat();
+                    chats.forEach(function (chat) {
+                        plugged.deleteMessage(chat.cid);
+                    });
+                    plugged.sendChat(utils.replace(langfile.delchat.clear, {username: data.username, count: chats.length}), 60);
+                } else {
+                    models.User.find({where: {$or: [{username: {$like: '%' + S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s + '%'}}, {id: _.rest(split, 1)}]}}).then(function (user) {
+                        if (user !== null && user !== undefined) {
+                            plugged.sendChat(utils.replace(langfile.delchat.user, {
+                                mod: data.username,
+                                username: user.username
+                            }), 45);
+                            plugged.getChatByUser(user.username).forEach(function (msg) {
+                                plugged.deleteMessage(msg.cid);
+                            });
+                        } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                            username: plugged.getUserByID(data.id).username,
+                            value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                        }), 20);
+                    })
+                }
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.kick = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                var split = data.message.split(' ');
+                var user = plugged.getUserByName(S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s);
+                if (user !== undefined) {
+                    redis.get('user:role:save:' + user.id).then(function (role) {
+                        if (role >= perm) plugged.sendChat(utils.replace(langfile.kick.error, {
+                            mod: data.username,
+                            username: user.username
+                        }), 20);
+                        else {
+                            plugged.sendChat(utils.replace(langfile.kick.default, {
+                                mod: data.username,
+                                username: user.username
+                            }), 60);
+                            plugged.banUser(user.id, plugged.BANDURATION.HOUR, plugged.BANREASON.VIOLATING_COMMUNITY_RULES, function () {
+                                setTimeout(function () {
+                                    plugged.unbanUser(user.id);
+                                }, 15 * 1000);
+                            });
+                        }
+                    });
+                } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                    username: plugged.getUserByID(data.id),
+                    value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.setstaff = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 2) {
+                var split = data.message.split(' ');
+                var user = plugged.getUserByName(S(_.rest(split, 2).join(' ')).chompLeft('@').chompRight(' ').s);
+                var role = utils.role(split[1]);
+                if (user !== undefined) {
+                    plugged.sendChat(utils.replace(langfile.setstaff.default, {
+                        mod: data.username,
+                        username: user.username,
+                        role: utils.rolename(role)
+                    }), 45);
+                    if (role === plugged.USERROLE.NONE) plugged.removeStaff(user.id);
+                    else plugged.addStaff(user.id, role);
+                    models.User.update({s_role: utils.permlevel(role)}, {where: {id: user.id}});
+                    redis.set('user:role:save:' + user.id, utils.permlevel(role));
+                } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                    username: plugged.getUserByID(data.id),
+                    value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands['bouncer+'] = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 2) {
+                config.options.bouncer_plus = !config.options.bouncer_plus;
+                if (config.options.bouncer_plus) plugged.sendChat(utils.replace(langfile.bouncer_plus.enabled, {username: data.username}), 45);
+                else plugged.sendChat(utils.replace(langfile.bouncer_plus.disabled, {username: data.username}), 45);
+                redis.set('meta:config:options:bouncer_plus', (config.options.bouncer_plus ? 1 : 0));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.demote = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 0) plugged.removeStaff(data.id);
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.promote = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 0) plugged.addStaff(data.id, perm);
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.ping = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 0) plugged.sendChat(langfile.ping.default, 30);
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.historyskip = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                config.history.skipenabled = !config.history.skipenabled;
+                if (config.history.skipenabled) plugged.sendChat(utils.replace(langfile.skip.history.enabled, {username: data.username}), 30);
+                else plugged.sendChat(utils.replace(langfile.skip.history.disabled, {username: data.username}), 30);
+                redis.set('meta:config:history:skipenabled', (config.history.skipenabled ? 1 : 0));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.voteskip = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                config.voteskip.enabled = !config.voteskip.enabled;
+                if (config.voteskip.enabled) plugged.sendChat(utils.replace(langfile.skip.vote.enabled, {username: data.username}), 30);
+                else plugged.sendChat(utils.replace(langfile.skip.vote.disabled, {username: data.username}), 30);
+                redis.set('meta:config:voteskip:enabled', (config.voteskip.enabled ? 1 : 0));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.clearhistory = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                plugged.sendChat(utils.replace(langfile.skip.history.clear, {username: data.username}), 60);
+                redis.keys('media:history:*').then(function (keys) {
+                    keys.forEach(function (key) {
+                        redis.del(key);
+                    });
+                });
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.reloadblacklist = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                redis.keys('media:blacklist:*').then(function (keys) {
+                    keys.forEach(function (key) {
+                        redis.del(key);
+                    });
+                    models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
+                        songs.forEach(function (song) {
+                            redis.set('media:blacklist:' + song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
+                        });
+                        plugged.sendChat(utils.replace(langfile.blacklist.reload, {
+                            username: data.username,
+                            count: songs.length
+                        }));
+                    });
+                });
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.link = {
+    handler: function(data){
+        if(plugged.getCurrentMedia().id !== -1){
+            var m = plugged.getCurrentMedia();
+            if(m.format === 1) plugged.sendChat(utils.replace(langfile.link.default, {username: data.username, link: 'https://youtu.be/' + m.cid}));
+        } else plugged.sendChat(utils.replace(langfile.link.no_media, {username: data.username}));
+    }
+};
+
+module.exports = commands;
