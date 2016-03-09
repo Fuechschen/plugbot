@@ -101,5 +101,9 @@ module.exports = {
     mute: {
         default: '[&{mod}: Muted &{username}]',
         already_muted: '[&{mod}: Unmute] &{username} is already muted.'
+    },
+    lockdown : {
+        enabled: '[&{username}: Lockdown enabled]',
+        disabled: '[&{username}: Lockdown disabled]'
     }
 };

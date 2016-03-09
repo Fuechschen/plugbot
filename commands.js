@@ -484,4 +484,18 @@ commands.ban = {
     }
 };
 
+commands.lockdown = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                config.state.lockdown = !config.state.lockdown;
+                if (config.state.lockdown) plugged.sendChat(utils.replace(langfile.lockdown.enabled, {username: data.username}), 60);
+                else plugged.sendChat(utils.replace(langfile.lockdown.disabled, {username: data.username}), 60);
+                redis.set('meta:config:state:lockdown', (config.state.lockdown ? 1 : 0));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
 module.exports = commands;

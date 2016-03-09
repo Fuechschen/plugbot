@@ -251,59 +251,65 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.CHAT, function (data) {
         if (data.id !== plugged.getSelf().id) {
-            redis.exists('user:mute:' + data.id).then(function (exm) {
-                if (S(data.message).startsWith('!')) {
-                    var split = S(data.message).chompLeft('!').s.split(' ');
-                    if (commands[split[0]] !== undefined) {
-                        commands[split[0]].handler(data);
-                    }
+            if (S(data.message).startsWith('!')) {
+                var split = S(data.message).chompLeft('!').s.split(' ');
+                if (commands[split[0]] !== undefined) {
+                    commands[split[0]].handler(data);
                 }
-                if (exm === 1) {
-                    plugged.deleteMessage(data.cid);
-                    redis.incr('user:mute:' + data.id + ':violation').then(function(){
-                        redis.get('user:mute:' + data.id + ':violation').then(function(val){
-                            if(val > config.chatfilter.spam.mute_violation){
-                                plugged.sendChat(utils.replace(langfile.chatfilter.spam.hard_mute, {username: data.username}), 60);
-                                plugged.muteUser(data.id, plugged.MUTEDURATION.LONG, plugged.BANREASON.SPAMMING);
-                            }
-                        });
-                    });
-                }
-                else {
-                    redis.get('user:role:save:' + data.id).then(function (perm) {
-                        if (perm < 2) {
-                            redis.incr('user:chat:spam:' + data.id + ':points');
-                            redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
-                                if (data.message === lastmsg) {
-                                    plugged.deleteMessage(data.cid);
-                                    redis.incrby('user:chat:spam:' + data.id + ':points', 10);
-                                    redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
-                                } else {
-                                    redis.set('user:chat:spam:' + data.id + ':lastmsg', data.message).then(function () {
-                                        redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
-                                    });
+            }
+            if(config.state.lockdown){
+                redis.get('user:role:save:' + data.id).then(function(perm){
+                   if(perm < 2) plugged.deleteMessage(data.cid);
+                });
+            } else {
+                redis.exists('user:mute:' + data.id).then(function (exm) {
+                    if (exm === 1) {
+                        plugged.deleteMessage(data.cid);
+                        redis.incr('user:mute:' + data.id + ':violation').then(function(){
+                            redis.get('user:mute:' + data.id + ':violation').then(function(val){
+                                if(val > config.chatfilter.spam.mute_violation){
+                                    plugged.sendChat(utils.replace(langfile.chatfilter.spam.hard_mute, {username: data.username}), 60);
+                                    plugged.muteUser(data.id, plugged.MUTEDURATION.LONG, plugged.BANREASON.SPAMMING);
                                 }
-                                redis.get('user:chat:spam:' + data.id + ':points').then(function (points) {
-                                    if (points >= config.chatfilter.spam.points) {
-                                        redis.incr('user:chat:spam:' + data.id + ':warns');
+                            });
+                        });
+                    }
+                    else {
+                        redis.get('user:role:save:' + data.id).then(function (perm) {
+                            if (perm < 2) {
+                                redis.incr('user:chat:spam:' + data.id + ':points');
+                                redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
+                                    if (data.message === lastmsg) {
                                         plugged.deleteMessage(data.cid);
-                                        plugged.sendChat(utils.replace(langfile.chatfilter.spam.warn, {username: data.username}), 60);
+                                        redis.incrby('user:chat:spam:' + data.id + ':points', 10);
+                                        redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
+                                    } else {
+                                        redis.set('user:chat:spam:' + data.id + ':lastmsg', data.message).then(function () {
+                                            redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
+                                        });
                                     }
-                                    redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
-                                        if (warns > config.chatfilter.spam.warns) {
-                                            plugged.sendChat(utils.replace(langfile.chatfilter.spam.mute, {username: data.username}), 60);
-                                            redis.set('user:mute:' + data.id, 1).then(function(){
-                                                redis.set('user:mute:' + data.id + ':violation', 0);
-                                                redis.expire('user:mute:' + data.id, config.chatfilter.spam.mute_duration);
-                                            });
+                                    redis.get('user:chat:spam:' + data.id + ':points').then(function (points) {
+                                        if (points >= config.chatfilter.spam.points) {
+                                            redis.incr('user:chat:spam:' + data.id + ':warns');
+                                            plugged.deleteMessage(data.cid);
+                                            plugged.sendChat(utils.replace(langfile.chatfilter.spam.warn, {username: data.username}), 60);
                                         }
+                                        redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
+                                            if (warns > config.chatfilter.spam.warns) {
+                                                plugged.sendChat(utils.replace(langfile.chatfilter.spam.mute, {username: data.username}), 60);
+                                                redis.set('user:mute:' + data.id, 1).then(function(){
+                                                    redis.set('user:mute:' + data.id + ':violation', 0);
+                                                    redis.expire('user:mute:' + data.id, config.chatfilter.spam.mute_duration);
+                                                });
+                                            }
+                                        });
                                     });
                                 });
-                            });
-                        }
-                    });
-                }
-            });
+                            }
+                        });
+                    }
+                });
+            }
         }
     });
 

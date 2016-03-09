@@ -15,6 +15,9 @@ if (conf.apiKeys.youtube === '' || conf.apiKeys.soundcloud === '') {
         redis.get('meta:config:state:eventmode').then(function(event){
             conf.state.eventmode = ((event !== null) ? (event === 1) : conf.state.eventmode);
         });
+        redis.get('meta:config:state:lockdown').then(function(lockdown){
+            conf.state.lockdown = ((lockdown !== null) ? (lockdown === 1) : conf.state.lockdown);
+        });
         redis.get('meta:config:voteskip:enabled').then(function(voteskip){
             conf.voteskip.enabled = ((voteskip !== null) ? (voteskip === 1) : conf.voteskip.enabled);
         });
