@@ -187,7 +187,10 @@ commands.delchat = {
                     chats.forEach(function (chat) {
                         plugged.deleteMessage(chat.cid);
                     });
-                    plugged.sendChat(utils.replace(langfile.delchat.clear, {username: data.username, count: chats.length}), 60);
+                    plugged.sendChat(utils.replace(langfile.delchat.clear, {
+                        username: data.username,
+                        count: chats.length
+                    }), 60);
                 } else {
                     models.User.find({where: {$or: [{username: {$like: '%' + S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s + '%'}}, {id: _.rest(split, 1)}]}}).then(function (user) {
                         if (user !== null && user !== undefined) {
@@ -381,11 +384,100 @@ commands.reloadblacklist = {
 };
 
 commands.link = {
-    handler: function(data){
-        if(plugged.getCurrentMedia().id !== -1){
+    handler: function (data) {
+        if (plugged.getCurrentMedia().id !== -1) {
             var m = plugged.getCurrentMedia();
-            if(m.format === 1) plugged.sendChat(utils.replace(langfile.link.default, {username: data.username, link: 'https://youtu.be/' + m.cid}));
+            if (m.format === 1) plugged.sendChat(utils.replace(langfile.link.default, {
+                username: data.username,
+                link: 'https://youtu.be/' + m.cid
+            }));
+            else {
+                request.get('https://api.soundcloud.com/tracks/' + m.cid + '?client_id=' + config.apiKeys.soundcloud, function(err, resp, body){
+                   if (!err && resp.statusCode === 200){
+                       var json = JSON.parse(body);
+                       plugged.sendChat(utils.replace(langfile.link.default, {username: data.username, link: json.permalink_url}));
+                   } else plugged.sendChat(utils.replace(langfile.link.error, {username: data.username}));
+                });
+            }
         } else plugged.sendChat(utils.replace(langfile.link.no_media, {username: data.username}));
+    }
+};
+
+commands.unmute = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                var split = data.message.split(' ');
+                var user = plugged.getUserByName(S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s);
+                if (user !== undefined) {
+                    redis.exists('user:mute:' + user.id).then(function (exm) {
+                        if (exm === 1) {
+                            redis.del('user:mute:' + user.id).then(function () {
+                                redis.del('user:mute:' + user.id + ':violation');
+                                plugged.unmuteUser(user.id);
+                            });
+                            plugged.sendChat(utils.replace(langfile.unmute.default, {
+                                username: user.username,
+                                mod: data.username
+                            }), 60);
+                        } else plugged.sendChat(utils.replace(langfile.unmute.not_muted, {
+                            mod: data.username,
+                            username: user.username
+                        }), 30);
+                    });
+                } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                    username: plugged.getUserByID(data.id),
+                    value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.mute = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                var split = data.message.split(' ');
+                var user = plugged.getUserByName(S(_.rest(split, 1).join(' ')).chompLeft('@').chompRight(' ').s);
+                if (user !== undefined) {
+                    redis.exists('user:mute:' + user.id).then(function (exm) {
+                        if (exm === 1) {
+                            plugged.sendChat(utils.replace(langfile.mute.already_muted, {
+                                username: user.username,
+                                mod: data.username
+                            }), 30);
+                        } else {
+                            redis.set('user:mute:' + user.id, 1).then(function () {
+                                redis.set('user:mute:' + user.id + ':violation', 0);
+                                redis.expire('user:mute:' + user.id, config.chatfilter.spam.mute_duration);
+                            });
+                            plugged.sendChat(utils.replace(langfile.mute.default, {
+                                username: user.username,
+                                mod: data.username
+                            }), 60);
+                        }
+                    });
+                } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
+                    username: plugged.getUserByID(data.id),
+                    value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.ban = {
+    handler: function (data) {
+        //todo
+    }
+};
+
+commands.ban = {
+    handler: function (data) {
+        //todo
     }
 };
 

@@ -84,12 +84,22 @@ module.exports = {
     },
     link: {
         default: '[&{username}: Link] &{link}',
-        no_media: '[&{username}: Link] For what should i give you a link? There\'s nothing playing...'
+        no_media: '[&{username}: Link] For what should i give you a link? There\'s nothing playing...',
+        error: '[&{username}: Link] Error while resolving link...'
     },
     chatfilter: {
         spam: {
-            warn: '@&{username}, please stop spamming!'
+            warn: '@&{username}, please stop spamming!',
+            mute: '@&{username} was muted for spamming.',
+            hard_mute: '@&{username} refused to stop spamming, now hard muting him...'
         }
+    },
+    unmute: {
+        default: '[&{mod}: Unmuted &{username}]',
+        not_muted: '[&{mod}: Unmute] &{username} isn\'t muted.'
+    },
+    mute: {
+        default: '[&{mod}: Muted &{username}]',
+        already_muted: '[&{mod}: Unmute] &{username} is already muted.'
     }
-
 };
