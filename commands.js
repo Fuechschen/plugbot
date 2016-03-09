@@ -3,21 +3,26 @@ var commands = {};
 commands.skip = commands.fs = {
     handler: function (msg) {
         redis.get('user:role:save:' + msg.id).then(function (perm) {
-            if (perm > 1) {
-                var booth = plugged.getBooth();
-                var media = plugged.getCurrentMedia();
-                plugged.sendChat(utils.replace(langfile.skip.default, {username: msg.username}), 70);
-                plugged.skipDJ(booth.dj);
-                setTimeout(function () {
-                    var split = msg.message.trim().split(' ');
-                    if (langfile.skip.reasons[split[1]] !== undefined) {
-                        plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
-                            username: plugged.getUserByID(booth.id),
-                            song: utils.songtitle(media.author, media.title)
-                        }), 60);
-                    }
-                }, 4 * 1000);
-            }
+            redis.exists('meta:state:skipable').then(function(ex){
+                if (perm > 1 && ex === 0) {
+                    var booth = plugged.getBooth();
+                    var media = plugged.getCurrentMedia();
+                    plugged.sendChat(utils.replace(langfile.skip.default, {username: msg.username}), 70);
+                    plugged.skipDJ(booth.dj);
+                    redis.set('meta:state:skipable', 1).then(function(){
+                        redis.expire('meta:state:skipable', 4);
+                    });
+                    setTimeout(function () {
+                        var split = msg.message.trim().split(' ');
+                        if (langfile.skip.reasons[split[1]] !== undefined) {
+                            plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
+                                username: plugged.getUserByID(booth.id),
+                                song: utils.songtitle(media.author, media.title)
+                            }), 60);
+                        }
+                    }, 4 * 1000);
+                }
+            });
         });
         plugged.deleteMessage(msg.cid);
     }
@@ -26,11 +31,15 @@ commands.skip = commands.fs = {
 commands.bl = commands.blacklist = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
-            if (perm > 1) {
+            redis.exists('meta:state:skipable').then(function(ex){
+            if (perm > 1 && ex === 0) {
                 var booth = plugged.getBooth();
                 var media = plugged.getCurrentMedia();
                 plugged.sendChat(utils.replace(langfile.blacklist.default, {username: data.username}), 60);
                 plugged.skipDJ(booth.dj);
+                redis.set('meta:state:skipable', 1).then(function(){
+                    redis.expire('meta:state:skipable', 4);
+                });
                 var split = data.message.trim().split(' ');
                 var reason = utils.blacklistReason(_.rest(split, 1));
                 redis.set('media:blacklist:' + media.format + ':' + media.id, ((split.length > 1 ? reason : 1))).then(function () {
@@ -54,6 +63,7 @@ commands.bl = commands.blacklist = {
                     }, 4 * 1000);
                 });
             }
+            });
         });
         plugged.deleteMessage(data.cid);
     }
@@ -62,26 +72,31 @@ commands.bl = commands.blacklist = {
 commands.ls = commands.lockskip = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
-            if (perm > 1) {
-                plugged.sendChat(utils.replace(langfile.skip.lockskip, {username: data.username}), 70);
-                var booth = plugged.getBooth();
-                var media = plugged.getCurrentMedia();
-                plugged.setLock(true, false);
-                plugged.setCycle(true);
-                plugged.skipDJ(booth.dj);
-                if (booth.shouldCycle !== plugged.doesWaitlistCycle) plugged.setCycle(booth.shouldCycle);
-                if (booth.isLocked !== plugged.isWaitlistLocked) plugged.setLock(booth.isLocked, false);
-                if (config.lockskip.move_pos !== undefined) plugged.moveDJ(booth.dj, config.lockskip.move_pos);
-                setTimeout(function () {
-                    var split = data.message.trim().split(' ');
-                    if (langfile.skip.reasons[split[1]] !== undefined) {
-                        plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
-                            username: plugged.getUserByID(booth.dj).username,
-                            song: utils.songtitle(media.author, media.title)
-                        }), 60);
-                    }
-                }, 4 * 1000)
-            }
+            redis.exists('meta:state:skipable').then(function(ex) {
+                if (perm > 1 && ex === 0) {
+                    plugged.sendChat(utils.replace(langfile.skip.lockskip, {username: data.username}), 70);
+                    var booth = plugged.getBooth();
+                    var media = plugged.getCurrentMedia();
+                    plugged.setLock(true, false);
+                    plugged.setCycle(true);
+                    plugged.skipDJ(booth.dj);
+                    redis.set('meta:state:skipable', 1).then(function () {
+                        redis.expire('meta:state:skipable', 4);
+                    });
+                    if (booth.shouldCycle !== plugged.doesWaitlistCycle) plugged.setCycle(booth.shouldCycle);
+                    if (booth.isLocked !== plugged.isWaitlistLocked) plugged.setLock(booth.isLocked, false);
+                    if (config.lockskip.move_pos !== undefined) plugged.moveDJ(booth.dj, config.lockskip.move_pos);
+                    setTimeout(function () {
+                        var split = data.message.trim().split(' ');
+                        if (langfile.skip.reasons[split[1]] !== undefined) {
+                            plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
+                                username: plugged.getUserByID(booth.dj).username,
+                                song: utils.songtitle(media.author, media.title)
+                            }), 60);
+                        }
+                    }, 4 * 1000)
+                }
+            });
         });
         plugged.deleteMessage(data.cid);
     }
@@ -497,5 +512,56 @@ commands.lockdown = {
         plugged.deleteMessage(data.cid);
     }
 };
+
+commands.welcomemsg = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 2) {
+                var split = data.message.trim().split(' ');
+                if(split.length > 1){
+                    var meta = plugged.getRoomMeta();
+                    if(split[1] === 'none' && split.length === 2){
+                        plugged.updateRoomInfo(meta.name, meta.description, '');
+                    } else {
+                        plugged.updateRoomInfo(meta.name, meta.description, _.rest(split, 1).join(' ').trim());
+                    }
+                    plugged.sendChat(utils.replace(langfile.roomedit.welcomemsg, {username: data.username}))
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {username: data.username, cmd: Welcome}));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.roomname = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 2) {
+                var split = data.message.trim().split(' ');
+                if(split.length > 1){
+                    var meta = plugged.getRoomMeta();
+                        plugged.updateRoomInfo(_.rest(split, 1).join(' ').trim(), meta.description, meta.welcome);
+                    plugged.sendChat(utils.replace(langfile.roomedit.roomname, {username: data.username}))
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {username: data.username, cmd: Welcome}));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.cleverbot = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                config.cleverbot.enabled = !config.cleverbot.enabled;
+                if (config.cleverbot.enabled) plugged.sendChat(utils.replace(langfile.cleverbot.enabled, {username: data.username}), 30);
+                else plugged.sendChat(utils.replace(langfile.cleverbot.disabled, {username: data.username}), 30);
+                redis.set('meta:config:cleverbot:enabled', (config.cleverbot.enabled ? 1 : 0));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
 
 module.exports = commands;

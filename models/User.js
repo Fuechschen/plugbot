@@ -1,6 +1,6 @@
 module.exports = function(sequelize, Sequelize) {
     return sequelize.define("user", {
-        id: {type: Sequelize.INTEGER.UNSIGNED, primaryKey: true},
+        id: {type: Sequelize.INTEGER.UNSIGNED, primaryKey: true, unique: true},
         username: {type: Sequelize.STRING, allowNull: false},
         slug: {type: Sequelize.STRING, allowNull: false},
         language: {type: Sequelize.STRING, defaultValue: 'en'},

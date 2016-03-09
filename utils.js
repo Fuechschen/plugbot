@@ -1,3 +1,11 @@
+var cleverbot;
+try {
+    var Cleverbot = required('cleverbot-node');
+    cleverbot = new Cleverbot;
+    cleverbot.prepare();
+} catch (e){
+    cleverbot = undefined;
+}
 module.exports = {
     replace: function (str, replacer) {
         var keys = _.keys(replacer);
@@ -116,5 +124,38 @@ module.exports = {
             string = string.replaceAll('#' + key, langfile.blacklist.reasons[key]);
         });
         return string;
+    },
+    loadConfigfromRedis: function(){
+        redis.get('meta:config:state:eventmode').then(function(event){
+            config.state.eventmode = ((event !== null) ? (event === 1) : config.state.eventmode);
+        });
+        redis.get('meta:config:state:lockdown').then(function(lockdown){
+            config.state.lockdown = ((lockdown !== null) ? (lockdown === 1) : config.state.lockdown);
+        });
+        redis.get('meta:config:voteskip:enabled').then(function(voteskip){
+            config.voteskip.enabled = ((voteskip !== null) ? (voteskip === 1) : config.voteskip.enabled);
+        });
+        redis.get('meta:config:cleverbot:enabled').then(function(cleverbot){
+            config.cleverbot.enabled = ((cleverbot !== null) ? (cleverbot === 1) : config.cleverbot.enabled);
+        });
+        redis.get('meta:config:history:skipenabled').then(function(historyskip){
+            config.history.skipenabled = ((historyskip !== null) ? (historyskip === 1) : config.history.skipenabled);
+        });
+        redis.get('meta:config:lockskip:move_pos').then(function(lockskippos){
+            config.lockskip.move_pos = ((lockskippos === null) ? config.lockskip.move_pos : lockskippos);
+        });
+        redis.get('meta:config:options:bouncer_plus').then(function(bouncer_plus){
+            config.options.bouncer_plus = ((bouncer_plus !== null) ? (bouncer_plus === 1) : config.options.bouncer_plus);
+        });
+        redis.get('meta:config:timeguard:enabled').then(function(timeguard){
+            config.timeguard.enabled = ((timeguard !== null) ? (timeguard === 1) : config.timeguard.enabled);
+        });
+    },
+    sendToCleverbot: function(data){
+        if(cleverbot !== undefined){
+            cleverbot.write(data.message.replace('@' + plugged.getSelf().username, '').trim(), function(resp){
+               plugged.sendChat(this.replace(langfile.cleverbot.format, {username: data.username, messgae: resp.message}));
+            });
+        }
     }
 };

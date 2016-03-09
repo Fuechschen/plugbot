@@ -24,5 +24,8 @@
     "shortid": "^2.2.4",
     "string": "^3.3.1",
     "underscore": "^1.8.3"
+  },
+  "optionalDependencies": {
+    "cleverbot-node": "git://github.com/avatarkava/cleverbot-node.git"
   }
 }

@@ -30,18 +30,37 @@ redis.keys('user:role:save:*').then(function (keys) {
         redis.del(key);
     });
 });
-config.loadfromRedis(redis);
+utils.loadConfigfromRedis();
 
 timeouts = {
     stuck: null
 };
 plugged = new Plugged();
-plugged.login(config.login);
+//redis.get('meta:auth:save:token').then(function (token) {
+//redis.get('meta:auth:save:jar').then(function(jar){
+//    if(jar !== null && token !== null){
+//        plugged.setJar(JSON.parse(jar));
+//    } else {
+//        token = undefined;
+//    }
+plugged.login(config.login);//, token);
+//}) ;
+//});
 commands = require('./commands.js');
 workers = require('./workers.js');
 plugged.on(plugged.LOGIN_SUCCESS, function () {
     plugged.cacheChat(true);
     plugged.connect(config.options.room);
+    plugged.getAuthToken(function (err, token) {
+        if (!err) {
+            redis.set('meta:auth:save:jar', JSON.stringify(plugged.getJar())).then(function () {
+                redis.set('meta:auth:save:token', token).then(function () {
+                    redis.expire('meta:auth:save:token', 604800);
+                });
+                redis.expire('meta:auth:save:jar', 604800);
+            });
+        }
+    });
 });
 
 plugged.on(plugged.CONN_ERROR, function (err) {
@@ -257,17 +276,20 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     commands[split[0]].handler(data);
                 }
             }
-            if(config.state.lockdown){
-                redis.get('user:role:save:' + data.id).then(function(perm){
-                   if(perm < 2) plugged.deleteMessage(data.cid);
+            if (config.state.lockdown) {
+                redis.get('user:role:save:' + data.id).then(function (perm) {
+                    if (perm < 2) plugged.deleteMessage(data.cid);
                 });
             } else {
+                if(config.cleverbot.enabled && S(data.message).contains('@' + bot.getSelf().username)){
+                    utils.sendToCleverbot(data);
+                }
                 redis.exists('user:mute:' + data.id).then(function (exm) {
                     if (exm === 1) {
                         plugged.deleteMessage(data.cid);
-                        redis.incr('user:mute:' + data.id + ':violation').then(function(){
-                            redis.get('user:mute:' + data.id + ':violation').then(function(val){
-                                if(val > config.chatfilter.spam.mute_violation){
+                        redis.incr('user:mute:' + data.id + ':violation').then(function () {
+                            redis.get('user:mute:' + data.id + ':violation').then(function (val) {
+                                if (val > config.chatfilter.spam.mute_violation) {
                                     plugged.sendChat(utils.replace(langfile.chatfilter.spam.hard_mute, {username: data.username}), 60);
                                     plugged.muteUser(data.id, plugged.MUTEDURATION.LONG, plugged.BANREASON.SPAMMING);
                                 }
@@ -297,7 +319,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                         redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
                                             if (warns > config.chatfilter.spam.warns) {
                                                 plugged.sendChat(utils.replace(langfile.chatfilter.spam.mute, {username: data.username}), 60);
-                                                redis.set('user:mute:' + data.id, 1).then(function(){
+                                                redis.set('user:mute:' + data.id, 1).then(function () {
                                                     redis.set('user:mute:' + data.id + ':violation', 0);
                                                     redis.expire('user:mute:' + data.id, config.chatfilter.spam.mute_duration);
                                                 });

@@ -4,7 +4,7 @@ module.exports = {
         default: '[&{username}: Blacklist]',
         with_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}: &{reason}',
         without_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}.',
-        skip_reason: '@&{username}, your song "&{song}" is blacklisted for: &{reason}',
+        skip_reason: '@&{username}, your song "&{song}" is blacklisted: &{reason}',
         skip: '@&{username}, your song "&{song}" is blacklisted',
         reload: '[&{username}: Reloaded Blacklist with &{count} items]',
         reasons: {
@@ -39,7 +39,8 @@ module.exports = {
         }
     },
     error: {
-        user_not_found: 'User wasn\'t found!'
+        user_not_found: 'User wasn\'t found!',
+        argument: '[&{username}: &{cmd}] Error on arguments, please check command syntax.'
     },
     bouncer_plus: {
         enabled: '[&{username}: Bouncer+ enabled]',
@@ -105,5 +106,14 @@ module.exports = {
     lockdown : {
         enabled: '[&{username}: Lockdown enabled]',
         disabled: '[&{username}: Lockdown disabled]'
+    },
+    roomedit: {
+        welcomemsg: '[&{username}: Updated welcome message]',
+        roomname: '[&{username}: Updated roomname]'
+    },
+    cleverbot: {
+        enabled: '[&{username}: Cleverbot enabled]',
+        disabled: '[&{username}: Clever disabled]',
+        format: '&{username} &{message}'
     }
 };
