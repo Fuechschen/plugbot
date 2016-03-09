@@ -13,19 +13,21 @@
     "url": "https://github.com/Fuechschen/plugbot.git"
   },
   "dependencies": {
+    "chalk": "^1.1.1",
     "ioredis": "^1.15.1",
     "moment": "^2.12.0",
     "mysql": "^2.10.2",
     "path": "^0.12.7",
     "plugged": "^2.5.3",
-    "pm2": "^1.0.2",
     "request": "^2.69.0",
     "sequelize": "^3.19.3",
     "shortid": "^2.2.4",
+    "storyboard": "0.0.3",
     "string": "^3.3.1",
     "underscore": "^1.8.3"
   },
   "optionalDependencies": {
-    "cleverbot-node": "git://github.com/avatarkava/cleverbot-node.git"
+    "cleverbot-node": "git://github.com/avatarkava/cleverbot-node.git",
+    "pm2": "^1.0.2"
   }
 }

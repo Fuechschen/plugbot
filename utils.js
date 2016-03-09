@@ -3,7 +3,7 @@ try {
     var Cleverbot = required('cleverbot-node');
     cleverbot = new Cleverbot;
     cleverbot.prepare();
-} catch (e){
+} catch (e) {
     cleverbot = undefined;
 }
 module.exports = {
@@ -17,6 +17,9 @@ module.exports = {
     },
     songtitle: function (author, title) {
         return author + ' - ' + title;
+    },
+    mediatitle: function (media) {
+        return media.author + ' - ' + media.title;
     },
     role: function (role) {
         var r;
@@ -125,37 +128,64 @@ module.exports = {
         });
         return string;
     },
-    loadConfigfromRedis: function(){
-        redis.get('meta:config:state:eventmode').then(function(event){
+    loadConfigfromRedis: function () {
+        redis.get('meta:config:state:eventmode').then(function (event) {
             config.state.eventmode = ((event !== null) ? (event === 1) : config.state.eventmode);
         });
-        redis.get('meta:config:state:lockdown').then(function(lockdown){
+        redis.get('meta:config:state:lockdown').then(function (lockdown) {
             config.state.lockdown = ((lockdown !== null) ? (lockdown === 1) : config.state.lockdown);
         });
-        redis.get('meta:config:voteskip:enabled').then(function(voteskip){
+        redis.get('meta:config:voteskip:enabled').then(function (voteskip) {
             config.voteskip.enabled = ((voteskip !== null) ? (voteskip === 1) : config.voteskip.enabled);
         });
-        redis.get('meta:config:cleverbot:enabled').then(function(cleverbot){
+        redis.get('meta:config:cleverbot:enabled').then(function (cleverbot) {
             config.cleverbot.enabled = ((cleverbot !== null) ? (cleverbot === 1) : config.cleverbot.enabled);
         });
-        redis.get('meta:config:history:skipenabled').then(function(historyskip){
+        redis.get('meta:config:history:skipenabled').then(function (historyskip) {
             config.history.skipenabled = ((historyskip !== null) ? (historyskip === 1) : config.history.skipenabled);
         });
-        redis.get('meta:config:lockskip:move_pos').then(function(lockskippos){
+        redis.get('meta:config:lockskip:move_pos').then(function (lockskippos) {
             config.lockskip.move_pos = ((lockskippos === null) ? config.lockskip.move_pos : lockskippos);
         });
-        redis.get('meta:config:options:bouncer_plus').then(function(bouncer_plus){
+        redis.get('meta:config:options:bouncer_plus').then(function (bouncer_plus) {
             config.options.bouncer_plus = ((bouncer_plus !== null) ? (bouncer_plus === 1) : config.options.bouncer_plus);
         });
-        redis.get('meta:config:timeguard:enabled').then(function(timeguard){
+        redis.get('meta:config:timeguard:enabled').then(function (timeguard) {
             config.timeguard.enabled = ((timeguard !== null) ? (timeguard === 1) : config.timeguard.enabled);
         });
     },
-    sendToCleverbot: function(data){
-        if(cleverbot !== undefined){
-            cleverbot.write(data.message.replace('@' + plugged.getSelf().username, '').trim(), function(resp){
-               plugged.sendChat(this.replace(langfile.cleverbot.format, {username: data.username, messgae: resp.message}));
+    sendToCleverbot: function (data) {
+        if (cleverbot !== undefined) {
+            cleverbot.write(data.message.replace('@' + plugged.getSelf().username, '').trim(), function (resp) {
+                plugged.sendChat(this.replace(langfile.cleverbot.format, {
+                    username: data.username,
+                    messgae: resp.message
+                }));
             });
         }
+    },
+    checkVoteSkip: function (score) {
+        switch (typeof config.voteskip.condition) {
+            default:
+                return false;
+                break;
+            case 'number':
+                if (score.mehs >= config.voteskip.condition) return true;
+                break;
+            case 'function':
+                if (config.voteskip.condition(score)) return true;
+                break;
+            case 'object':
+                if (config.voteskip.condition.max <= score.mehs) return true;
+                else if (config.voteskip.condition.min <= score.mehs)return ((score.mehs / score.userCount) >= config.voteskip.condition.ratio);
+                else return false;
+                break;
+        }
+    },
+    userLogString: function(user, id){
+        return (typeof user === 'object' ? user.username + '[' + user.id + ']' : user + '[' + id + ']');
+    },
+    mediatitlelog: function(media){
+        return media.author + ' - ' + media.title + '[' + media.id + '|' + media.format + '|' + media.cid + ']';
     }
 };

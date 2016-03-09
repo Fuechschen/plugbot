@@ -1,3 +1,5 @@
+story = require('storyboard').mainStory;
+chalk = require('chalk');
 config = require('./load_config.js');
 langfile = require('./langfile.js');
 _ = require('underscore');
@@ -9,6 +11,7 @@ utils = require('./utils.js');
 var Plugged = require('plugged');
 var Sequelize = require('sequelize');
 var IoRedis = require('ioredis');
+
 
 sequelize = new Sequelize(config.sequelize.database, config.sequelize.username, config.sequelize.password, config.sequelize.options);
 models = {
@@ -36,15 +39,15 @@ timeouts = {
     stuck: null
 };
 plugged = new Plugged();
-//redis.get('meta:auth:save:token').then(function (token) {
-//redis.get('meta:auth:save:jar').then(function(jar){
-//    if(jar !== null && token !== null){
-//        plugged.setJar(JSON.parse(jar));
-//    } else {
-//        token = undefined;
-//    }
+/*redis.get('meta:auth:save:token').then(function (token) {
+ redis.get('meta:auth:save:jar').then(function (jar) {
+ if (jar !== null && token !== null) {
+ plugged.setJar(JSON.parse(jar));
+ } else {
+ token = undefined;
+ }*/
 plugged.login(config.login);//, token);
-//}) ;
+//    });
 //});
 commands = require('./commands.js');
 workers = require('./workers.js');
@@ -72,6 +75,7 @@ plugged.on(plugged.LOGIN_ERROR, function (err) {
 });
 
 plugged.on(plugged.JOINED_ROOM, function () {
+    story.info('meta', 'Joined room ' + config.options.room);
     plugged.getUsers().forEach(function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
         redis.set('user:chat:spam:' + user.id + ':warns', 0);
@@ -157,56 +161,45 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 }
             });
+            models.Song.findOrCreate({
+                where: {plug_id: now.media.id}, defaults: {
+                    title: now.media.title,
+                    author: now.media.author,
+                    image: now.media.image,
+                    duration: now.media.duration,
+                    format: now.media.format,
+                    plug_id: now.media.id,
+                    cid: now.media.cid
+                }
+            }).spread(function (song) {
+                song.updateAttributes({image: now.media.image});
+            });
             timeouts.stuck = setTimeout(function () {
                 plugged.sendChat(langfile.skip.stuck.default, 30);
                 plugged.skipDJ(booth.dj, now.historyID);
             }, (now.media.duration + 5) * 1000);
-        }
+            story.info('advance', utils.userLogString(plugged.getUserByID(booth.dj)) + ': ' + utils.mediatitlelog(now.media));
+        } else story.info('advance', 'Nobody is playing!');
         if (prev.dj !== undefined) {
             redis.set('media:history:' + prev.media.format + ':' + prev.media.id, 1).then(function () {
                 redis.expire('media:history:' + prev.media.format + ':' + prev.media.id, config.history.time * 60);
             });
             models.Song.find({where: {plug_id: now.media.id}}).then(function (song) {
-                if (song !== null && song !== undefined) {
-                    song.updateAttributes({
-                        title: now.media.title,
-                        author: now.media.author,
-                        image: now.media.image,
-                        duration: now.media.duration,
-                        format: now.media.format,
-                        plug_id: now.media.id,
-                        cid: now.media.cid
+                models.User.find({where: {id: prev.dj.id}}).then(function (user) {
+                    models.Play.create({
+                        time: new Date,
+                        woots: prev.score.positive,
+                        mehs: prev.score.negative,
+                        grabs: prev.score.grabs
+                    }).then(function (play) {
+                        play.setSong(song);
+                        play.setUser(user);
                     });
-                    createPlay(song);
-                } else {
-                    models.Song.create({
-                        title: now.media.title,
-                        author: now.media.author,
-                        image: now.media.image,
-                        duration: now.media.duration,
-                        format: now.media.format,
-                        plug_id: now.media.id,
-                        cid: now.media.cid
-                    }).then(function (newsong) {
-                        createPlay(newsong);
-                    });
-                }
-
-                function createPlay(sng) {
-                    models.User.find({where: {id: prev.dj.id}}).then(function (user) {
-                        models.Play.create({
-                            time: new Date,
-                            woots: prev.score.positive,
-                            mehs: prev.score.negative,
-                            grabs: prev.score.grabs
-                        }).then(function (play) {
-                            play.setSong(sng);
-                            play.setUser(user);
-                        });
-                    })
-                }
+                });
             });
+            story.info('score', utils.mediatitlelog(prev.media) + ' woots: ' + prev.score.positive + ' | grabs: ' + prev.score.grabs + ' | mehs: ' + prev.score.negative);
         }
+
     });
 
     plugged.on(plugged.FRIEND_JOIN, function (user) {
@@ -220,7 +213,13 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     else plugged.removeStaff(user.id);
                 }
                 usr.updateAttributes({status: true});
+                if (config.options.welcome.old) setTimeout(function () {
+                    plugged.sendChat(utils.replace(langfile.welcome.old, {username: user.username}), 60);
+                }, 6 * 1000)
             } else {
+                if (config.options.welcome.new) setTimeout(function () {
+                    plugged.sendChat(utils.replace(langfile.welcome.new, {username: user.username}), 60);
+                }, 6 * 1000);
                 models.User.create({
                     id: user.id,
                     username: user.username,
@@ -234,6 +233,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 });
             }
         });
+        story.info('join', utils.userLogString(user));
     });
 
     plugged.on(plugged.USER_JOIN, function (user) {
@@ -247,7 +247,13 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     else plugged.removeStaff(user.id);
                 }
                 usr.updateAttributes({status: true});
+                if (config.options.welcome.old) setTimeout(function () {
+                    plugged.sendChat(utils.replace(langfile.welcome.old, {username: user.username}), 60);
+                }, 6 * 1000)
             } else {
+                if (config.options.welcome.new) setTimeout(function () {
+                    plugged.sendChat(utils.replace(langfile.welcome.new, {username: user.username}), 60);
+                }, 6 * 1000);
                 models.User.create({
                     id: user.id,
                     username: user.username,
@@ -261,11 +267,13 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 });
             }
         });
+        story.info('join', utils.userLogString(user));
     });
 
     plugged.on(plugged.USER_LEAVE, function (user) {
         redis.del('user:role:save:' + user.id);
         models.User.update({status: false}, {where: {id: user.id}});
+        story.info('leave', utils.userLogString(user));
     });
 
     plugged.on(plugged.CHAT, function (data) {
@@ -274,6 +282,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 var split = S(data.message).chompLeft('!').s.split(' ');
                 if (commands[split[0]] !== undefined) {
                     commands[split[0]].handler(data);
+                    story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
                 }
             }
             if (config.state.lockdown) {
@@ -281,7 +290,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     if (perm < 2) plugged.deleteMessage(data.cid);
                 });
             } else {
-                if(config.cleverbot.enabled && S(data.message).contains('@' + bot.getSelf().username)){
+                if (config.cleverbot.enabled && S(data.message).contains('@' + plugged.getSelf().username)) {
                     utils.sendToCleverbot(data);
                 }
                 redis.exists('user:mute:' + data.id).then(function (exm) {
@@ -333,6 +342,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 });
             }
         }
+        story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
     });
 
     plugged.on(plugged.MOD_STAFF, function (data) {
@@ -351,6 +361,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 }
             });
+            story.info('promote', util.userLogString(data.moderator, data.moderatorID) + ': ' + utils.userLogString(data.username, data.id) + ' --> ' + utils.rolename(data.role));
         }
     });
 
@@ -369,16 +380,29 @@ plugged.on(plugged.JOINED_ROOM, function () {
                         }
                     });
                 }
-            })
+            });
+            story.info('ban', util.userLogString(data.moderator, data.moderatorID) + ': ' + data.username + ' --> ' + data.duration);
         }
     });
 
     plugged.on(plugged.VOTE, function () {
-        var score = {woots: 0, mehs: 0};
+        var score = {woots: 0, mehs: 0, userCount: plugged.getUsers().length};
         plugged.getVotes(false).forEach(function (vote) {
             if (vote.direction === 1) score.woots = score.woots + 1;
             else if (vote.direction === -1) score.mehs = score.mehs - 1;
         });
-        //todo voteskip
+        if (utils.checkVoteSkip(score) && config.voteskip.enabled) {
+            plugged.sendChat(utils.replace(langfile.skip.vote.default, {
+                username: plugged.getCurrentDJ(),
+                song: utils.mediatitle(plugged.getCurrentMedia())
+            }), 60);
+            plugged.skipDJ(plugged.getCurrentDJ().id);
+        }
+    });
+
+    plugged.on(plugged.MOD_SKIP, function (data) {
+        if (data.mi !== plugged.getSelf().id) {
+            story.info('skip', utils.userLogString(data.m, data.mi));
+        }
     });
 });

@@ -3,24 +3,25 @@ var commands = {};
 commands.skip = commands.fs = {
     handler: function (msg) {
         redis.get('user:role:save:' + msg.id).then(function (perm) {
-            redis.exists('meta:state:skipable').then(function(ex){
+            redis.exists('meta:state:skipable').then(function (ex) {
                 if (perm > 1 && ex === 0) {
                     var booth = plugged.getBooth();
                     var media = plugged.getCurrentMedia();
                     plugged.sendChat(utils.replace(langfile.skip.default, {username: msg.username}), 70);
                     plugged.skipDJ(booth.dj);
-                    redis.set('meta:state:skipable', 1).then(function(){
+                    redis.set('meta:state:skipable', 1).then(function () {
                         redis.expire('meta:state:skipable', 4);
                     });
                     setTimeout(function () {
                         var split = msg.message.trim().split(' ');
                         if (langfile.skip.reasons[split[1]] !== undefined) {
                             plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
-                                username: plugged.getUserByID(booth.id),
+                                username: plugged.getUserByID(booth.id).username,
                                 song: utils.songtitle(media.author, media.title)
                             }), 60);
                         }
                     }, 4 * 1000);
+                    story.info('skip', utils.userLogString(msg.username, msg.id) + ': ' + utils.mediatitlelog(media) + ' played by ' + utils.userLogString(plugged.getUserByID(booth.dj)));
                 }
             });
         });
@@ -31,38 +32,39 @@ commands.skip = commands.fs = {
 commands.bl = commands.blacklist = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
-            redis.exists('meta:state:skipable').then(function(ex){
-            if (perm > 1 && ex === 0) {
-                var booth = plugged.getBooth();
-                var media = plugged.getCurrentMedia();
-                plugged.sendChat(utils.replace(langfile.blacklist.default, {username: data.username}), 60);
-                plugged.skipDJ(booth.dj);
-                redis.set('meta:state:skipable', 1).then(function(){
-                    redis.expire('meta:state:skipable', 4);
-                });
-                var split = data.message.trim().split(' ');
-                var reason = utils.blacklistReason(_.rest(split, 1));
-                redis.set('media:blacklist:' + media.format + ':' + media.id, ((split.length > 1 ? reason : 1))).then(function () {
-                    setTimeout(function () {
-                        if (split.length > 1) {
-                            plugged.sendChat(utils.replace(langfile.blacklist.with_reason, {
-                                username: plugged.getUserByID(booth.dj).username,
-                                mod: data.username,
-                                song: utils.songtitle(media.author, media.title),
-                                reason: reason
-                            }), 60);
-                            models.Song.update({isBanned: true, reason: reason}, {where: {plug_id: media.id}});
-                        } else {
-                            plugged.sendChat(utils.replace(langfile.blacklist.without_reason, {
-                                username: plugged.getUserByID(booth.dj).username,
-                                song: utils.songtitle(media.author, media.title),
-                                mod: data.username
-                            }), 60);
-                            models.Song.update({isBanned: true}, {where: {plug_id: media.id}});
-                        }
-                    }, 4 * 1000);
-                });
-            }
+            redis.exists('meta:state:skipable').then(function (ex) {
+                if (perm > 1 && ex === 0) {
+                    var booth = plugged.getBooth();
+                    var media = plugged.getCurrentMedia();
+                    plugged.sendChat(utils.replace(langfile.blacklist.default, {username: data.username}), 60);
+                    plugged.skipDJ(booth.dj);
+                    redis.set('meta:state:skipable', 1).then(function () {
+                        redis.expire('meta:state:skipable', 4);
+                    });
+                    var split = data.message.trim().split(' ');
+                    var reason = utils.blacklistReason(_.rest(split, 1));
+                    redis.set('media:blacklist:' + media.format + ':' + media.id, ((split.length > 1 ? reason : 1))).then(function () {
+                        setTimeout(function () {
+                            if (split.length > 1) {
+                                plugged.sendChat(utils.replace(langfile.blacklist.with_reason, {
+                                    username: plugged.getUserByID(booth.dj).username,
+                                    mod: data.username,
+                                    song: utils.songtitle(media.author, media.title),
+                                    reason: reason
+                                }), 60);
+                                models.Song.update({isBanned: true, reason: reason}, {where: {plug_id: media.id}});
+                            } else {
+                                plugged.sendChat(utils.replace(langfile.blacklist.without_reason, {
+                                    username: plugged.getUserByID(booth.dj).username,
+                                    song: utils.songtitle(media.author, media.title),
+                                    mod: data.username
+                                }), 60);
+                                models.Song.update({isBanned: true}, {where: {plug_id: media.id}});
+                            }
+                        }, 4 * 1000);
+                    });
+                    story.info('blacklist', utils.userLogString(data.username, data.id) + ': ' + utils.mediatitlelog(media) + ' played by ' + utils.userLogString(plugged.getUserByID(booth.dj)));
+                }
             });
         });
         plugged.deleteMessage(data.cid);
@@ -72,7 +74,7 @@ commands.bl = commands.blacklist = {
 commands.ls = commands.lockskip = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
-            redis.exists('meta:state:skipable').then(function(ex) {
+            redis.exists('meta:state:skipable').then(function (ex) {
                 if (perm > 1 && ex === 0) {
                     plugged.sendChat(utils.replace(langfile.skip.lockskip, {username: data.username}), 70);
                     var booth = plugged.getBooth();
@@ -94,7 +96,8 @@ commands.ls = commands.lockskip = {
                                 song: utils.songtitle(media.author, media.title)
                             }), 60);
                         }
-                    }, 4 * 1000)
+                    }, 4 * 1000);
+                    story.info('lockskip', utils.userLogString(data.username, data.id) + ': ' + utils.mediatitlelog(media) + ' played by ' + utils.userLogString(plugged.getUserByID(booth.dj)));
                 }
             });
         });
@@ -117,6 +120,7 @@ commands.add = {
                     username: plugged.getUserByID(data.id),
                     value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
                 }), 20);
+                story.info('add', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -138,6 +142,7 @@ commands.rem = commands.remove = commands.rm = {
                     username: plugged.getUserByID(data.id),
                     value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
                 }), 20);
+                story.info('remove', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -150,6 +155,7 @@ commands.lock = {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
                 plugged.sendChat(utils.replace(langfile.bp_actions.lock, {username: data.username}), 70);
                 plugged.setLock(true, false);
+                story.info('lock', utils.userLogString(data.username, data.id));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -162,6 +168,7 @@ commands.unlock = {
             if ((config.options.bouncer_plus ? (perm > 1) : (perm > 2))) {
                 plugged.sendChat(utils.replace(langfile.bp_actions.unlock, {username: data.username}), 70);
                 plugged.setLock(false, false);
+                story.info('unlock', utils.userLogString(data.username, data.id));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -174,6 +181,7 @@ commands.clear = {
             if ((config.options.bouncer_plus ? (perm > 1) : (perm > 2))) {
                 plugged.sendChat(utils.replace(langfile.bp_actions.clear, {username: data.username}), 70);
                 plugged.setLock(true, true);
+                story.info('clear', utils.userLogString(data.username, data.id));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -185,7 +193,9 @@ commands.cycle = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
                 plugged.sendChat(utils.replace(langfile.bp_actions.cycle, {username: data.username}), 70);
-                plugged.setCycle(!plugged.doesWaitlistCycle());
+                var cycle = plugged.doesWaitlistCycle()
+                plugged.setCycle(!cycle);
+                story.info('cycle', utils.userLogString(data.username, data.id) + ': --> ' + !plugged.doesWaitlistCycle());
             }
         });
         plugged.deleteMessage(data.cid);
@@ -250,6 +260,7 @@ commands.kick = {
                                     plugged.unbanUser(user.id);
                                 }, 15 * 1000);
                             });
+                            story.info('lockskip', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(plugged.getUserByID(user)));
                         }
                     });
                 } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
@@ -279,6 +290,7 @@ commands.setstaff = {
                     else plugged.addStaff(user.id, role);
                     models.User.update({s_role: utils.permlevel(role)}, {where: {id: user.id}});
                     redis.set('user:role:save:' + user.id, utils.permlevel(role));
+                    story.info('promote', util.userLogString(data.username, data.id) + ': ' + utils.userLogString(user) + ' --> ' + utils.rolename(role));
                 } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
                     username: plugged.getUserByID(data.id),
                     value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
@@ -297,6 +309,7 @@ commands['bouncer+'] = {
                 if (config.options.bouncer_plus) plugged.sendChat(utils.replace(langfile.bouncer_plus.enabled, {username: data.username}), 45);
                 else plugged.sendChat(utils.replace(langfile.bouncer_plus.disabled, {username: data.username}), 45);
                 redis.set('meta:config:options:bouncer_plus', (config.options.bouncer_plus ? 1 : 0));
+                story.info('bouncer+', util.userLogString(data.username, data.id) + ': --> ' + config.options.bouncer_plus);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -338,6 +351,7 @@ commands.historyskip = {
                 if (config.history.skipenabled) plugged.sendChat(utils.replace(langfile.skip.history.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.skip.history.disabled, {username: data.username}), 30);
                 redis.set('meta:config:history:skipenabled', (config.history.skipenabled ? 1 : 0));
+                story.info('historyskip', util.userLogString(data.username, data.id) + ': --> ' + config.history.skipenabled);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -352,6 +366,7 @@ commands.voteskip = {
                 if (config.voteskip.enabled) plugged.sendChat(utils.replace(langfile.skip.vote.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.skip.vote.disabled, {username: data.username}), 30);
                 redis.set('meta:config:voteskip:enabled', (config.voteskip.enabled ? 1 : 0));
+                story.info('voteskip', util.userLogString(data.username, data.id) + ': --> ' + config.voteskip.enabled);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -368,6 +383,7 @@ commands.clearhistory = {
                         redis.del(key);
                     });
                 });
+                story.info('clearhistory', util.userLogString(data.username, data.id));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -438,6 +454,7 @@ commands.unmute = {
                                 username: user.username,
                                 mod: data.username
                             }), 60);
+                            story.info('unmute', util.userLogString(data.username, data.id) + ': ' + util.userLogString(user));
                         } else plugged.sendChat(utils.replace(langfile.unmute.not_muted, {
                             mod: data.username,
                             username: user.username
@@ -475,6 +492,7 @@ commands.mute = {
                                 username: user.username,
                                 mod: data.username
                             }), 60);
+                            story.info('mute', util.userLogString(data.username, data.id) + ': ' + util.userLogString(user));
                         }
                     });
                 } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
@@ -493,7 +511,7 @@ commands.ban = {
     }
 };
 
-commands.ban = {
+commands.unban = {
     handler: function (data) {
         //todo
     }
@@ -507,6 +525,7 @@ commands.lockdown = {
                 if (config.state.lockdown) plugged.sendChat(utils.replace(langfile.lockdown.enabled, {username: data.username}), 60);
                 else plugged.sendChat(utils.replace(langfile.lockdown.disabled, {username: data.username}), 60);
                 redis.set('meta:config:state:lockdown', (config.state.lockdown ? 1 : 0));
+                story.info('lockdown', util.userLogString(data.username, data.id) + ': --> ' + config.state.lockdown);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -518,15 +537,19 @@ commands.welcomemsg = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 2) {
                 var split = data.message.trim().split(' ');
-                if(split.length > 1){
+                if (split.length > 1) {
                     var meta = plugged.getRoomMeta();
-                    if(split[1] === 'none' && split.length === 2){
+                    if (split[1] === 'none' && split.length === 2) {
                         plugged.updateRoomInfo(meta.name, meta.description, '');
                     } else {
                         plugged.updateRoomInfo(meta.name, meta.description, _.rest(split, 1).join(' ').trim());
                     }
-                    plugged.sendChat(utils.replace(langfile.roomedit.welcomemsg, {username: data.username}))
-                } else plugged.sendChat(utils.replace(langfile.error.argument, {username: data.username, cmd: Welcome}));
+                    plugged.sendChat(utils.replace(langfile.roomedit.welcomemsg, {username: data.username}), 30);
+                    story.info('welcomemsg', util.userLogString(data.username, data.id) + ': --> ' + _.rest(split, 1).join(' ').trim());
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                    username: data.username,
+                    cmd: Welcome
+                }), 30);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -538,11 +561,15 @@ commands.roomname = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 2) {
                 var split = data.message.trim().split(' ');
-                if(split.length > 1){
+                if (split.length > 1) {
                     var meta = plugged.getRoomMeta();
-                        plugged.updateRoomInfo(_.rest(split, 1).join(' ').trim(), meta.description, meta.welcome);
-                    plugged.sendChat(utils.replace(langfile.roomedit.roomname, {username: data.username}))
-                } else plugged.sendChat(utils.replace(langfile.error.argument, {username: data.username, cmd: Welcome}));
+                    plugged.updateRoomInfo(_.rest(split, 1).join(' ').trim(), meta.description, meta.welcome);
+                    plugged.sendChat(utils.replace(langfile.roomedit.roomname, {username: data.username}), 30);
+                    story.info('roomname', util.userLogString(data.username, data.id) + ': --> ' + _.rest(split, 1).join(' ').trim());
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                    username: data.username,
+                    cmd: Welcome
+                }), 30);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -557,6 +584,7 @@ commands.cleverbot = {
                 if (config.cleverbot.enabled) plugged.sendChat(utils.replace(langfile.cleverbot.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.cleverbot.disabled, {username: data.username}), 30);
                 redis.set('meta:config:cleverbot:enabled', (config.cleverbot.enabled ? 1 : 0));
+                story.info('cleverbot', util.userLogString(data.username, data.id) + ': --> ' + config.cleverbot.enabled);
             }
         });
         plugged.deleteMessage(data.cid);
