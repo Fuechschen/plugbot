@@ -392,11 +392,14 @@ commands.link = {
                 link: 'https://youtu.be/' + m.cid
             }));
             else {
-                request.get('https://api.soundcloud.com/tracks/' + m.cid + '?client_id=' + config.apiKeys.soundcloud, function(err, resp, body){
-                   if (!err && resp.statusCode === 200){
-                       var json = JSON.parse(body);
-                       plugged.sendChat(utils.replace(langfile.link.default, {username: data.username, link: json.permalink_url}));
-                   } else plugged.sendChat(utils.replace(langfile.link.error, {username: data.username}));
+                request.get('https://api.soundcloud.com/tracks/' + m.cid + '?client_id=' + config.apiKeys.soundcloud, function (err, resp, body) {
+                    if (!err && resp.statusCode === 200) {
+                        var json = JSON.parse(body);
+                        plugged.sendChat(utils.replace(langfile.link.default, {
+                            username: data.username,
+                            link: json.permalink_url
+                        }));
+                    } else plugged.sendChat(utils.replace(langfile.link.error, {username: data.username}));
                 });
             }
         } else plugged.sendChat(utils.replace(langfile.link.no_media, {username: data.username}));

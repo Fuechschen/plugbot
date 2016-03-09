@@ -109,10 +109,10 @@ module.exports = {
         }
         return r;
     },
-    blacklistReason: function(str){
+    blacklistReason: function (str) {
         var string = S(str);
         var keys = _.keys(langfile.blacklist.reasons);
-        keys.forEach(function(key){
+        keys.forEach(function (key) {
             string = string.replaceAll('#' + key, langfile.blacklist.reasons[key]);
         });
         return string;

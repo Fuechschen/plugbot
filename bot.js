@@ -253,7 +253,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         if (data.id !== plugged.getSelf().id) {
             redis.exists('user:mute:' + data.id).then(function (exm) {
                 if (S(data.message).startsWith('!')) {
-                    var split = S(data.message.trim()).chompLeft('!').s.split(' ');
+                    var split = S(data.message).chompLeft('!').s.split(' ');
                     if (commands[split[0]] !== undefined) {
                         commands[split[0]].handler(data);
                     }
