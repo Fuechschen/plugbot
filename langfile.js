@@ -18,6 +18,7 @@ module.exports = {
     skip: {
         default: '[&{username}: Skip]',
         lockskip: '[&{username}: Lockskip]',
+        cycleskip: '[&{username}: CycleSkip]',
         reasons: {
             u: '@&{username}, your song "&{song}" was unvailable.',
             h: '@&{username}, your song "&{song}" is in the history.',

@@ -195,7 +195,7 @@ module.exports = {
             } else load('lockdown', 'not stored');
         });
 
-        function load(name, val){
+        function load(name, val) {
             loaded = loaded + 1;
             story.debug('meta', 'Loaded ' + name + ' [' + val + '] from Redis. ' + loaded + '/8');
         }
@@ -233,5 +233,40 @@ module.exports = {
     },
     mediatitlelog: function (media) {
         return media.author + ' - ' + media.title + '[' + media.id + '|' + media.format + '|' + media.cid + ']';
+    },
+    clone: function (obj, options) {
+        options = options || {};
+
+        if (options.deep === undefined) options.deep = false;
+        if (options.exclude === undefined) options.exclude = [];
+
+        function copy(obj, level) {
+            if (obj == null || typeof obj !== 'object') return obj;
+
+            var clone, i;
+
+            if (obj instanceof Array) {
+                clone = [];
+
+                for (i = 0; i < obj.length; i++) {
+                    if (!obj.hasOwnProperty(i)) continue;
+                    if (options.deep && level < 4) clone.push(copy(obj[i], level + 1));
+                    else clone.push(obj[i]);
+                }
+            } else {
+                clone = {};
+
+                for (i in obj) {
+                    if (!obj.hasOwnProperty(i)) continue;
+                    if (options.exclude[level] !== undefined && options.exclude[level].indexOf(i) !== -1) continue;
+                    if (options.deep && level < 4) clone[i] = copy(obj[i], level + 1);
+                    else clone[i] = obj[i];
+                }
+            }
+
+            return clone;
+        }
+
+        return copy(obj, 0);
     }
 };

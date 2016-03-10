@@ -5,8 +5,8 @@ commands.skip = commands.fs = {
         redis.get('user:role:save:' + msg.id).then(function (perm) {
             redis.exists('meta:state:skipable').then(function (ex) {
                 if (perm > 1 && ex === 0) {
-                    var booth = plugged.getBooth();
-                    var media = plugged.getCurrentMedia();
+                    var booth = utils.clone(plugged.getBooth());
+                    var media = utils.clone(plugged.getCurrentMedia());
                     plugged.sendChat(utils.replace(langfile.skip.default, {username: msg.username}), 70);
                     plugged.skipDJ(booth.dj);
                     redis.set('meta:state:skipable', 1).then(function () {
@@ -16,7 +16,7 @@ commands.skip = commands.fs = {
                         var split = msg.message.trim().split(' ');
                         if (langfile.skip.reasons[split[1]] !== undefined) {
                             plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
-                                username: plugged.getUserByID(booth.id).username,
+                                username: plugged.getUserByID(booth.dj).username,
                                 song: utils.songtitle(media.author, media.title)
                             }), 60);
                         }
@@ -34,8 +34,8 @@ commands.bl = commands.blacklist = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             redis.exists('meta:state:skipable').then(function (ex) {
                 if (perm > 1 && ex === 0) {
-                    var booth = plugged.getBooth();
-                    var media = plugged.getCurrentMedia();
+                    var booth = utils.clone(plugged.getBooth());
+                    var media = utils.clone(plugged.getCurrentMedia());
                     plugged.sendChat(utils.replace(langfile.blacklist.default, {username: data.username}), 60);
                     plugged.skipDJ(booth.dj);
                     redis.set('meta:state:skipable', 1).then(function () {
@@ -77,8 +77,8 @@ commands.ls = commands.lockskip = {
             redis.exists('meta:state:skipable').then(function (ex) {
                 if (perm > 1 && ex === 0) {
                     plugged.sendChat(utils.replace(langfile.skip.lockskip, {username: data.username}), 70);
-                    var booth = plugged.getBooth();
-                    var media = plugged.getCurrentMedia();
+                    var booth = utils.clone(plugged.getBooth());
+                    var media = utils.clone(plugged.getCurrentMedia());
                     plugged.setLock(true, false);
                     plugged.setCycle(true);
                     plugged.skipDJ(booth.dj);
@@ -98,6 +98,37 @@ commands.ls = commands.lockskip = {
                         }
                     }, 4 * 1000);
                     story.info('lockskip', utils.userLogString(data.username, data.id) + ': ' + utils.mediatitlelog(media) + ' played by ' + utils.userLogString(plugged.getUserByID(booth.dj)));
+                }
+            });
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.cs = commands.cycleskip = {
+    handler: function(data){
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            redis.exists('meta:state:skipable').then(function (ex) {
+                if (perm > 1 && ex === 0) {
+                    var booth = utils.clone(plugged.getBooth());
+                    var media = utils.clone(plugged.getCurrentMedia());
+                    plugged.sendChat(utils.replace(langfile.skip.cycleskip, {username: data.username}), 70);
+                    plugged.setCycle(false);
+                    plugged.skipDJ(booth.dj);
+                    redis.set('meta:state:skipable', 1).then(function () {
+                        redis.expire('meta:state:skipable', 4);
+                    });
+                    if (booth.shouldCycle !== plugged.doesWaitlistCycle) plugged.setCycle(booth.shouldCycle);
+                    setTimeout(function () {
+                        var split = data.message.trim().split(' ');
+                        if (langfile.skip.reasons[split[1]] !== undefined) {
+                            plugged.sendChat(utils.replace(langfile.skip.reasons[split[1]], {
+                                username: plugged.getUserByID(booth.dj).username,
+                                song: utils.songtitle(media.author, media.title)
+                            }), 60);
+                        }
+                    }, 4 * 1000);
+                    story.info('cycleskip', utils.userLogString(data.username, data.id) + ': ' + utils.mediatitlelog(media) + ' played by ' + utils.userLogString(plugged.getUserByID(booth.dj)));
                 }
             });
         });
@@ -442,7 +473,7 @@ commands.reloadblacklist = {
 commands.link = {
     handler: function (data) {
         if (plugged.getCurrentMedia().id !== -1) {
-            var m = plugged.getCurrentMedia();
+            var m = utils.clone(plugged.getCurrentMedia());
             if (m.format === 1) plugged.sendChat(utils.replace(langfile.link.default, {
                 username: data.username,
                 link: 'https://youtu.be/' + m.cid
