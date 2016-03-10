@@ -188,5 +188,21 @@ module.exports = {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
             bl_reason: 'Video not embeddable'
         }
+    },
+    state: {
+        default: '[&{username}: State]',
+        format: '[&{key}] --> &{val}',
+        keys: {
+            eventmode: 'Eventmode',
+            historyskip: 'Historyskip',
+            voteskip: 'Voteskip',
+            timeguard: 'Timeguard',
+            chatfilter: 'Chatfilter',
+            bouncer_plus: 'Bouncer+',
+            cleverbot: 'Cleverbot',
+            lockdown: 'Lockdown',
+            lockskippos: 'LockSkipPos'
+
+        }
     }
 };
