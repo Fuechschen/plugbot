@@ -1,6 +1,6 @@
-story = require('storyboard').mainStory;
 chalk = require('chalk');
 config = require('./load_config.js');
+story = require('./logger.js');
 langfile = require('./langfile.js');
 _ = require('underscore');
 path = require('path');
@@ -33,6 +33,7 @@ redis.keys('user:role:save:*').then(function (keys) {
         redis.del(key);
     });
 });
+
 utils.loadConfigfromRedis();
 
 timeouts = {
@@ -191,7 +192,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     author: now.media.author,
                     duration: now.media.duration
                 });
-                if (song.tskip !== null && song.tskip !== undefined) {
+                if (song.tskip !== null && song.tskip !== undefined && !config.state.eventmode) {
                     plugged.sendChat(utils.replace(langfile.tskip.default, {time: song.tskip}), song.tskip + 10);
                     timeouts.tksip = setTimeout(function () {
                         plugged.sendChat(langfile.tskip.skip, 60);
@@ -199,14 +200,16 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     }, song.tskip * 1000);
                 }
             });
-            timeouts.stuck = setTimeout(function () {
-                plugged.sendChat(langfile.skip.stuck.default, 30);
-                plugged.skipDJ(booth.dj, now.historyID);
-            }, (now.media.duration + 5) * 1000);
             story.info('advance', utils.userLogString(plugged.getUserByID(booth.dj)) + ': ' + utils.mediatitlelog(now.media));
         } else story.info('advance', 'Nobody is playing!');
         clearTimeout(timeouts.stuck);
         clearTimeout(timeouts.tskip);
+        if(booth.dj !== undefined){
+            timeouts.stuck = setTimeout(function () {
+                plugged.sendChat(langfile.skip.stuck.default, 30);
+                plugged.skipDJ(booth.dj, now.historyID);
+            }, (now.media.duration + 5) * 1000);
+        }
         if (prev.dj !== undefined) {
             redis.set('media:history:' + prev.media.format + ':' + prev.media.cid, 1).then(function () {
                 redis.expire('media:history:' + prev.media.format + ':' + prev.media.cid, config.history.time * 60);

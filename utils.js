@@ -130,41 +130,75 @@ module.exports = {
     },
     loadConfigfromRedis: function () {
         var loaded = 0;
-        redis.get('meta:config:voteskip:enabled').then(function (voteskip) {
-            config.voteskip.enabled = ((voteskip !== null) ? (voteskip === 1) : config.voteskip.enabled);
-            loaded = loaded + 1;
+        redis.exists('meta:config:state:eventmode').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:state:eventmode').then(function (val) {
+                    (val === 1) ? config.state.eventmode = false : config.state.eventmode = true;
+                    load('eventmode', config.state.eventmode);
+                });
+            } else load('eventmode', 'not stored')
         });
-        redis.get('meta:config:timeguard:enabled').then(function (timeguard) {
-            config.timeguard.enabled = ((timeguard !== null) ? (timeguard === 1) : config.timeguard.enabled);
-            loaded = loaded + 1;
+        redis.exists('meta:config:voteskip:enabled').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:voteskip:enabled').then(function (val) {
+                    (val === 1) ? config.voteskip.enabled = false : config.voteskip.enabled = true;
+                    load('voteskip', config.voteskip.enabled)
+                });
+            } else load('voteskip', 'not stored')
         });
-        redis.get('meta:config:history:skipenabled').then(function (historyskip) {
-            config.history.skipenabled = ((historyskip !== null) ? (historyskip === 1) : config.history.skipenabled);
-            loaded = loaded + 1;
+        redis.exists('meta:config:timeguard:enabled').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:timeguard:enabled').then(function (val) {
+                    (val === 1) ? config.timeguard.enabled = false : config.timeguard.enabled = true;
+                    load('timeguard', config.timeguard.enabled);
+                });
+            } else load('timeguard', 'not stored');
         });
-        redis.get('meta:config:cleverbot:enabled').then(function (cleverbot) {
-            config.cleverbot.enabled = ((cleverbot !== null) ? (cleverbot === 1) : config.cleverbot.enabled);
-            loaded = loaded + 1;
+        redis.exists('meta:config:history:skipenabled').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:history:skipenabled').then(function (val) {
+                    (val === 1) ? config.history.skipenabled = false : config.history.skipenabled = true;
+                    load('historyskip', config.history.skipenabled);
+                });
+            } else load('historyskip', 'not stored');
         });
-        redis.get('meta:config:lockskip:move_pos').then(function (lockskippos) {
-            config.lockskip.move_pos = ((lockskippos === null) ? config.lockskip.move_pos : lockskippos);
-            loaded = loaded + 1;
+        redis.exists('meta:config:cleverbot:enabled').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:cleverbot:enabled').then(function (val) {
+                    (val === 1) ? config.cleverbot.enabled = false : config.cleverbot.enabled = true;
+                    load('cleverbot', config.cleverbot.enabled);
+                });
+            } else load('cleverbot', 'not stored');
         });
-        redis.get('meta:config:options:bouncer_plus').then(function (bouncer_plus) {
-            config.options.bouncer_plus = ((bouncer_plus !== null) ? (bouncer_plus === 1) : config.options.bouncer_plus);
-            loaded = loaded + 1;
+        redis.exists('meta:config:lockskip:move_pos').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:lockskip:move_pos').then(function (val) {
+                    config.lockskip.move_pos = val;
+                    load('lockskippos', config.lockskip.move_pos);
+                });
+            } else load('lockskippos', 'not stored');
         });
-        redis.get('meta:config:state:eventmode').then(function (event) {
-            config.state.eventmode = ((event !== null) ? (event === 1) : config.state.eventmode);
-            loaded = loaded + 1;
+        redis.exists('meta:config:options:bouncer_plus').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:options:bouncer_plus').then(function (val) {
+                    (val === 1) ? config.options.bouncer_plus = false : config.options.bouncer_plus = true;
+                    load('bouncer+', config.options.bouncer_plus);
+                });
+            } else load('bouncer+', 'not stored');
         });
-        while(true){
-            if(!loaded < 7){
-                story.info('meta', 'Loaded configuration from redis.');
-                return;
-            }
-        }
+        redis.exists('meta:config:state:eventmode').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:state:eventmode').then(function (val) {
+                    (val === 1) ? config.state.lockdown = false : config.state.lockdown = true;
+                    load('lockdown', config.state.lockdown);
+                });
+            } else load('lockdown', 'not stored');
+        });
 
+        function load(name, val){
+            loaded = loaded + 1;
+            story.debug('meta', 'Loaded ' + name + ' [' + val + '] from Redis. ' + loaded + '/8');
+        }
     },
     sendToCleverbot: function (data) {
         if (cleverbot !== undefined) {
@@ -194,10 +228,10 @@ module.exports = {
                 break;
         }
     },
-    userLogString: function(user, id){
+    userLogString: function (user, id) {
         return (typeof user === 'object' ? user.username + '[' + user.id + ']' : user + '[' + id + ']');
     },
-    mediatitlelog: function(media){
+    mediatitlelog: function (media) {
         return media.author + ' - ' + media.title + '[' + media.id + '|' + media.format + '|' + media.cid + ']';
     }
 };

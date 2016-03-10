@@ -347,7 +347,7 @@ commands.historyskip = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
-                if (config.state.eventmode) {
+                if (!config.state.eventmode) {
                     config.history.skipenabled = !config.history.skipenabled;
                     if (config.history.skipenabled) plugged.sendChat(utils.replace(langfile.skip.history.enabled, {username: data.username}), 30);
                     else plugged.sendChat(utils.replace(langfile.skip.history.disabled, {username: data.username}), 30);
@@ -388,10 +388,10 @@ commands.eventmode = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
                 config.state.eventmode = !config.state.eventmode;
-                if (config.stateeventmode) plugged.sendChat(utils.replace(langfile.eventmode.enabled, {username: data.username}), 30);
+                if (config.state.eventmode) plugged.sendChat(utils.replace(langfile.eventmode.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.eventmode.disabled, {username: data.username}), 30);
                 redis.set('meta:config:state:eventmode', (config.state.eventmode ? 1 : 0));
-                story.info('eventmode', utils.userLogString(data.username, data.id) + ': --> ' + config.voteskip.enabled);
+                story.info('eventmode', utils.userLogString(data.username, data.id) + ': --> ' + config.state.eventmode);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -561,7 +561,7 @@ commands.timeguard = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
-                if (config.state.eventmode) {
+                if (!config.state.eventmode) {
                     config.timeguard.enabled = !config.timeguard.enabled;
                     if (config.timeguard.enabled) plugged.sendChat(utils.replace(langfile.skip.timeguard.enabled, {username: data.username}), 60);
                     else plugged.sendChat(utils.replace(langfile.skip.timeguard.disabled, {username: data.username}), 60);
