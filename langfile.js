@@ -22,6 +22,7 @@ module.exports = {
     skip: {
         default: '[&{username}: Skip]',
         lockskip: '[&{username}: Lockskip]',
+        lockskippos: '[&{username}: Set Lockskip-Position to &{pos}]',
         cycleskip: '[&{username}: CycleSkip]',
         reasons: {
             u: '@&{username}, your song "&{song}" was unvailable.',
@@ -103,6 +104,8 @@ module.exports = {
         error: '[&{username}: Link] Error while resolving link...'
     },
     chatfilter: {
+        enabled: '[&{username}: Chatfilter enabled]',
+        disabled: '[&{username}: Chatfilter disabled]',
         spam: {
             warn: '@&{username}, please stop spamming!',
             mute: '@&{username} was muted for spamming.',

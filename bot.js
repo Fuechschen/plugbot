@@ -88,7 +88,7 @@ plugged.on(plugged.LOGIN_ERROR, function (err) {
     story.error('Error', 'Error while logging in.', {attach: err});
 });
 
-plugged.on(plugged.PLUG_ERROR, function(err){
+plugged.on(plugged.PLUG_ERROR, function (err) {
     story.error('Error', 'plug.dj encountered an error.', {attach: err});
 });
 
@@ -154,7 +154,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     redis.get('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (track) {
                         plugged.sendChat(langfile.blacklist.skip_first);
                         plugged.skipDJ(booth.dj, now.historyID);
-                        setTimeout(function(){
+                        setTimeout(function () {
                             if (track !== '1') {
                                 plugged.sendChat(utils.replace(langfile.blacklist.skip_reason, {
                                     username: plugged.getUserByID(booth.dj).username,
@@ -176,7 +176,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                             redis.ttl('media:history:' + now.media.format + ':' + now.media.cid).then(function (ttl) {
                                 plugged.sendChat(langfile.skip.history.skip);
                                 plugged.skipDJ(booth.dj, now.historyID);
-                                setTimeout(function(){
+                                setTimeout(function () {
                                     plugged.sendChat(utils.replace(langfile.skip.history.default, {
                                         username: plugged.getUserByID(booth.dj).username,
                                         song: utils.songtitle(now.media.author, now.media.title),
@@ -200,7 +200,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     body = JSON.parse(body);
                                     if (body.items.length > 0) {
                                         if (body.items[0] !== undefined) {
-                                            if(utils.checkRegionRestriction(body.items[0]) !== false){
+                                            if (utils.checkRegionRestriction(body.items[0]) !== false) {
                                                 if (plugged.getCurrentMedia().id === now.media.id) {
                                                     var intersection = utils.checkRegionRestriction(body.items[0]);
                                                     plugged.sendChat(langfile.youtubeGuard.skip);
@@ -231,7 +231,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                         });
                                                     }, 4 * 1000);
                                                 }
-                                            } else if(body.items[0].status.uploadStatus === 'deleted') {
+                                            } else if (body.items[0].status.uploadStatus === 'deleted') {
                                                 plugged.sendChat(langfile.youtubeGuard.skip);
                                                 plugged.skipDJ(booth.dj);
                                                 setTimeout(function () {
@@ -258,7 +258,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                         });
                                                     });
                                                 }, 4 * 1000);
-                                            }else if(body.items[0].status.uploadStatus === 'rejected'){
+                                            } else if (body.items[0].status.uploadStatus === 'rejected') {
                                                 plugged.sendChat(langfile.youtubeGuard.skip);
                                                 plugged.skipDJ(booth.dj);
                                                 setTimeout(function () {
@@ -286,7 +286,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                         });
                                                     });
                                                 }, 4 * 1000);
-                                            } else if(body.items[0].status.privacyStatus === 'private'){
+                                            } else if (body.items[0].status.privacyStatus === 'private') {
                                                 plugged.sendChat(langfile.youtubeGuard.skip);
                                                 plugged.skipDJ(booth.dj);
                                                 setTimeout(function () {
@@ -313,7 +313,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                         });
                                                     });
                                                 }, 4 * 1000);
-                                            } else if(body.items[0].status.embeddable === false){
+                                            } else if (body.items[0].status.embeddable === false) {
                                                 plugged.sendChat(langfile.youtubeGuard.skip);
                                                 plugged.skipDJ(booth.dj);
                                                 setTimeout(function () {
@@ -343,7 +343,12 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                             }
                                         }
                                     }
-                                } else story.warn('YoutubeApi', 'Error during youtube-api call.', {attach: {err: error, response: resp}});
+                                } else story.warn('YoutubeApi', 'Error during youtube-api call.', {
+                                    attach: {
+                                        err: error,
+                                        response: resp
+                                    }
+                                });
                             });
                         }
                     });
@@ -409,8 +414,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.FRIEND_JOIN, function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
-        redis.exists('user:chat:spam:' + user.id + ':warns').then(function(ex){
-            if(ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        redis.exists('user:chat:spam:' + user.id + ':warns').then(function (ex) {
+            if (ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
         });
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
@@ -445,8 +450,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.USER_JOIN, function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
-        redis.exists('user:chat:spam:' + user.id + ':warns').then(function(ex){
-            if(ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        redis.exists('user:chat:spam:' + user.id + ':warns').then(function (ex) {
+            if (ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
         });
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
@@ -514,7 +519,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                             });
                         });
                     }
-                    else {
+                    else if (config.chatfilter.enabled) {
                         redis.get('user:role:save:' + data.id).then(function (perm) {
                             if (perm < 2) {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
@@ -541,6 +546,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                     redis.set('user:mute:' + data.id + ':violation', 0);
                                                     redis.expire('user:mute:' + data.id, config.chatfilter.spam.mute_duration);
                                                 });
+                                            } else {
+                                                if (utils.contains(data.message, config.chatfilter.words.blacklist)) {
+                                                    plugged.deleteMessage(data.cid);
+                                                    redis.incrby('user:chat:spam:' + data.id + ':points', 7);
+                                                } else if (utils.containsplug(data.message)) {
+                                                    plugged.deleteMessage(data.cid);
+                                                    redis.incrby('user:chat:spam:' + data.id + ':points', 20);
+                                                }
                                             }
                                         });
                                     });
@@ -554,7 +567,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
     });
 
-    plugged.on(plugged.CHAT_MENTION, function(data){
+    plugged.on(plugged.CHAT_MENTION, function (data) {
         if (data.id !== plugged.getSelf().id) {
             if (S(data.message).startsWith('!')) {
                 var split = S(data.message).chompLeft('!').s.split(' ');
@@ -607,8 +620,16 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                     redis.set('user:mute:' + data.id + ':violation', 0);
                                                     redis.expire('user:mute:' + data.id, config.chatfilter.spam.mute_duration);
                                                 });
-                                            } else if(!S(data.message).startsWith('!')){
-                                                utils.sendToCleverbot(data);
+                                            } else {
+                                                if (utils.contains(data.message, config.chatfilter.words.blacklist)) {
+                                                    plugged.deleteMessage(data.cid);
+                                                    redis.incrby('user:chat:spam:' + data.id + ':points', 7);
+                                                } else if (utils.containsplug(data.message)) {
+                                                    plugged.deleteMessage(data.cid);
+                                                    redis.incrby('user:chat:spam:' + data.id + ':points', 20);
+                                                } else if (!S(data.message).startsWith('!')) {
+                                                    utils.sendToCleverbot(data);
+                                                }
                                             }
                                         });
                                     });
@@ -671,7 +692,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         if (utils.checkVoteSkip(score) && config.voteskip.enabled && !config.state.eventmode) {
             plugged.sendChat(langfile.skip.vote.skip);
             plugged.skipDJ(plugged.getCurrentDJ().id);
-            setTimeout(function(){
+            setTimeout(function () {
                 plugged.sendChat(utils.replace(langfile.skip.vote.default, {
                     username: plugged.getCurrentDJ(),
                     song: utils.mediatitle(plugged.getCurrentMedia())

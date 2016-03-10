@@ -133,7 +133,7 @@ module.exports = {
         redis.exists('meta:config:state:eventmode').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:state:eventmode').then(function (val) {
-                    config.state.eventmode = val === 1;
+                    config.state.eventmode = val === '1';
                     load('eventmode', config.state.eventmode);
                 });
             } else load('eventmode', 'not stored')
@@ -141,7 +141,7 @@ module.exports = {
         redis.exists('meta:config:voteskip:enabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:voteskip:enabled').then(function (val) {
-                    config.voteskip.enabled = val === 1;
+                    config.voteskip.enabled = val === '1';
                     load('voteskip', config.voteskip.enabled)
                 });
             } else load('voteskip', 'not stored')
@@ -149,7 +149,7 @@ module.exports = {
         redis.exists('meta:config:timeguard:enabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:timeguard:enabled').then(function (val) {
-                    config.timeguard.enabled = val === 1;
+                    config.timeguard.enabled = val === '1';
                     load('timeguard', config.timeguard.enabled);
                 });
             } else load('timeguard', 'not stored');
@@ -157,7 +157,7 @@ module.exports = {
         redis.exists('meta:config:history:skipenabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:history:skipenabled').then(function (val) {
-                    config.history.skipenabled = val === 1;
+                    config.history.skipenabled = val === '1';
                     load('historyskip', config.history.skipenabled);
                 });
             } else load('historyskip', 'not stored');
@@ -165,7 +165,7 @@ module.exports = {
         redis.exists('meta:config:cleverbot:enabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:cleverbot:enabled').then(function (val) {
-                    config.cleverbot.enabled = val === 1;
+                    config.cleverbot.enabled = val === '1';
                     load('cleverbot', config.cleverbot.enabled);
                 });
             } else load('cleverbot', 'not stored');
@@ -173,7 +173,7 @@ module.exports = {
         redis.exists('meta:config:lockskip:move_pos').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:lockskip:move_pos').then(function (val) {
-                    config.lockskip.move_pos = val;
+                    config.lockskip.move_pos = parseInt(val);
                     load('lockskippos', config.lockskip.move_pos);
                 });
             } else load('lockskippos', 'not stored');
@@ -181,7 +181,7 @@ module.exports = {
         redis.exists('meta:config:options:bouncer_plus').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:options:bouncer_plus').then(function (val) {
-                    config.options.bouncer_plus = val === 1;
+                    config.options.bouncer_plus = val === '1';
                     load('bouncer+', config.options.bouncer_plus);
                 });
             } else load('bouncer+', 'not stored');
@@ -189,10 +189,18 @@ module.exports = {
         redis.exists('meta:config:state:lockdown').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:state:lockdown').then(function (val) {
-                    config.state.lockdown = val === 1;
+                    config.state.lockdown = val === '1';
                     load('lockdown', config.state.lockdown);
                 });
             } else load('lockdown', 'not stored');
+        });
+        redis.exists('meta:config:chatfilter:enabled').then(function (ex) {
+            if (ex) {
+                redis.get('meta:config:chatfilter:enabled').then(function (val) {
+                    config.chatfilter.enabled = val === '1';
+                    load('chatfilter', config.chatfilter.enabled);
+                });
+            } else load('chatfilter', 'not stored');
         });
 
         function load(name, val) {
@@ -236,18 +244,13 @@ module.exports = {
     },
     clone: function (obj, options) {
         options = options || {};
-
         if (options.deep === undefined) options.deep = false;
         if (options.exclude === undefined) options.exclude = [];
-
         function copy(obj, level) {
             if (obj == null || typeof obj !== 'object') return obj;
-
             var clone, i;
-
             if (obj instanceof Array) {
                 clone = [];
-
                 for (i = 0; i < obj.length; i++) {
                     if (!obj.hasOwnProperty(i)) continue;
                     if (options.deep && level < 4) clone.push(copy(obj[i], level + 1));
@@ -255,7 +258,6 @@ module.exports = {
                 }
             } else {
                 clone = {};
-
                 for (i in obj) {
                     if (!obj.hasOwnProperty(i)) continue;
                     if (options.exclude[level] !== undefined && options.exclude[level].indexOf(i) !== -1) continue;
@@ -263,7 +265,6 @@ module.exports = {
                     else clone[i] = obj[i];
                 }
             }
-
             return clone;
         }
 
@@ -284,7 +285,18 @@ module.exports = {
             } else return false;
         } else return false;
     },
-    dblog: function(msg){
+    dblog: function (msg) {
         story.debug('db', msg);
+    },
+    contains: function (string, array) {
+        var str = S(string);
+        for (var st in array) {
+            if (str.contains(str)) return true;
+        }
+        return false;
+    },
+    containsplug: function (string) {
+        return S(string).contains('https://plug.dj/');
+        //return  string.match(/https?:\/\/plug\.dj\/.+/i).length === string.match(/https?:\/\/[sb][ul][po][pg]o?r?t?\.?plug\.dj\//i).length
     }
 };

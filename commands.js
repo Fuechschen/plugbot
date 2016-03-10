@@ -689,7 +689,10 @@ commands.idbl = commands.idblacklist = {
                                 ban_reason: (split.length === 2 ? undefined : _.rest(split, 2).join(' ').trim())
                             });
                             redis.set('media:blacklist:' + song.format + ':' + song.cid, (split.length === 2 ? 1 : _.rest(split, 2).join(' ').trim()));
-                            plugged.sendChat(utils.replace(langfile.blacklist.idbl.default, {username: data.username, song: utils.songtitle(song.author, song.title)}), 30);
+                            plugged.sendChat(utils.replace(langfile.blacklist.idbl.default, {
+                                username: data.username,
+                                song: utils.songtitle(song.author, song.title)
+                            }), 30);
                             story.info('blacklist', utils.userLogString(data.username, data.id) + ' added ' + utils.songtitle(song.author, song.title) + '[' + song.format + ':' + song.cid + '] to the blacklist');
                         });
                     } else plugged.sendChat(utils.replace(langfile.error.argument, {
@@ -708,49 +711,49 @@ commands.idbl = commands.idblacklist = {
 
 //todo fix
 /*commands.tskip = {
-    handler: function (data) {
-        redis.get('user:role:save:' + data.id).then(function (perm) {
-            if (perm > 1) {
-                var split = data.message.trim().split(' ');
-                if (split[1] === 'set') {
-                    var time = parseInt(split[2]);
-                    if (!isNaN(time)) {
-                        clearTimeout(timeouts.tksip);
-                        timeouts.tskip = setTimeout(function () {
-                            plugged.sendChat(langfile.tksip.skip, 60);
-                            plugged.skipDJ(plugged.getCurrentDJ().id);
-                        }, moment(plugged.getStartTime()).add(time, 'seconds').diff(moment(), 'seconds') * 1000);
-                        plugged.sendChat(utils.replace(langfile.tskip.set, {username: data.username, time: time}));
-                        models.Song.update({tskip: time}, {
-                            where: {
-                                format: plugged.getCurrentMedia().format,
-                                cid: plugged.getCurrentMedia().cid
-                            }
-                        });
-                    } else plugged.sendChat(utils.replace(langfile.error.argument, {
-                        username: data.username,
-                        cmd: 'TSkip'
-                    }), 20);
-                } else if (perm > 2) {
-                    if (split[1] === 'cancel') {
-                        clearTimeout(timeouts.tskip);
-                        plugged.sendChat(utils.replace(langfile.tskip.cancel, {username: data.username}), 30);
-                    } else if (split[1] === 'clear') {
-                        clearTimeout(timeouts.tskip);
-                        plugged.sendChat(utils.replace(langfile.tskip.clear, {username: data.username}), 30);
-                        models.Song.update({tskip: null}, {
-                            where: {
-                                format: plugged.getCurrentMedia().format,
-                                cid: plugged.getCurrentMedia().cid
-                            }
-                        });
-                    }
-                }
-            }
-        });
-        plugged.deleteMessage(data.cid);
-    }
-};*/
+ handler: function (data) {
+ redis.get('user:role:save:' + data.id).then(function (perm) {
+ if (perm > 1) {
+ var split = data.message.trim().split(' ');
+ if (split[1] === 'set') {
+ var time = parseInt(split[2]);
+ if (!isNaN(time)) {
+ clearTimeout(timeouts.tksip);
+ timeouts.tskip = setTimeout(function () {
+ plugged.sendChat(langfile.tksip.skip, 60);
+ plugged.skipDJ(plugged.getCurrentDJ().id);
+ }, moment(plugged.getStartTime()).add(time, 'seconds').diff(moment(), 'seconds') * 1000);
+ plugged.sendChat(utils.replace(langfile.tskip.set, {username: data.username, time: time}));
+ models.Song.update({tskip: time}, {
+ where: {
+ format: plugged.getCurrentMedia().format,
+ cid: plugged.getCurrentMedia().cid
+ }
+ });
+ } else plugged.sendChat(utils.replace(langfile.error.argument, {
+ username: data.username,
+ cmd: 'TSkip'
+ }), 20);
+ } else if (perm > 2) {
+ if (split[1] === 'cancel') {
+ clearTimeout(timeouts.tskip);
+ plugged.sendChat(utils.replace(langfile.tskip.cancel, {username: data.username}), 30);
+ } else if (split[1] === 'clear') {
+ clearTimeout(timeouts.tskip);
+ plugged.sendChat(utils.replace(langfile.tskip.clear, {username: data.username}), 30);
+ models.Song.update({tskip: null}, {
+ where: {
+ format: plugged.getCurrentMedia().format,
+ cid: plugged.getCurrentMedia().cid
+ }
+ });
+ }
+ }
+ }
+ });
+ plugged.deleteMessage(data.cid);
+ }
+ };*/
 
 commands.move = {
     handler: function (data) {
@@ -854,21 +857,65 @@ commands.unbl = commands.rmbl = commands.unblacklist = {
                             }
                         }).then(function (song) {
                             if (song !== null && song !== undefined) {
-                               song.updateAttributes({isBanned: false, ban_reason: null});
-                                plugged.sendChat(utils.replace(langfile.blacklist.unbl.default, {username: data.username, song: utils.songtitle(song.author, song.title)}), 30);
+                                song.updateAttributes({isBanned: false, ban_reason: null});
+                                plugged.sendChat(utils.replace(langfile.blacklist.unbl.default, {
+                                    username: data.username,
+                                    song: utils.songtitle(song.author, song.title)
+                                }), 30);
                                 story.info('unbl', utils.userLogString(data.username, data.id) + ' removed ' + utils.songtitle(song.author, song.title) + '[' + song.format + ':' + song.cid + '] from the blacklist.');
                             } else plugged.sendChat(utils.replace(langfile.error.argument, {
                                 username: data.username,
-                                cmd: UnBl
+                                cmd: 'UnBl'
                             }), 20);
                         });
                     } else plugged.sendChat(utils.replace(langfile.error.argument, {
                         username: data.username,
-                        cmd: UnBl
+                        cmd: 'UnBl'
                     }), 20);
                 } else plugged.sendChat(utils.replace(langfile.error.argument, {
                     username: data.username,
-                    cmd: UnBl
+                    cmd: 'UnBl'
+                }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.chatfilter = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                config.chatfilter.enabled = !config.chatfilter.enabled;
+                if (config.chatfilter.enabled) plugged.sendChat(utils.replace(langfile.chatfilter.enabled, {username: data.username}), 30);
+                else plugged.sendChat(utils.replace(langfile.chatfilter.disabled, {username: data.username}), 30);
+                redis.set('meta:config:chatfilter:enabled', (config.chatfilter.enabled ? 1 : 0));
+                story.info('chatfilter', utils.userLogString(data.username, data.id) + ': --> ' + config.chatfilter.enabled);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.lockskippos = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                var split = data.message.trim().split(' ');
+                if (split.length === 2) {
+                    var pos = parseInt(split[1]);
+                    if (!isNaN(pos) && pos > 0 && pos < 51) {
+                        config.lockskip.move_pos = pos;
+                        plugged.sendChat(utils.replace(langfile.skip.lockskippos, {username: data.username, pos: pos}), 30);
+                        story.info('locksippos', utils.userLogString(data.username, data.id) + ' set Lockskippos to ' + pos);
+                        redis.set('meta:config:lockskip:move_pos', pos);
+                    } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                        username: data.username,
+                        cmd: 'LockSkipPos'
+                    }), 20);
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                    username: data.username,
+                    cmd: 'LockSkipPos'
                 }), 20);
             }
         });
