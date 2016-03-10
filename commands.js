@@ -25,7 +25,7 @@ commands.skip = commands.fs = {
                 }
             });
         });
-        plugged.deleteMessage(msg.cid);
+        plugged.removeChatMessage(msg.cid);
     }
 };
 
@@ -67,7 +67,7 @@ commands.bl = commands.blacklist = {
                 }
             });
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -101,7 +101,7 @@ commands.ls = commands.lockskip = {
                 }
             });
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -132,7 +132,7 @@ commands.cs = commands.cycleskip = {
                 }
             });
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -154,7 +154,7 @@ commands.add = commands.addwl = {
                 story.info('add', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -176,7 +176,7 @@ commands.rem = commands.remove = commands.rm = commands.rmwl = {
                 story.info('remove', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -189,7 +189,7 @@ commands.lock = {
                 story.info('lock', utils.userLogString(data.username, data.id));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -202,7 +202,7 @@ commands.unlock = {
                 story.info('unlock', utils.userLogString(data.username, data.id));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -215,7 +215,7 @@ commands.clear = commands.clearwl = {
                 story.info('clear', utils.userLogString(data.username, data.id));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -229,7 +229,7 @@ commands.cycle = {
                 story.info('cycle', utils.userLogString(data.username, data.id) + ': --> ' + !plugged.doesWaitlistCycle());
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -241,7 +241,7 @@ commands.delchat = {
                 if (split.length === 1) {
                     var chats = plugged.getChat();
                     chats.forEach(function (chat) {
-                        plugged.deleteMessage(chat.cid);
+                        plugged.removeChatMessage(chat.cid);
                     });
                     plugged.sendChat(utils.replace(langfile.delchat.clear, {
                         username: data.username,
@@ -255,7 +255,7 @@ commands.delchat = {
                                 username: user.username
                             }), 45);
                             plugged.getChatByUser(user.username).forEach(function (msg) {
-                                plugged.deleteMessage(msg.cid);
+                                plugged.removeChatMessage(msg.cid);
                             });
                         } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
                             username: plugged.getUserByID(data.id).username,
@@ -265,7 +265,7 @@ commands.delchat = {
                 }
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -300,7 +300,7 @@ commands.kick = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -328,7 +328,7 @@ commands.setstaff = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -343,7 +343,7 @@ commands['bouncer+'] = {
                 story.info('bouncer+', utils.userLogString(data.username, data.id) + ': --> ' + config.options.bouncer_plus);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -352,7 +352,7 @@ commands.demote = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 0) plugged.removeStaff(data.id);
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -361,7 +361,7 @@ commands.promote = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 0) plugged.addStaff(data.id, perm);
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -370,7 +370,7 @@ commands.ping = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 0) plugged.sendChat(langfile.ping.default, 30);
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -390,7 +390,7 @@ commands.historyskip = {
                 }));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -410,7 +410,7 @@ commands.voteskip = {
                 }));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -425,7 +425,7 @@ commands.eventmode = {
                 story.info('eventmode', utils.userLogString(data.username, data.id) + ': --> ' + config.state.eventmode);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -442,7 +442,7 @@ commands.clearhistory = {
                 story.info('clearhistory', utils.userLogString(data.username, data.id));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -466,7 +466,7 @@ commands.reloadblacklist = {
                 });
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -522,7 +522,7 @@ commands.unmute = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -557,7 +557,7 @@ commands.mute = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -584,7 +584,7 @@ commands.lockdown = {
                 story.info('lockdown', utils.userLogString(data.username, data.id) + ': --> ' + config.state.lockdown);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -604,7 +604,7 @@ commands.timeguard = {
                 }));
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -628,7 +628,7 @@ commands.welcomemsg = {
                 }), 30);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -648,7 +648,7 @@ commands.roomname = {
                 }), 30);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -663,7 +663,7 @@ commands.cleverbot = {
                 story.info('cleverbot', utils.userLogString(data.username, data.id) + ': --> ' + config.cleverbot.enabled);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -705,7 +705,7 @@ commands.idbl = commands.idblacklist = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -751,7 +751,7 @@ commands.idbl = commands.idblacklist = {
  }
  }
  });
- plugged.deleteMessage(data.cid);
+ plugged.removeChatMessage(data.cid);
  }
  };*/
 
@@ -778,7 +778,7 @@ commands.move = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -811,7 +811,7 @@ commands.superuser = commands.su = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -824,7 +824,7 @@ commands.leavewl = {
                 });
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -837,7 +837,7 @@ commands.joinwl = {
                 });
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -878,7 +878,7 @@ commands.unbl = commands.rmbl = commands.unblacklist = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -893,7 +893,7 @@ commands.chatfilter = {
                 story.info('chatfilter', utils.userLogString(data.username, data.id) + ': --> ' + config.chatfilter.enabled);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -922,7 +922,7 @@ commands.lockskippos = commands.lspos = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -945,7 +945,7 @@ commands.chatlvl = commands.chatlevel = commands.clvl = {
                 }), 20);
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 
@@ -970,7 +970,7 @@ commands.state = {
                 });
             }
         });
-        plugged.deleteMessage(data.cid);
+        plugged.removeChatMessage(data.cid);
     }
 };
 

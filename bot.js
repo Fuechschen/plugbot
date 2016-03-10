@@ -501,7 +501,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
             }
             if (config.state.lockdown) {
                 redis.get('user:role:save:' + data.id).then(function (perm) {
-                    if (perm < 2) plugged.deleteMessage(data.cid);
+                    if (perm < 2) plugged.removeChatMessage(data.cid);
                 });
             } else {
                 if (config.cleverbot.enabled && S(data.message).contains('@' + plugged.getSelf().username)) {
@@ -509,7 +509,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
                 redis.exists('user:mute:' + data.id).then(function (exm) {
                     if (exm === 1) {
-                        plugged.deleteMessage(data.cid);
+                        plugged.removeChatMessage(data.cid);
                         if (!S(data.message).startsWith('!')) {
                             redis.incr('user:mute:' + data.id + ':violation').then(function () {
                                 redis.get('user:mute:' + data.id + ':violation').then(function (val) {
@@ -527,7 +527,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
                                 redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
                                     if (data.message === lastmsg) {
-                                        plugged.deleteMessage(data.cid);
+                                        plugged.removeChatMessage(data.cid);
                                         redis.incrby('user:chat:spam:' + data.id + ':points', 10);
                                         redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
                                     } else {
@@ -538,7 +538,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     redis.get('user:chat:spam:' + data.id + ':points').then(function (points) {
                                         if (points >= config.chatfilter.spam.points) {
                                             redis.incr('user:chat:spam:' + data.id + ':warns');
-                                            plugged.deleteMessage(data.cid);
+                                            plugged.removeChatMessage(data.cid);
                                             plugged.sendChat(utils.replace(langfile.chatfilter.spam.warn, {username: data.username}), 60);
                                         }
                                         redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
@@ -550,10 +550,10 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                 });
                                             } else {
                                                 if (utils.contains(data.message, config.chatfilter.words.blacklist)) {
-                                                    plugged.deleteMessage(data.cid);
+                                                    plugged.removeChatMessage(data.cid);
                                                     redis.incrby('user:chat:spam:' + data.id + ':points', 7);
                                                 } else if (utils.containsplug(data.message)) {
-                                                    plugged.deleteMessage(data.cid);
+                                                    plugged.removeChatMessage(data.cid);
                                                     redis.incrby('user:chat:spam:' + data.id + ':points', 20);
                                                 }
                                             }
@@ -580,12 +580,12 @@ plugged.on(plugged.JOINED_ROOM, function () {
             }
             if (config.state.lockdown) {
                 redis.get('user:role:save:' + data.id).then(function (perm) {
-                    if (perm < 2) plugged.deleteMessage(data.cid);
+                    if (perm < 2) plugged.removeChatMessage(data.cid);
                 });
             } else {
                 redis.exists('user:mute:' + data.id).then(function (exm) {
                     if (exm === 1) {
-                        plugged.deleteMessage(data.cid);
+                        plugged.removeChatMessage(data.cid);
                         if (!S(data.message).startsWith('!')) {
                             redis.incr('user:mute:' + data.id + ':violation').then(function () {
                                 redis.get('user:mute:' + data.id + ':violation').then(function (val) {
@@ -603,7 +603,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
                                 redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
                                     if (data.message === lastmsg) {
-                                        plugged.deleteMessage(data.cid);
+                                        plugged.removeChatMessage(data.cid);
                                         redis.incrby('user:chat:spam:' + data.id + ':points', 10);
                                         redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
                                     } else {
@@ -614,7 +614,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     redis.get('user:chat:spam:' + data.id + ':points').then(function (points) {
                                         if (points >= config.chatfilter.spam.points) {
                                             redis.incr('user:chat:spam:' + data.id + ':warns');
-                                            plugged.deleteMessage(data.cid);
+                                            plugged.removeChatMessage(data.cid);
                                             plugged.sendChat(utils.replace(langfile.chatfilter.spam.warn, {username: data.username}), 60);
                                         }
                                         redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
@@ -626,10 +626,10 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                 });
                                             } else {
                                                 if (utils.contains(data.message, config.chatfilter.words.blacklist)) {
-                                                    plugged.deleteMessage(data.cid);
+                                                    plugged.removeChatMessage(data.cid);
                                                     redis.incrby('user:chat:spam:' + data.id + ':points', 7);
                                                 } else if (utils.containsplug(data.message)) {
-                                                    plugged.deleteMessage(data.cid);
+                                                    plugged.removeChatMessage(data.cid);
                                                     redis.incrby('user:chat:spam:' + data.id + ':points', 20);
                                                 } else if (!S(data.message).startsWith('!')) {
                                                     utils.sendToCleverbot(data);
