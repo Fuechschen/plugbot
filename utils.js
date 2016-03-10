@@ -61,7 +61,7 @@ module.exports = {
                 r = plugged.USERROLE.HOST;
                 break;
             default:
-                r = plugged.USERROLE.NONE;
+                r = undefined;
                 break;
         }
         return r;
@@ -130,20 +130,20 @@ module.exports = {
     },
     loadConfigfromRedis: function () {
         var loaded = 0;
-        redis.get('meta:config:state:eventmode').then(function (event) {
-            config.state.eventmode = ((event !== null) ? (event === 1) : config.state.eventmode);
-            loaded = loaded + 1;
-        });
         redis.get('meta:config:voteskip:enabled').then(function (voteskip) {
             config.voteskip.enabled = ((voteskip !== null) ? (voteskip === 1) : config.voteskip.enabled);
             loaded = loaded + 1;
         });
-        redis.get('meta:config:cleverbot:enabled').then(function (cleverbot) {
-            config.cleverbot.enabled = ((cleverbot !== null) ? (cleverbot === 1) : config.cleverbot.enabled);
+        redis.get('meta:config:timeguard:enabled').then(function (timeguard) {
+            config.timeguard.enabled = ((timeguard !== null) ? (timeguard === 1) : config.timeguard.enabled);
             loaded = loaded + 1;
         });
         redis.get('meta:config:history:skipenabled').then(function (historyskip) {
             config.history.skipenabled = ((historyskip !== null) ? (historyskip === 1) : config.history.skipenabled);
+            loaded = loaded + 1;
+        });
+        redis.get('meta:config:cleverbot:enabled').then(function (cleverbot) {
+            config.cleverbot.enabled = ((cleverbot !== null) ? (cleverbot === 1) : config.cleverbot.enabled);
             loaded = loaded + 1;
         });
         redis.get('meta:config:lockskip:move_pos').then(function (lockskippos) {
@@ -154,8 +154,8 @@ module.exports = {
             config.options.bouncer_plus = ((bouncer_plus !== null) ? (bouncer_plus === 1) : config.options.bouncer_plus);
             loaded = loaded + 1;
         });
-        redis.get('meta:config:timeguard:enabled').then(function (timeguard) {
-            config.timeguard.enabled = ((timeguard !== null) ? (timeguard === 1) : config.timeguard.enabled);
+        redis.get('meta:config:state:eventmode').then(function (event) {
+            config.state.eventmode = ((event !== null) ? (event === 1) : config.state.eventmode);
             loaded = loaded + 1;
         });
         while(true){

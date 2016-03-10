@@ -87,7 +87,11 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
                     else plugged.removeStaff(user.id);
                 }
-                usr.updateAttributes({status: true});
+                usr.updateAttributes({
+                    status: true,
+                    username: user.username,
+                    role: user.role
+                });
             } else {
                 models.User.create({
                     id: user.id,
@@ -145,7 +149,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 } else {
                     redis.exists('media:history:' + now.media.format + ':' + now.media.cid).then(function (exh) {
-                        if (exh === 1 && config.history.skipenabled) {
+                        if (exh === 1 && config.history.skipenabled && !config.state.eventmode) {
                             plugged.skipDJ(booth.dj, now.historyID);
                             redis.ttl('media:history:' + now.media.format + ':' + now.media.cid).then(function (ttl) {
                                 plugged.skipDJ(booth.dj, now.historyID);
@@ -155,7 +159,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: moment().subtract((config.history.time * 60) - ttl, 'seconds').fromNow()
                                 }));
                             });
-                        } else if (config.timeguard.enabled && now.media.duration >= config.timeguard.time) {
+                        } else if (config.timeguard.enabled && now.media.duration >= config.timeguard.time && !config.state.eventmode) {
                             plugged.sendChat(langfile.skip.timeguard.skip);
                             plugged.skipDJ(booth.dj);
                             setTimeout(function () {
@@ -231,7 +235,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
-                if (!usr.super_user && user.role !== usr.s_role) {
+                if (usr.super_user === false && user.role !== usr.s_role) {
                     if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
                     else plugged.removeStaff(user.id);
                 }
@@ -414,7 +418,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
             if (vote.direction === 1) score.woots = score.woots + 1;
             else if (vote.direction === -1) score.mehs = score.mehs - 1;
         });
-        if (utils.checkVoteSkip(score) && config.voteskip.enabled) {
+        if (utils.checkVoteSkip(score) && config.voteskip.enabled && !config.state.eventmode) {
             plugged.sendChat(utils.replace(langfile.skip.vote.default, {
                 username: plugged.getCurrentDJ(),
                 song: utils.mediatitle(plugged.getCurrentMedia())

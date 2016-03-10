@@ -46,7 +46,8 @@ module.exports = {
     },
     error: {
         user_not_found: 'User wasn\'t found!',
-        argument: '[&{username}: &{cmd}] Error on arguments, please check command syntax.'
+        argument: '[&{username}: &{cmd}] Error on arguments, please check command syntax.',
+        eventmode: '[&{username}: &{cmd}] This command isn\'t available in eventmode.'
     },
     bouncer_plus: {
         enabled: '[&{username}: Bouncer+ enabled]',
@@ -132,5 +133,16 @@ module.exports = {
         set: '[&{username}: TSkip] Time set to &{time} seconds.',
         clear: '[&{username}: TSkip] Time cleared.',
         cancel: '[&{username}: TSkip] Skip canceld.'
+    },
+    move: {
+        default: '[&{username}: Move]'
+    },
+    superuser: {
+        add: '[&{mod}: SuperUser] Set &{username} as Super-User.',
+        remove :'[&{mod}: SuperUser] Removed &{username} as Super-User.'
+    },
+    eventmode: {
+        enabled: '[&{username}: Eventmode enabled]',
+        disabled: '[&{username}: Eventmode disabled]'
     }
 };
