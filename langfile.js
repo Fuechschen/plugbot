@@ -36,6 +36,12 @@ module.exports = {
             default: '@&{username}, your song "&{song}" recieved to many mehs.',
             enabled: '[&{username}: Voteskip enabled]',
             disabled: '[&{username}: Voteskip disabled]'
+        },
+        timeguard: {
+            skip: '[Timeguard]',
+            default: '@&{username}, your song "&{song}" is over the maximum of &{time} seconds.',
+            enabled: '[&{username}: Timeguard enabled]',
+            disabled: '[&{username}: Timeguard disabled]'
         }
     },
     error: {
@@ -119,5 +125,12 @@ module.exports = {
     welcome: {
         new: 'Welcome @&{username}. I see this is your fist time joining the room. Remember to obey the rules and have fun!',
         old: 'Welcome back @&{username}.'
+    },
+    tksip: {
+        default: '[TSkip] This song will be automatically skipped after &{time} seconds.',
+        skip: '[TSkip]',
+        set: '[&{username}: TSkip] Time set to &{time} seconds.',
+        clear: '[&{username}: TSkip] Time cleared.',
+        cancel: '[&{username}: TSkip] Skip canceld.'
     }
 };

@@ -43,7 +43,7 @@ commands.bl = commands.blacklist = {
                     });
                     var split = data.message.trim().split(' ');
                     var reason = utils.blacklistReason(_.rest(split, 1));
-                    redis.set('media:blacklist:' + media.format + ':' + media.id, ((split.length > 1 ? reason : 1))).then(function () {
+                    redis.set('media:blacklist:' + media.format + ':' + media.cid, ((split.length > 1 ? reason : 1))).then(function () {
                         setTimeout(function () {
                             if (split.length > 1) {
                                 plugged.sendChat(utils.replace(langfile.blacklist.with_reason, {
@@ -309,7 +309,7 @@ commands['bouncer+'] = {
                 if (config.options.bouncer_plus) plugged.sendChat(utils.replace(langfile.bouncer_plus.enabled, {username: data.username}), 45);
                 else plugged.sendChat(utils.replace(langfile.bouncer_plus.disabled, {username: data.username}), 45);
                 redis.set('meta:config:options:bouncer_plus', (config.options.bouncer_plus ? 1 : 0));
-                story.info('bouncer+', util.userLogString(data.username, data.id) + ': --> ' + config.options.bouncer_plus);
+                story.info('bouncer+', utils.userLogString(data.username, data.id) + ': --> ' + config.options.bouncer_plus);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -351,7 +351,7 @@ commands.historyskip = {
                 if (config.history.skipenabled) plugged.sendChat(utils.replace(langfile.skip.history.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.skip.history.disabled, {username: data.username}), 30);
                 redis.set('meta:config:history:skipenabled', (config.history.skipenabled ? 1 : 0));
-                story.info('historyskip', util.userLogString(data.username, data.id) + ': --> ' + config.history.skipenabled);
+                story.info('historyskip', utils.userLogString(data.username, data.id) + ': --> ' + config.history.skipenabled);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -366,7 +366,7 @@ commands.voteskip = {
                 if (config.voteskip.enabled) plugged.sendChat(utils.replace(langfile.skip.vote.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.skip.vote.disabled, {username: data.username}), 30);
                 redis.set('meta:config:voteskip:enabled', (config.voteskip.enabled ? 1 : 0));
-                story.info('voteskip', util.userLogString(data.username, data.id) + ': --> ' + config.voteskip.enabled);
+                story.info('voteskip', utils.userLogString(data.username, data.id) + ': --> ' + config.voteskip.enabled);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -383,7 +383,7 @@ commands.clearhistory = {
                         redis.del(key);
                     });
                 });
-                story.info('clearhistory', util.userLogString(data.username, data.id));
+                story.info('clearhistory', utils.userLogString(data.username, data.id));
             }
         });
         plugged.deleteMessage(data.cid);
@@ -454,7 +454,7 @@ commands.unmute = {
                                 username: user.username,
                                 mod: data.username
                             }), 60);
-                            story.info('unmute', util.userLogString(data.username, data.id) + ': ' + util.userLogString(user));
+                            story.info('unmute', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user));
                         } else plugged.sendChat(utils.replace(langfile.unmute.not_muted, {
                             mod: data.username,
                             username: user.username
@@ -492,7 +492,7 @@ commands.mute = {
                                 username: user.username,
                                 mod: data.username
                             }), 60);
-                            story.info('mute', util.userLogString(data.username, data.id) + ': ' + util.userLogString(user));
+                            story.info('mute', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user));
                         }
                     });
                 } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
@@ -525,7 +525,22 @@ commands.lockdown = {
                 if (config.state.lockdown) plugged.sendChat(utils.replace(langfile.lockdown.enabled, {username: data.username}), 60);
                 else plugged.sendChat(utils.replace(langfile.lockdown.disabled, {username: data.username}), 60);
                 redis.set('meta:config:state:lockdown', (config.state.lockdown ? 1 : 0));
-                story.info('lockdown', util.userLogString(data.username, data.id) + ': --> ' + config.state.lockdown);
+                story.info('lockdown', utils.userLogString(data.username, data.id) + ': --> ' + config.state.lockdown);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.timeguard = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                config.timeguard.enabled = !config.timeguard.enabled;
+                if (config.timeguard.enabled) plugged.sendChat(utils.replace(langfile.skip.timeguard.enabled, {username: data.username}), 60);
+                else plugged.sendChat(utils.replace(langfile.skip.timeguard.disabled, {username: data.username}), 60);
+                redis.set('meta:config:timeguard:enabled', (config.timeguard.enabled ? 1 : 0));
+                story.info('timeguard', utils.userLogString(data.username, data.id) + ': --> ' + config.timeguard.enabled);
             }
         });
         plugged.deleteMessage(data.cid);
@@ -545,7 +560,7 @@ commands.welcomemsg = {
                         plugged.updateRoomInfo(meta.name, meta.description, _.rest(split, 1).join(' ').trim());
                     }
                     plugged.sendChat(utils.replace(langfile.roomedit.welcomemsg, {username: data.username}), 30);
-                    story.info('welcomemsg', util.userLogString(data.username, data.id) + ': --> ' + _.rest(split, 1).join(' ').trim());
+                    story.info('welcomemsg', utils.userLogString(data.username, data.id) + ': --> ' + _.rest(split, 1).join(' ').trim());
                 } else plugged.sendChat(utils.replace(langfile.error.argument, {
                     username: data.username,
                     cmd: Welcome
@@ -565,7 +580,7 @@ commands.roomname = {
                     var meta = plugged.getRoomMeta();
                     plugged.updateRoomInfo(_.rest(split, 1).join(' ').trim(), meta.description, meta.welcome);
                     plugged.sendChat(utils.replace(langfile.roomedit.roomname, {username: data.username}), 30);
-                    story.info('roomname', util.userLogString(data.username, data.id) + ': --> ' + _.rest(split, 1).join(' ').trim());
+                    story.info('roomname', utils.userLogString(data.username, data.id) + ': --> ' + _.rest(split, 1).join(' ').trim());
                 } else plugged.sendChat(utils.replace(langfile.error.argument, {
                     username: data.username,
                     cmd: Welcome
@@ -584,12 +599,93 @@ commands.cleverbot = {
                 if (config.cleverbot.enabled) plugged.sendChat(utils.replace(langfile.cleverbot.enabled, {username: data.username}), 30);
                 else plugged.sendChat(utils.replace(langfile.cleverbot.disabled, {username: data.username}), 30);
                 redis.set('meta:config:cleverbot:enabled', (config.cleverbot.enabled ? 1 : 0));
-                story.info('cleverbot', util.userLogString(data.username, data.id) + ': --> ' + config.cleverbot.enabled);
+                story.info('cleverbot', utils.userLogString(data.username, data.id) + ': --> ' + config.cleverbot.enabled);
             }
         });
         plugged.deleteMessage(data.cid);
     }
 };
 
+commands.idbl = commands.idblacklist = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                var split = data.message.trim().split(' ');
+                if (split.length > 1) {
+                    var mid = split[1].split(':');
+                    if (mid.length === 2) {
+                        models.Song.findOrCreate({
+                            where: {cid: mid[1], format: mid[0]},
+                            defaults: {
+                                cid: mid[1],
+                                format: mid[0],
+                                isBanned: true,
+                                ban_reason: (split.length === 2 ? undefined : _.rest(split, 2).join(' ').trim())
+                            }
+                        }).spread(function (song) {
+                            song.updateAttributes({
+                                isBanned: true,
+                                ban_reason: (split.length === 2 ? undefined : _.rest(split, 2).join(' ').trim())
+                            });
+                            redis.set('media:blacklist:' + song.format + ':' + song.cid, (split.length === 2 ? 1 : _.rest(split, 2).join(' ').trim()));
+                        })
+                    } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                        username: data.username,
+                        cmd: 'Blacklist'
+                    }));
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                    username: data.username,
+                    cmd: 'Blacklist'
+                }));
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.tskip = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                var split = data.message.trim().split(' ');
+                if (split[1] === 'set') {
+                    var time = parseInt(split[2]);
+                    if (!isNaN(time)) {
+                        clearTimeout(timeouts.tksip);
+                        timeouts.tskip = setTimeout(function () {
+                            plugged.sendChat(langfile.tksip.skip, 60);
+                            plugged.skipDJ(plugged.getCurrentDJ().id);
+                        }, moment(plugged.getStartTime()).add(time, 'seconds').diff(moment(), 'seconds') * 1000);
+                        plugged.sendChat(utils.replace(langfile.tskip.set, {username: data.username, time: time}));
+                        models.Song.update({tskip: time}, {
+                            where: {
+                                format: plugged.getCurrentMedia().format,
+                                cid: plugged.getCurrentMedia().cid
+                            }
+                        });
+                    } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                        username: data.username,
+                        cmd: 'TSkip'
+                    }), 20);
+                } else if (perm > 2) {
+                    if (split[1] === 'cancel') {
+                        clearTimeout(timeouts.tskip);
+                        plugged.sendChat(utils.replace(langfile.tskip.cancel, {username: data.username}), 30);
+                    } else if (split[1] === 'clear') {
+                        clearTimeout(timeouts.tskip);
+                        plugged.sendChat(utils.replace(langfile.tskip.clear, {username: data.username}), 30);
+                        models.Song.update({tskip: null}, {
+                            where: {
+                                format: plugged.getCurrentMedia().format,
+                                cid: plugged.getCurrentMedia().cid
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
 
 module.exports = commands;

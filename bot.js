@@ -36,7 +36,8 @@ redis.keys('user:role:save:*').then(function (keys) {
 utils.loadConfigfromRedis();
 
 timeouts = {
-    stuck: null
+    stuck: null,
+    tskip: null
 };
 plugged = new Plugged();
 /*redis.get('meta:auth:save:token').then(function (token) {
@@ -124,13 +125,12 @@ plugged.on(plugged.JOINED_ROOM, function () {
     });
 
     plugged.on(plugged.ADVANCE, function (booth, now, prev) {
-        clearTimeout(timeouts.stuck);
         if (booth.dj !== undefined) {
-            redis.exists('media:blacklist:' + now.media.format + ':' + now.media.id).then(function (exb) {
+            redis.exists('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (exb) {
                 if (exb === 1) {
-                    redis.get('media:blacklist:' + now.media.format + ':' + now.media.id).then(function (track) {
+                    redis.get('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (track) {
                         plugged.skipDJ(booth.dj, now.historyID);
-                        if (track !== 1) {
+                        if (track !== '1') {
                             plugged.sendChat(utils.replace(langfile.blacklist.skip_reason, {
                                 username: plugged.getUserByID(booth.dj).username,
                                 song: utils.songtitle(now.media.author, now.media.title),
@@ -144,10 +144,10 @@ plugged.on(plugged.JOINED_ROOM, function () {
                         }
                     });
                 } else {
-                    redis.exists('media:history:' + now.media.format + ':' + now.media.id).then(function (exh) {
+                    redis.exists('media:history:' + now.media.format + ':' + now.media.cid).then(function (exh) {
                         if (exh === 1 && config.history.skipenabled) {
                             plugged.skipDJ(booth.dj, now.historyID);
-                            redis.ttl('media:history:' + now.media.format + ':' + now.media.id).then(function (ttl) {
+                            redis.ttl('media:history:' + now.media.format + ':' + now.media.cid).then(function (ttl) {
                                 plugged.skipDJ(booth.dj, now.historyID);
                                 plugged.sendChat(utils.replace(langfile.skip.history.default, {
                                     username: plugged.getUserByID(booth.dj).username,
@@ -155,14 +155,22 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: moment().subtract((config.history.time * 60) - ttl, 'seconds').fromNow()
                                 }));
                             });
-                        } else {
-
+                        } else if (config.timeguard.enabled && now.media.duration >= config.timeguard.time) {
+                            plugged.sendChat(langfile.skip.timeguard.skip);
+                            plugged.skipDJ(booth.dj);
+                            setTimeout(function () {
+                                plugged.sendChat(utils.replace(langfile.skip.timeguard.default, {
+                                    username: plugged.getUserByID(booth.dj).username,
+                                    song: utils.songtitle(now.media.author, now.media.title),
+                                    time: config.timeguard.time
+                                }), 60);
+                            }, 4 * 1000);
                         }
                     });
                 }
             });
             models.Song.findOrCreate({
-                where: {plug_id: now.media.id}, defaults: {
+                where: {cid: now.media.cid, format: now.media.format}, defaults: {
                     title: now.media.title,
                     author: now.media.author,
                     image: now.media.image,
@@ -171,8 +179,21 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     plug_id: now.media.id,
                     cid: now.media.cid
                 }
-            }).spread(function (song) {
-                song.updateAttributes({image: now.media.image});
+            }).then(function (song) {
+                song = song[0];
+                song.updateAttributes({
+                    image: now.media.image,
+                    title: now.media.title,
+                    author: now.media.author,
+                    duration: now.media.duration
+                });
+                if (song.tskip !== null && song.tskip !== undefined) {
+                    plugged.sendChat(utils.replace(langfile.tskip.default, {time: song.tskip}), song.tskip + 10);
+                    timeouts.tksip = setTimeout(function () {
+                        plugged.sendChat(langfile.tskip.skip, 60);
+                        plugged.skipDJ(booth.dj);
+                    }, song.tskip * 1000);
+                }
             });
             timeouts.stuck = setTimeout(function () {
                 plugged.sendChat(langfile.skip.stuck.default, 30);
@@ -180,9 +201,11 @@ plugged.on(plugged.JOINED_ROOM, function () {
             }, (now.media.duration + 5) * 1000);
             story.info('advance', utils.userLogString(plugged.getUserByID(booth.dj)) + ': ' + utils.mediatitlelog(now.media));
         } else story.info('advance', 'Nobody is playing!');
+        clearTimeout(timeouts.stuck);
+        clearTimeout(timeouts.tskip);
         if (prev.dj !== undefined) {
-            redis.set('media:history:' + prev.media.format + ':' + prev.media.id, 1).then(function () {
-                redis.expire('media:history:' + prev.media.format + ':' + prev.media.id, config.history.time * 60);
+            redis.set('media:history:' + prev.media.format + ':' + prev.media.cid, 1).then(function () {
+                redis.expire('media:history:' + prev.media.format + ':' + prev.media.cid, config.history.time * 60);
             });
             models.Song.find({where: {plug_id: now.media.id}}).then(function (song) {
                 models.User.find({where: {id: prev.dj.id}}).then(function (user) {
