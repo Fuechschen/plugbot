@@ -132,7 +132,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
     plugged.on(plugged.ADVANCE, function (booth, now, prev) {
         if (booth.dj !== undefined) {
             redis.exists('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (exb) {
-                if (exb === 1) {
+                if (exb === 1 && plugged.getCurrentMedia().id === now.media.id) {
                     redis.get('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (track) {
                         plugged.skipDJ(booth.dj, now.historyID);
                         if (track !== '1') {
@@ -150,7 +150,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 } else {
                     redis.exists('media:history:' + now.media.format + ':' + now.media.cid).then(function (exh) {
-                        if (exh === 1 && config.history.skipenabled && !config.state.eventmode) {
+                        if (exh === 1 && config.history.skipenabled && !config.state.eventmode && plugged.getCurrentMedia().id === now.media.id) {
                             plugged.skipDJ(booth.dj, now.historyID);
                             redis.ttl('media:history:' + now.media.format + ':' + now.media.cid).then(function (ttl) {
                                 plugged.skipDJ(booth.dj, now.historyID);
@@ -160,7 +160,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: moment().subtract((config.history.time * 60) - ttl, 'seconds').fromNow()
                                 }));
                             });
-                        } else if (config.timeguard.enabled && now.media.duration >= config.timeguard.time && !config.state.eventmode) {
+                        } else if (config.timeguard.enabled && now.media.duration >= config.timeguard.time && !config.state.eventmode && plugged.getCurrentMedia().id === now.media.id) {
                             plugged.sendChat(langfile.skip.timeguard.skip);
                             plugged.skipDJ(booth.dj);
                             setTimeout(function () {
@@ -170,6 +170,46 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: config.timeguard.time
                                 }), 60);
                             }, 4 * 1000);
+                        } else if (config.countryblocks.enabled && now.media.format === 1 && plugged.getCurrentMedia().id === now.media.id) {
+                            request.get('https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=' + now.media.cid + '&key=' + config.apiKeys.youtube, function (error, resp, body) {
+                                if (!error && resp.statusCode === 200) {
+                                    body = JSON.parse(body);
+                                    if (body.items.length > 0) {
+                                        if (body.items[0].contentDetails.regionRestriction !== undefined) {
+                                            var intersection = _.intersection(body.items[0].contentDetails.regionRestriction.blocked, config.countryblocks.countries);
+                                            if (intersection.length !== 0 && plugged.getCurrentMedia().id === now.media.id) {
+                                                plugged.sendChat(langfile.countryblocks.skip);
+                                                plugged.skipDJ(booth.dj);
+                                                setTimeout(function () {
+                                                    plugged.sendChat(utils.replace(langfile.countryblocks.default, {
+                                                        username: plugged.getUserByID(booth.dj).username,
+                                                        song: utils.mediatitle(now.media),
+                                                        countries: intersection.join(' ')
+                                                    }), 60);
+                                                    models.Song.findOrCreate({
+                                                        where: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id
+                                                        }, defaults: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id,
+                                                            idBanned: true,
+                                                            ban_reason: utils.replace(langfile.countryblocks.bl_reason, {countries: intersection.join(' ')})
+                                                        }
+                                                    }).spread(function (track) {
+                                                        track.updateAttributes({
+                                                            isBanned: true,
+                                                            ban_reason: utils.replace(langfile.countryblocks.bl_reason, {countries: intersection.join(' ')})
+                                                        });
+                                                    });
+                                                }, 4 * 1000);
+                                            }
+                                        }
+                                    }
+                                } else console.log('Error during youtube-api call.', error, resp);
+                            });
                         }
                     });
                 }
@@ -204,7 +244,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         } else story.info('advance', 'Nobody is playing!');
         clearTimeout(timeouts.stuck);
         clearTimeout(timeouts.tskip);
-        if(booth.dj !== undefined){
+        if (booth.dj !== undefined) {
             timeouts.stuck = setTimeout(function () {
                 plugged.sendChat(langfile.skip.stuck.default, 30);
                 plugged.skipDJ(booth.dj, now.historyID);

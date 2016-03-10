@@ -144,5 +144,10 @@ module.exports = {
     eventmode: {
         enabled: '[&{username}: Eventmode enabled]',
         disabled: '[&{username}: Eventmode disabled]'
+    },
+    countryblocks: {
+        skip: '[CountryBlock]',
+        default: '@&{username}, your song "&{song}" was automatically blacklisted bacause it\'s blocked in the following countries: "&{countries}"',
+        bl_reason: 'Blocked in the following countries: &{countries}'
     }
 };
