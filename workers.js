@@ -5,5 +5,12 @@ module.exports = {
              redis.set(key, 0);
           });
       });
-    }, 60 * 1000)
+    }, 60 * 1000),
+    warnpoints: setInterval(function(){
+        redis.keys('user:chat:spam:*:points').then(function(keys){
+            keys.forEach(function(key){
+                redis.set(key, 0);
+            });
+        });
+    }, 3600 * 1000)
 };

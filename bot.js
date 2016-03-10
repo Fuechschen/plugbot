@@ -1,4 +1,5 @@
 chalk = require('chalk');
+utils = require('./utils.js');
 config = require('./load_config.js');
 story = require('./logger.js');
 langfile = require('./langfile.js');
@@ -7,7 +8,6 @@ path = require('path');
 S = require('string');
 moment = require('moment');
 request = require('request');
-utils = require('./utils.js');
 var Plugged = require('plugged');
 var Sequelize = require('sequelize');
 var IoRedis = require('ioredis');
@@ -66,21 +66,36 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             });
         }
     });
+    redis.keys('media:blacklist:*').then(function (keys) {
+        keys.forEach(function (key) {
+            redis.del(key);
+        });
+        models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
+            songs.forEach(function (song) {
+                redis.set('media:blacklist:' + song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
+            });
+            story.info('meta', 'Loaded blacklist with ' + songs.length + ' entries.');
+        });
+    });
+    story.info('meta', 'Successfully authed to plug.dj');
 });
 
 plugged.on(plugged.CONN_ERROR, function (err) {
-    story.error('Connection', 'Error while connecting to plug.dj.', {attach: err});
+    story.error('Error', 'Error while connecting to plug.dj.', {attach: err});
 });
 
 plugged.on(plugged.LOGIN_ERROR, function (err) {
-    story.error('Connection', 'Error while logging in.', {attach: err});
+    story.error('Error', 'Error while logging in.', {attach: err});
+});
+
+plugged.on(plugged.PLUG_ERROR, function(err){
+    story.error('Error', 'plug.dj encountered an error.', {attach: err});
 });
 
 plugged.on(plugged.JOINED_ROOM, function () {
     story.info('meta', 'Joined room ' + config.options.room);
     plugged.getUsers().forEach(function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
-        redis.set('user:chat:spam:' + user.id + ':warns', 0);
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
@@ -394,7 +409,9 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.FRIEND_JOIN, function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
-        redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        redis.exists('user:chat:spam:' + user.id + ':warns').then(function(ex){
+            if(ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        });
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
@@ -428,7 +445,9 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.USER_JOIN, function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
-        redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        redis.exists('user:chat:spam:' + user.id + ':warns').then(function(ex){
+            if(ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        });
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);

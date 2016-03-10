@@ -11,6 +11,12 @@ module.exports = {
         reasons: {
             u: 'Song unavailable.',
             n: 'Song nsfw.'
+        },
+        unbl: {
+            default: '[&{username}: UnBl] Removed "&{song}" from the blacklist.'
+        },
+        idbl: {
+            default: '[&{username}: Blacklist] Added "&{song}" to the blacklist.'
         }
     },
     skip: {
@@ -111,7 +117,7 @@ module.exports = {
         default: '[&{mod}: Muted &{username}]',
         already_muted: '[&{mod}: Unmute] &{username} is already muted.'
     },
-    lockdown : {
+    lockdown: {
         enabled: '[&{username}: Lockdown enabled]',
         disabled: '[&{username}: Lockdown disabled]'
     },
@@ -140,7 +146,7 @@ module.exports = {
     },
     superuser: {
         add: '[&{mod}: SuperUser] Set &{username} as Super-User.',
-        remove :'[&{mod}: SuperUser] Removed &{username} as Super-User.'
+        remove: '[&{mod}: SuperUser] Removed &{username} as Super-User.'
     },
     eventmode: {
         enabled: '[&{username}: Eventmode enabled]',

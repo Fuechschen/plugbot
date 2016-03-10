@@ -224,7 +224,7 @@ commands.cycle = {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
                 plugged.sendChat(utils.replace(langfile.bp_actions.cycle, {username: data.username}), 70);
-                var cycle = plugged.doesWaitlistCycle()
+                var cycle = plugged.doesWaitlistCycle();
                 plugged.setCycle(!cycle);
                 story.info('cycle', utils.userLogString(data.username, data.id) + ': --> ' + !plugged.doesWaitlistCycle());
             }
@@ -689,22 +689,25 @@ commands.idbl = commands.idblacklist = {
                                 ban_reason: (split.length === 2 ? undefined : _.rest(split, 2).join(' ').trim())
                             });
                             redis.set('media:blacklist:' + song.format + ':' + song.cid, (split.length === 2 ? 1 : _.rest(split, 2).join(' ').trim()));
-                        })
+                            plugged.sendChat(utils.replace(langfile.blacklist.idbl.default, {username: data.username, song: utils.songtitle(song.author, song.title)}), 30);
+                            story.info('blacklist', utils.userLogString(data.username, data.id) + ' added ' + utils.songtitle(song.author, song.title) + '[' + song.format + ':' + song.cid + '] to the blacklist');
+                        });
                     } else plugged.sendChat(utils.replace(langfile.error.argument, {
                         username: data.username,
                         cmd: 'Blacklist'
-                    }));
+                    }), 20);
                 } else plugged.sendChat(utils.replace(langfile.error.argument, {
                     username: data.username,
                     cmd: 'Blacklist'
-                }));
+                }), 20);
             }
         });
         plugged.deleteMessage(data.cid);
     }
 };
 
-commands.tskip = {
+//todo fix
+/*commands.tskip = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 1) {
@@ -747,7 +750,7 @@ commands.tskip = {
         });
         plugged.deleteMessage(data.cid);
     }
-};
+};*/
 
 commands.move = {
     handler: function (data) {
@@ -839,7 +842,34 @@ commands.unbl = commands.rmbl = commands.unblacklist = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 2) {
-                //todo unbl
+                var split = data.message.trim().split(' ');
+                if (split.length === 2) {
+                    var args = split[1].split(':');
+                    if (args.length === 2 && ['1', '2'].indexOf(args[1])) {
+                        models.Song.find({
+                            where: {
+                                isBanned: true,
+                                format: args[0],
+                                cid: args[1]
+                            }
+                        }).then(function (song) {
+                            if (song !== null && song !== undefined) {
+                               song.updateAttributes({isBanned: false, ban_reason: null});
+                                plugged.sendChat(utils.replace(langfile.blacklist.unbl.default, {username: data.username, song: utils.songtitle(song.author, song.title)}), 30);
+                                story.info('unbl', utils.userLogString(data.username, data.id) + ' removed ' + utils.songtitle(song.author, song.title) + '[' + song.format + ':' + song.cid + '] from the blacklist.');
+                            } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                                username: data.username,
+                                cmd: UnBl
+                            }), 20);
+                        });
+                    } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                        username: data.username,
+                        cmd: UnBl
+                    }), 20);
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                    username: data.username,
+                    cmd: UnBl
+                }), 20);
             }
         });
         plugged.deleteMessage(data.cid);

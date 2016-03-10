@@ -283,5 +283,8 @@ module.exports = {
                 } else return false;
             } else return false;
         } else return false;
+    },
+    dblog: function(msg){
+        story.debug('db', msg);
     }
 };
