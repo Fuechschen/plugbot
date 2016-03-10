@@ -106,7 +106,7 @@ commands.ls = commands.lockskip = {
 };
 
 commands.cs = commands.cycleskip = {
-    handler: function(data){
+    handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             redis.exists('meta:state:skipable').then(function (ex) {
                 if (perm > 1 && ex === 0) {
@@ -136,7 +136,7 @@ commands.cs = commands.cycleskip = {
     }
 };
 
-commands.add = {
+commands.add = commands.addwl = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
@@ -158,7 +158,7 @@ commands.add = {
     }
 };
 
-commands.rem = commands.remove = commands.rm = {
+commands.rem = commands.remove = commands.rm = commands.rmwl = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if (perm > 1) {
@@ -206,7 +206,7 @@ commands.unlock = {
     }
 };
 
-commands.clear = {
+commands.clear = commands.clearwl = {
     handler: function (data) {
         redis.get('user:role:save:' + data.id).then(function (perm) {
             if ((config.options.bouncer_plus ? (perm > 1) : (perm > 2))) {
@@ -321,7 +321,7 @@ commands.setstaff = {
                     else plugged.addStaff(user.id, role);
                     models.User.update({s_role: utils.permlevel(role)}, {where: {id: user.id}});
                     redis.set('user:role:save:' + user.id, utils.permlevel(role));
-                    story.info('promote', util.userLogString(data.username, data.id) + ': ' + utils.userLogString(user) + ' --> ' + utils.rolename(role));
+                    story.info('promote', utils.userLogString(data.username, data.id) + ': ' + utils.userLogString(user) + ' --> ' + utils.rolename(role));
                 } else plugged.sendChat(utils.replace(langfile.error.user_not_found, {
                     username: plugged.getUserByID(data.id),
                     value: S(_.rest(split, 1).join(' ')).chompLeft('@').s
@@ -759,8 +759,9 @@ commands.move = {
                     var user = plugged.getUserByName(S(_.initial(_.rest(split, 1)).join(' ')).chompLeft('@').chompRight(' ').s);
                     if (user !== undefined && !isNaN(pos)) {
                         plugged.sendChat(utils.replace(langfile.move.default, {username: data.username}));
-                        if (plugged.getWaitlist().indexOf(user) === -1) plugged.addToWaitlist(user.id);
-                        plugged.moveDJ(user.id, pos)
+                        if (plugged.getWaitlist().indexOf(user.id) === -1) plugged.addToWaitlist(user.id);
+                        plugged.moveDJ(user.id, pos - 1);
+                        story.info('move', utils.userLogString(data.username, data.id) + ' moved ' + utils.userLogString(user) + ' to ' + pos);
                     } else plugged.sendChat(utils.replace(langfile.error.argument, {
                         username: data.username,
                         cmd: 'Move'
@@ -802,6 +803,43 @@ commands.superuser = commands.su = {
                     username: data.username,
                     cmd: 'SuperUser'
                 }), 20);
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.leavewl = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                plugged.leaveWaitlist(function () {
+                    plugged.activatePlaylist(config.playlists.none);
+                });
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.joinwl = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 1) {
+                plugged.activatePlaylist(config.playlists.play, function () {
+                    plugged.joinWaitlist();
+                });
+            }
+        });
+        plugged.deleteMessage(data.cid);
+    }
+};
+
+commands.unbl = commands.rmbl = commands.unblacklist = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (perm > 2) {
+                //todo unbl
             }
         });
         plugged.deleteMessage(data.cid);

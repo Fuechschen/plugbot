@@ -106,16 +106,16 @@ module.exports = {
                 r = langfile.setstaff.roles.bouncer;
                 break;
             case plugged.USERROLE.MANAGER:
-                r = plugged.setstaff.roles.manager;
+                r = langfile.setstaff.roles.manager;
                 break;
             case plugged.USERROLE.COHOST:
-                r = plugged.setstaff.roles.cohost;
+                r = langfile.setstaff.roles.cohost;
                 break;
             case plugged.USERROLE.HOST:
-                r = plugged.setstaff.roles.host;
+                r = langfile.setstaff.roles.host;
                 break;
             default:
-                r = plugged.setstaff.roles.undef;
+                r = langfile.setstaff.roles.undef;
                 break;
         }
         return r;
@@ -133,7 +133,7 @@ module.exports = {
         redis.exists('meta:config:state:eventmode').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:state:eventmode').then(function (val) {
-                    (val === 1) ? config.state.eventmode = false : config.state.eventmode = true;
+                    config.state.eventmode = val === 1;
                     load('eventmode', config.state.eventmode);
                 });
             } else load('eventmode', 'not stored')
@@ -141,7 +141,7 @@ module.exports = {
         redis.exists('meta:config:voteskip:enabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:voteskip:enabled').then(function (val) {
-                    (val === 1) ? config.voteskip.enabled = false : config.voteskip.enabled = true;
+                    config.voteskip.enabled = val === 1;
                     load('voteskip', config.voteskip.enabled)
                 });
             } else load('voteskip', 'not stored')
@@ -149,7 +149,7 @@ module.exports = {
         redis.exists('meta:config:timeguard:enabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:timeguard:enabled').then(function (val) {
-                    (val === 1) ? config.timeguard.enabled = false : config.timeguard.enabled = true;
+                    config.timeguard.enabled = val === 1;
                     load('timeguard', config.timeguard.enabled);
                 });
             } else load('timeguard', 'not stored');
@@ -157,7 +157,7 @@ module.exports = {
         redis.exists('meta:config:history:skipenabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:history:skipenabled').then(function (val) {
-                    (val === 1) ? config.history.skipenabled = false : config.history.skipenabled = true;
+                    config.history.skipenabled = val === 1;
                     load('historyskip', config.history.skipenabled);
                 });
             } else load('historyskip', 'not stored');
@@ -165,7 +165,7 @@ module.exports = {
         redis.exists('meta:config:cleverbot:enabled').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:cleverbot:enabled').then(function (val) {
-                    (val === 1) ? config.cleverbot.enabled = false : config.cleverbot.enabled = true;
+                    config.cleverbot.enabled = val === 1;
                     load('cleverbot', config.cleverbot.enabled);
                 });
             } else load('cleverbot', 'not stored');
@@ -181,15 +181,15 @@ module.exports = {
         redis.exists('meta:config:options:bouncer_plus').then(function (ex) {
             if (ex) {
                 redis.get('meta:config:options:bouncer_plus').then(function (val) {
-                    (val === 1) ? config.options.bouncer_plus = false : config.options.bouncer_plus = true;
+                    config.options.bouncer_plus = val === 1;
                     load('bouncer+', config.options.bouncer_plus);
                 });
             } else load('bouncer+', 'not stored');
         });
-        redis.exists('meta:config:state:eventmode').then(function (ex) {
+        redis.exists('meta:config:state:lockdown').then(function (ex) {
             if (ex) {
-                redis.get('meta:config:state:eventmode').then(function (val) {
-                    (val === 1) ? config.state.lockdown = false : config.state.lockdown = true;
+                redis.get('meta:config:state:lockdown').then(function (val) {
+                    config.state.lockdown = val === 1;
                     load('lockdown', config.state.lockdown);
                 });
             } else load('lockdown', 'not stored');
@@ -268,5 +268,20 @@ module.exports = {
         }
 
         return copy(obj, 0);
+    },
+    checkRegionRestriction: function (body) {
+        if (body.contentDetails.regionRestriction !== undefined) {
+            if (body.contentDetails.regionRestriction.allowed !== undefined) {
+                var allowedintersection = _.intersection(body.contentDetails.regionRestriction.allowed, config.youtubeGuard.countryblocks.countries);
+                if (allowedintersection.length !== config.youtubeGuard.countryblocks.countries.length) {
+                    return _.diffrence(config.youtubeGuard.countryblocks.countries, body.contentDetails.regionRestriction.allowed)
+                } else return false;
+            } else if (body.contentDetails.regionRestriction.blocked !== undefined) {
+                var blockintersection = _.intersection(body.contentDetails.regionRestriction.blocked, config.youtubeGuard.countryblocks.countries);
+                if (blockintersection.length !== 0) {
+                    return blockintersection;
+                } else return false;
+            } else return false;
+        } else return false;
     }
 };

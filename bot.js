@@ -69,11 +69,11 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
 });
 
 plugged.on(plugged.CONN_ERROR, function (err) {
-    console.log(err);
+    story.error('Connection', 'Error while connecting to plug.dj.', {attach: err});
 });
 
 plugged.on(plugged.LOGIN_ERROR, function (err) {
-    console.log(err);
+    story.error('Connection', 'Error while logging in.', {attach: err});
 });
 
 plugged.on(plugged.JOINED_ROOM, function () {
@@ -130,35 +130,44 @@ plugged.on(plugged.JOINED_ROOM, function () {
     });
 
     plugged.on(plugged.ADVANCE, function (booth, now, prev) {
+        booth = utils.clone(booth);
+        now = utils.clone(now);
+        prev = utils.clone(prev);
         if (booth.dj !== undefined) {
             redis.exists('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (exb) {
                 if (exb === 1 && plugged.getCurrentMedia().id === now.media.id) {
                     redis.get('media:blacklist:' + now.media.format + ':' + now.media.cid).then(function (track) {
+                        plugged.sendChat(langfile.blacklist.skip_first);
                         plugged.skipDJ(booth.dj, now.historyID);
-                        if (track !== '1') {
-                            plugged.sendChat(utils.replace(langfile.blacklist.skip_reason, {
-                                username: plugged.getUserByID(booth.dj).username,
-                                song: utils.songtitle(now.media.author, now.media.title),
-                                reason: track
-                            }), 120);
-                        } else {
-                            plugged.sendChat(utils.replace(langfile.blacklist.skip, {
-                                username: plugged.getUserByID(booth.dj).username,
-                                song: utils.songtitle(now.media.author, now.media.title)
-                            }), 120);
-                        }
+                        setTimeout(function(){
+                            if (track !== '1') {
+                                plugged.sendChat(utils.replace(langfile.blacklist.skip_reason, {
+                                    username: plugged.getUserByID(booth.dj).username,
+                                    song: utils.songtitle(now.media.author, now.media.title),
+                                    reason: track
+                                }), 120);
+                            } else {
+                                plugged.sendChat(utils.replace(langfile.blacklist.skip, {
+                                    username: plugged.getUserByID(booth.dj).username,
+                                    song: utils.songtitle(now.media.author, now.media.title)
+                                }), 120);
+                            }
+                        }, 4 * 1000);
                     });
                 } else {
                     redis.exists('media:history:' + now.media.format + ':' + now.media.cid).then(function (exh) {
                         if (exh === 1 && config.history.skipenabled && !config.state.eventmode && plugged.getCurrentMedia().id === now.media.id) {
                             plugged.skipDJ(booth.dj, now.historyID);
                             redis.ttl('media:history:' + now.media.format + ':' + now.media.cid).then(function (ttl) {
+                                plugged.sendChat(langfile.skip.history.skip);
                                 plugged.skipDJ(booth.dj, now.historyID);
-                                plugged.sendChat(utils.replace(langfile.skip.history.default, {
-                                    username: plugged.getUserByID(booth.dj).username,
-                                    song: utils.songtitle(now.media.author, now.media.title),
-                                    time: moment().subtract((config.history.time * 60) - ttl, 'seconds').fromNow()
-                                }));
+                                setTimeout(function(){
+                                    plugged.sendChat(utils.replace(langfile.skip.history.default, {
+                                        username: plugged.getUserByID(booth.dj).username,
+                                        song: utils.songtitle(now.media.author, now.media.title),
+                                        time: moment().subtract((config.history.time * 60) - ttl, 'seconds').fromNow()
+                                    }));
+                                }, 4 * 1000);
                             });
                         } else if (config.timeguard.enabled && now.media.duration >= config.timeguard.time && !config.state.eventmode && plugged.getCurrentMedia().id === now.media.id) {
                             plugged.sendChat(langfile.skip.timeguard.skip);
@@ -170,21 +179,50 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: config.timeguard.time
                                 }), 60);
                             }, 4 * 1000);
-                        } else if (config.countryblocks.enabled && now.media.format === 1 && plugged.getCurrentMedia().id === now.media.id) {
-                            request.get('https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=' + now.media.cid + '&key=' + config.apiKeys.youtube, function (error, resp, body) {
+                        } else if (config.youtubeGuard.enabled && now.media.format === 1 && plugged.getCurrentMedia().id === now.media.id) {
+                            request.get('https://www.googleapis.com/youtube/v3/videos?part=contentDetails,status&id=' + now.media.cid + '&key=' + config.apiKeys.youtube, function (error, resp, body) {
                                 if (!error && resp.statusCode === 200) {
                                     body = JSON.parse(body);
                                     if (body.items.length > 0) {
-                                        if (body.items[0].contentDetails.regionRestriction !== undefined) {
-                                            var intersection = _.intersection(body.items[0].contentDetails.regionRestriction.blocked, config.countryblocks.countries);
-                                            if (intersection.length !== 0 && plugged.getCurrentMedia().id === now.media.id) {
-                                                plugged.sendChat(langfile.countryblocks.skip);
+                                        if (body.items[0] !== undefined) {
+                                            if(utils.checkRegionRestriction(body.items[0]) !== false){
+                                                if (plugged.getCurrentMedia().id === now.media.id) {
+                                                    var intersection = utils.checkRegionRestriction(body.items[0]);
+                                                    plugged.sendChat(langfile.youtubeGuard.skip);
+                                                    plugged.skipDJ(booth.dj);
+                                                    setTimeout(function () {
+                                                        plugged.sendChat(utils.replace(langfile.youtubeGuard.blocked.default, {
+                                                            username: plugged.getUserByID(booth.dj).username,
+                                                            song: utils.mediatitle(now.media),
+                                                            countries: intersection.join(' ')
+                                                        }), 60);
+                                                        models.Song.findOrCreate({
+                                                            where: {
+                                                                format: now.media.format,
+                                                                cid: now.media.cid,
+                                                                plug_id: now.media.id
+                                                            }, defaults: {
+                                                                format: now.media.format,
+                                                                cid: now.media.cid,
+                                                                plug_id: now.media.id,
+                                                                idBanned: true,
+                                                                ban_reason: utils.replace(langfile.youtubeGuard.blocked.bl_reason, {countries: intersection.join(' ')})
+                                                            }
+                                                        }).spread(function (track) {
+                                                            track.updateAttributes({
+                                                                isBanned: true,
+                                                                ban_reason: utils.replace(langfile.youtubeGuard.blocked.bl_reason, {countries: intersection.join(' ')})
+                                                            });
+                                                        });
+                                                    }, 4 * 1000);
+                                                }
+                                            } else if(body.items[0].status.uploadStatus === 'deleted') {
+                                                plugged.sendChat(langfile.youtubeGuard.skip);
                                                 plugged.skipDJ(booth.dj);
                                                 setTimeout(function () {
-                                                    plugged.sendChat(utils.replace(langfile.countryblocks.default, {
+                                                    plugged.sendChat(utils.replace(langfile.youtubeGuard.deleted.default, {
                                                         username: plugged.getUserByID(booth.dj).username,
-                                                        song: utils.mediatitle(now.media),
-                                                        countries: intersection.join(' ')
+                                                        song: utils.mediatitle(now.media)
                                                     }), 60);
                                                     models.Song.findOrCreate({
                                                         where: {
@@ -196,19 +234,101 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                             cid: now.media.cid,
                                                             plug_id: now.media.id,
                                                             idBanned: true,
-                                                            ban_reason: utils.replace(langfile.countryblocks.bl_reason, {countries: intersection.join(' ')})
+                                                            ban_reason: langfile.youtubeGuard.deleted.bl_reason
                                                         }
                                                     }).spread(function (track) {
                                                         track.updateAttributes({
                                                             isBanned: true,
-                                                            ban_reason: utils.replace(langfile.countryblocks.bl_reason, {countries: intersection.join(' ')})
+                                                            ban_reason: langfile.youtubeGuard.deleted.bl_reason
+                                                        });
+                                                    });
+                                                }, 4 * 1000);
+                                            }else if(body.items[0].status.uploadStatus === 'rejected'){
+                                                plugged.sendChat(langfile.youtubeGuard.skip);
+                                                plugged.skipDJ(booth.dj);
+                                                setTimeout(function () {
+                                                    plugged.sendChat(utils.replace(langfile.youtubeGuard.rejected.default, {
+                                                        username: plugged.getUserByID(booth.dj).username,
+                                                        song: utils.mediatitle(now.media),
+                                                        reason: langfile.youtubeGuard.rejected.reasons[body.items[0].status.rejectionReason]
+                                                    }), 60);
+                                                    models.Song.findOrCreate({
+                                                        where: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id
+                                                        }, defaults: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id,
+                                                            idBanned: true,
+                                                            ban_reason: utils.replace(langfile.youtubeGuard.rejected.bl_reason, {reason: langfile.youtubeGuard.rejected.reasons[body.items[0].status.rejectionReason]})
+                                                        }
+                                                    }).spread(function (track) {
+                                                        track.updateAttributes({
+                                                            isBanned: true,
+                                                            ban_reason: utils.replace(langfile.youtubeGuard.rejected.bl_reason, {reason: langfile.youtubeGuard.rejected.reasons[body.items[0].status.rejectionReason]})
+                                                        });
+                                                    });
+                                                }, 4 * 1000);
+                                            } else if(body.items[0].status.privacyStatus === 'private'){
+                                                plugged.sendChat(langfile.youtubeGuard.skip);
+                                                plugged.skipDJ(booth.dj);
+                                                setTimeout(function () {
+                                                    plugged.sendChat(utils.replace(langfile.youtubeGuard.private.default, {
+                                                        username: plugged.getUserByID(booth.dj).username,
+                                                        song: utils.mediatitle(now.media)
+                                                    }), 60);
+                                                    models.Song.findOrCreate({
+                                                        where: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id
+                                                        }, defaults: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id,
+                                                            idBanned: true,
+                                                            ban_reason: langfile.youtubeGuard.private.bl_reason
+                                                        }
+                                                    }).spread(function (track) {
+                                                        track.updateAttributes({
+                                                            isBanned: true,
+                                                            ban_reason: langfile.youtubeGuard.private.bl_reason
+                                                        });
+                                                    });
+                                                }, 4 * 1000);
+                                            } else if(body.items[0].status.embeddable === false){
+                                                plugged.sendChat(langfile.youtubeGuard.skip);
+                                                plugged.skipDJ(booth.dj);
+                                                setTimeout(function () {
+                                                    plugged.sendChat(utils.replace(langfile.youtubeGuard.embeddable.default, {
+                                                        username: plugged.getUserByID(booth.dj).username,
+                                                        song: utils.mediatitle(now.media)
+                                                    }), 60);
+                                                    models.Song.findOrCreate({
+                                                        where: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id
+                                                        }, defaults: {
+                                                            format: now.media.format,
+                                                            cid: now.media.cid,
+                                                            plug_id: now.media.id,
+                                                            idBanned: true,
+                                                            ban_reason: langfile.youtubeGuard.embeddable.bl_reason
+                                                        }
+                                                    }).spread(function (track) {
+                                                        track.updateAttributes({
+                                                            isBanned: true,
+                                                            ban_reason: langfile.youtubeGuard.embeddable.bl_reason
                                                         });
                                                     });
                                                 }, 4 * 1000);
                                             }
                                         }
                                     }
-                                } else console.log('Error during youtube-api call.', error, resp);
+                                } else story.warn('YoutubeApi', 'Error during youtube-api call.', {attach: {err: error, response: resp}});
                             });
                         }
                     });
@@ -415,6 +535,74 @@ plugged.on(plugged.JOINED_ROOM, function () {
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
     });
 
+    plugged.on(plugged.CHAT_MENTION, function(data){
+        if (data.id !== plugged.getSelf().id) {
+            if (S(data.message).startsWith('!')) {
+                var split = S(data.message).chompLeft('!').s.split(' ');
+                if (commands[split[0]] !== undefined) {
+                    commands[split[0]].handler(data);
+                    story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
+                }
+            }
+            if (config.state.lockdown) {
+                redis.get('user:role:save:' + data.id).then(function (perm) {
+                    if (perm < 2) plugged.deleteMessage(data.cid);
+                });
+            } else {
+                redis.exists('user:mute:' + data.id).then(function (exm) {
+                    if (exm === 1) {
+                        plugged.deleteMessage(data.cid);
+                        redis.incr('user:mute:' + data.id + ':violation').then(function () {
+                            redis.get('user:mute:' + data.id + ':violation').then(function (val) {
+                                if (val > config.chatfilter.spam.mute_violation) {
+                                    plugged.sendChat(utils.replace(langfile.chatfilter.spam.hard_mute, {username: data.username}), 60);
+                                    plugged.muteUser(data.id, plugged.MUTEDURATION.LONG, plugged.BANREASON.SPAMMING);
+                                }
+                            });
+                        });
+                    }
+                    else {
+                        redis.get('user:role:save:' + data.id).then(function (perm) {
+                            if (perm < 2) {
+                                redis.incr('user:chat:spam:' + data.id + ':points');
+                                redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
+                                    if (data.message === lastmsg) {
+                                        plugged.deleteMessage(data.cid);
+                                        redis.incrby('user:chat:spam:' + data.id + ':points', 10);
+                                        redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
+                                    } else {
+                                        redis.set('user:chat:spam:' + data.id + ':lastmsg', data.message).then(function () {
+                                            redis.expire('user:chat:spam:' + data.id + ':lastmsg', 3600);
+                                        });
+                                    }
+                                    redis.get('user:chat:spam:' + data.id + ':points').then(function (points) {
+                                        if (points >= config.chatfilter.spam.points) {
+                                            redis.incr('user:chat:spam:' + data.id + ':warns');
+                                            plugged.deleteMessage(data.cid);
+                                            plugged.sendChat(utils.replace(langfile.chatfilter.spam.warn, {username: data.username}), 60);
+                                        }
+                                        redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
+                                            if (warns > config.chatfilter.spam.warns) {
+                                                plugged.sendChat(utils.replace(langfile.chatfilter.spam.mute, {username: data.username}), 60);
+                                                redis.set('user:mute:' + data.id, 1).then(function () {
+                                                    redis.set('user:mute:' + data.id + ':violation', 0);
+                                                    redis.expire('user:mute:' + data.id, config.chatfilter.spam.mute_duration);
+                                                });
+                                            } else if(!S(data.message).startsWith('!')){
+                                                utils.sendToCleverbot(data);
+                                            }
+                                        });
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
+    });
+
     plugged.on(plugged.MOD_STAFF, function (data) {
         data = data[0];
         if (data.moderatorID !== plugged.getSelf().id) {
@@ -462,11 +650,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
             else if (vote.direction === -1) score.mehs = score.mehs - 1;
         });
         if (utils.checkVoteSkip(score) && config.voteskip.enabled && !config.state.eventmode) {
-            plugged.sendChat(utils.replace(langfile.skip.vote.default, {
-                username: plugged.getCurrentDJ(),
-                song: utils.mediatitle(plugged.getCurrentMedia())
-            }), 60);
+            plugged.sendChat(langfile.skip.vote.skip);
             plugged.skipDJ(plugged.getCurrentDJ().id);
+            setTimeout(function(){
+                plugged.sendChat(utils.replace(langfile.skip.vote.default, {
+                    username: plugged.getCurrentDJ(),
+                    song: utils.mediatitle(plugged.getCurrentMedia())
+                }), 60);
+            }, 4 * 1000);
         }
     });
 

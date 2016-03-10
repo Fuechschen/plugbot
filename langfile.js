@@ -6,14 +6,12 @@ module.exports = {
         without_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}.',
         skip_reason: '@&{username}, your song "&{song}" is blacklisted: &{reason}',
         skip: '@&{username}, your song "&{song}" is blacklisted',
+        skip_first: '[Blacklist]',
         reload: '[&{username}: Reloaded Blacklist with &{count} items]',
         reasons: {
             u: 'Song unavailable.',
             n: 'Song nsfw.'
         }
-    },
-    history: {
-        skip: '@&{username}, your song "&{song}"'
     },
     skip: {
         default: '[&{username}: Skip]',
@@ -28,12 +26,14 @@ module.exports = {
             default: 'This song seems to stuck. Skipping...'
         },
         history: {
+            skip: '[History]',
             default: '@&{username}, your song "&{song}" was played &{time} and will be skippped now.',
             enabled: '[&{username}: Historyskip enabled]',
             disabled: '[&{username}: Historyskip disabled]',
             clear: '[&{username}: History cleared]'
         },
         vote: {
+            skip: '[Voteskip]',
             default: '@&{username}, your song "&{song}" recieved to many mehs.',
             enabled: '[&{username}: Voteskip enabled]',
             disabled: '[&{username}: Voteskip disabled]'
@@ -121,7 +121,7 @@ module.exports = {
     },
     cleverbot: {
         enabled: '[&{username}: Cleverbot enabled]',
-        disabled: '[&{username}: Clever disabled]',
+        disabled: '[&{username}: Cleverbot disabled]',
         format: '&{username} &{message}'
     },
     welcome: {
@@ -146,9 +146,38 @@ module.exports = {
         enabled: '[&{username}: Eventmode enabled]',
         disabled: '[&{username}: Eventmode disabled]'
     },
-    countryblocks: {
-        skip: '[CountryBlock]',
-        default: '@&{username}, your song "&{song}" was automatically blacklisted bacause it\'s blocked in the following countries: "&{countries}"',
-        bl_reason: 'Blocked in the following countries: &{countries}'
+    youtubeGuard: {
+        skip: '[YouTubeGuard]',
+        blocked: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
+            bl_reason: 'Blocked in the following countries: &{countries}'
+        },
+        deleted: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
+            bl_reason: 'Video was deleted.'
+        },
+        rejected: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been rejected by YouTube with the following reason: &{reason}',
+            bl_reason: 'Rejected by YouTube: &{reason}'
+        },
+        private: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because the publisher made it private. Contact a staffmemeber when you think it\'s available again to remove it from the blacklist.',
+            bl_reason: 'Video is set to private.',
+            reasons: {
+                claim: 'The video was claimed.',
+                copyright: 'The video contained content with copyright.',
+                duplicate: 'The video was an duplicate of an other video',
+                inappropriate: 'The video contains inappropoiate content.',
+                length: 'The video is too long',
+                termsOfUse: 'The Video violates the terms of use.',
+                trademark: 'An trademark was used unallowed',
+                uploaderAccountClosed: 'The Uploader\'s account has been closed',
+                uploaderAccountSuspended: 'The Uploader\'s account has been suspendend'
+            }
+        },
+        embeddable: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
+            bl_reason: 'Video not embeddable'
+        }
     }
 };
