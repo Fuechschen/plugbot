@@ -78,6 +78,7 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
         });
     });
     story.info('meta', 'Successfully authed to plug.dj');
+    utils.loadCleverbot();
 });
 
 plugged.on(plugged.CONN_ERROR, function (err) {
@@ -596,8 +597,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                 });
                             });
                         }
-                    }
-                    else {
+                    } else {
                         redis.get('user:role:save:' + data.id).then(function (perm) {
                             if (perm < 2) {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
@@ -638,6 +638,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                         });
                                     });
                                 });
+                            } else if (!S(data.message).startsWith('!')) {
+                                utils.sendToCleverbot(data);
                             }
                         });
                     }

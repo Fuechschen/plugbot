@@ -131,7 +131,7 @@ module.exports = {
     cleverbot: {
         enabled: '[&{username}: Cleverbot enabled]',
         disabled: '[&{username}: Cleverbot disabled]',
-        format: '&{username} &{message}'
+        format: '@&{username} &{message}'
     },
     welcome: {
         new: 'Welcome @&{username}. I see this is your fist time joining the room. Remember to obey the rules and have fun!',

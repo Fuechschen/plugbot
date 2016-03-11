@@ -1,11 +1,5 @@
 var cleverbot;
-try {
-    var Cleverbot = required('cleverbot-node');
-    cleverbot = new Cleverbot;
-    cleverbot.prepare();
-} catch (e) {
-    cleverbot = undefined;
-}
+
 module.exports = {
     replace: function (str, replacer) {
         var keys = _.keys(replacer);
@@ -209,11 +203,12 @@ module.exports = {
         }
     },
     sendToCleverbot: function (data) {
-        if (cleverbot !== undefined) {
+        if (cleverbot !== undefined && config.cleverbot.enabled) {
             cleverbot.write(data.message.replace('@' + plugged.getSelf().username, '').trim(), function (resp) {
-                plugged.sendChat(this.replace(langfile.cleverbot.format, {
+                story.debug('cleverbot', resp.message);
+                plugged.sendChat(utils.replace(langfile.cleverbot.format, {
                     username: data.username,
-                    messgae: resp.message
+                    message: resp.message
                 }));
             });
         }
@@ -298,5 +293,16 @@ module.exports = {
     containsplug: function (string) {
         return S(string).contains('https://plug.dj/');
         //return  string.match(/https?:\/\/plug\.dj\/.+/i).length === string.match(/https?:\/\/[sb][ul][po][pg]o?r?t?\.?plug\.dj\//i).length
+    },
+    loadCleverbot: function(){
+        try {
+            var Cleverbot = require('cleverbot-node');
+            cleverbot = new Cleverbot;
+            cleverbot.prepare();
+            story.info('cleverbot', 'Cleverbot loaded and ready.');
+        } catch (e) {
+            cleverbot = undefined;
+            story.info('cleverbot', 'Unable to load cleverbot-integration.', {attach: e});
+        }
     }
 };
