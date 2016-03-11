@@ -285,8 +285,8 @@ module.exports = {
     },
     contains: function (string, array) {
         var str = S(string);
-        for (var st in array) {
-            if (str.contains(str)) return true;
+        for (var i = 0; i < array.length; i++) {
+            if(str.contains(array[i])) return true;
         }
         return false;
     },
