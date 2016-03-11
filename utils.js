@@ -302,7 +302,8 @@ module.exports = {
             story.info('cleverbot', 'Cleverbot loaded and ready.');
         } catch (e) {
             cleverbot = undefined;
-            story.info('cleverbot', 'Unable to load cleverbot-integration.', {attach: e});
+            story.info('cleverbot', 'Unable to load cleverbot-integration.');
+            story.debug('cleverbot', 'Unable to load cleverbot-integration.', {attach: e});
         }
     }
 };

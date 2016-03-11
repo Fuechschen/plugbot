@@ -974,4 +974,31 @@ commands.state = {
     }
 };
 
+commands.filterreset = {
+    handler: function (data) {
+        redis.get('user:role:save:' + data.id).then(function (perm) {
+            if (config.options.bouncer_plus ? (perm > 1) : (perm > 2)) {
+                var split = data.message.split(' ');
+                if (split.length > 2) {
+                    var user = plugged.getUserByName(S(_.initial(_.rest(split, 1)).join(' ')).chompLeft('@').chompRight(' ').s);
+                    if (user !== undefined) {
+                        redis.set('user:chat:spam:' + user.id + ':points', 0).then(function(){
+                            redis.set('user:chat:spam:' + user.id + ':points', 0).then(function(){
+                               plugged.sendChat(utils.replace(langfile.filterreset.default, {username: user.username, mod: data.username}));
+                            });
+                        });
+                    } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                        username: data.username,
+                        cmd: 'FilterReset'
+                    }), 20);
+                } else plugged.sendChat(utils.replace(langfile.error.argument, {
+                    username: data.username,
+                    cmd: 'FilterReset'
+                }), 20);
+            }
+        });
+        plugged.removeChatMessage(data.cid);
+    }
+};
+
 module.exports = commands;

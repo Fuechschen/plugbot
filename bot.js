@@ -12,7 +12,6 @@ var Plugged = require('plugged');
 var Sequelize = require('sequelize');
 var IoRedis = require('ioredis');
 
-
 sequelize = new Sequelize(config.sequelize.database, config.sequelize.username, config.sequelize.password, config.sequelize.options);
 models = {
     User: sequelize.import(path.join(__dirname, 'models', 'User')),
@@ -514,7 +513,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                         if (!S(data.message).startsWith('!')) {
                             redis.incr('user:mute:' + data.id + ':violation').then(function () {
                                 redis.get('user:mute:' + data.id + ':violation').then(function (val) {
-                                    if (val > config.chatfilter.spam.mute_violation) {
+                                    if (parseInt(val, 10) > config.chatfilter.spam.mute_violation) {
                                         plugged.sendChat(utils.replace(langfile.chatfilter.spam.hard_mute, {username: data.username}), 60);
                                         plugged.muteUser(data.id, plugged.MUTEDURATION.LONG, plugged.BANREASON.SPAMMING);
                                     }
@@ -537,13 +536,13 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                         });
                                     }
                                     redis.get('user:chat:spam:' + data.id + ':points').then(function (points) {
-                                        if (points >= config.chatfilter.spam.points) {
+                                        if (parseInt(points, 10) >= config.chatfilter.spam.points) {
                                             redis.incr('user:chat:spam:' + data.id + ':warns');
                                             plugged.removeChatMessage(data.cid);
                                             plugged.sendChat(utils.replace(langfile.chatfilter.spam.warn, {username: data.username}), 60);
                                         }
                                         redis.get('user:chat:spam:' + data.id + ':warns').then(function (warns) {
-                                            if (warns > config.chatfilter.spam.warns) {
+                                            if (parseInt(warns, 10) > config.chatfilter.spam.warns) {
                                                 plugged.sendChat(utils.replace(langfile.chatfilter.spam.mute, {username: data.username}), 60);
                                                 redis.set('user:mute:' + data.id, 1).then(function () {
                                                     redis.set('user:mute:' + data.id + ':violation', 0);
@@ -552,7 +551,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                             } else {
                                                 if (utils.contains(data.message, config.chatfilter.words.blacklist)) {
                                                     plugged.removeChatMessage(data.cid);
-                                                    redis.incrby('user:chat:spam:' + data.id + ':points', 7);
+                                                    redis.incrby('user:chat:spam:' + data.id + ':points', 10);
                                                 } else if (utils.containsplug(data.message)) {
                                                     plugged.removeChatMessage(data.cid);
                                                     redis.incrby('user:chat:spam:' + data.id + ':points', 20);

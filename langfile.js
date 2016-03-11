@@ -204,5 +204,8 @@ module.exports = {
             lockskippos: 'LockSkipPos'
 
         }
+    },
+    filterreset: {
+        default: '[&{mod}: FilterReset] Reset spamscore for &{username}.'
     }
 };
