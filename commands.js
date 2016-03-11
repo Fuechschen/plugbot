@@ -983,7 +983,7 @@ commands.filterreset = {
                     var user = plugged.getUserByName(S(_.initial(_.rest(split, 1)).join(' ')).chompLeft('@').chompRight(' ').s);
                     if (user !== undefined) {
                         redis.set('user:chat:spam:' + user.id + ':points', 0).then(function(){
-                            redis.set('user:chat:spam:' + user.id + ':points', 0).then(function(){
+                            redis.set('user:chat:spam:' + user.id + ':warns', 0).then(function(){
                                plugged.sendChat(utils.replace(langfile.filterreset.default, {username: user.username, mod: data.username}));
                             });
                         });
