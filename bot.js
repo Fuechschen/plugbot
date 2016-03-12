@@ -424,7 +424,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
                     else plugged.removeStaff(user.id);
                 }
-                usr.updateAttributes({status: true});
+                usr.updateAttributes({status: true, slug: user.slug, username: user.username});
                 if (config.options.welcome.old) setTimeout(function () {
                     plugged.sendChat(utils.replace(langfile.welcome.old, {username: user.username}), 60);
                 }, 6 * 1000)
@@ -460,7 +460,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
                     else plugged.removeStaff(user.id);
                 }
-                usr.updateAttributes({status: true});
+                usr.updateAttributes({status: true, slug: user.slug, username: user.username});
                 if (config.options.welcome.old) setTimeout(function () {
                     plugged.sendChat(utils.replace(langfile.welcome.old, {username: user.username}), 60);
                 }, 6 * 1000)
@@ -567,6 +567,9 @@ plugged.on(plugged.JOINED_ROOM, function () {
             }
         }
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
+        redis.set('user:afk:' + data.id, 1).then(function () {
+            redis.expire('user:afk:' + data.id, config.afk.time);
+        });
     });
 
     plugged.on(plugged.CHAT_MENTION, function (data) {
@@ -646,6 +649,9 @@ plugged.on(plugged.JOINED_ROOM, function () {
             }
         }
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
+        redis.set('user:afk:' + data.id, 1).then(function () {
+            redis.expire('user:afk:' + data.id, config.afk.time);
+        });
     });
 
     plugged.on(plugged.MOD_STAFF, function (data) {

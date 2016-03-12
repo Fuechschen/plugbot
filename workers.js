@@ -18,5 +18,6 @@ module.exports = {
                 });
             });
         });
-    }, 900 * 1000)
+    }, 900 * 1000),
+    afk: undefined
 };
