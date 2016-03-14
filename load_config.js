@@ -1,4 +1,9 @@
-var conf = require('./config.js');
+var conf;
+try {
+    conf = require('./config.js');
+} catch (e){
+    throw new Error('No config file. Copy config.example.js to config.js and insert your data.');
+}
 
 if (conf.apiKeys.youtube === '' || conf.apiKeys.soundcloud === '') {
     throw new Error('You are missing at least one api-key.');
