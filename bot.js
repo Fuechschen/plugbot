@@ -417,41 +417,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
         redis.exists('user:chat:spam:' + user.id + ':warns').then(function (ex) {
             if (ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
         });
-        models.User.find({where: {id: user.id}}).then(function (usr) {
-            if (usr !== null && usr !== undefined) {
-                if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
-                if (usr.super_user === false && user.role !== usr.s_role) {
-                    if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
-                    else plugged.removeStaff(user.id);
-                }
-                usr.updateAttributes({status: true, slug: user.slug, username: user.username});
-                if (config.options.welcome.old) setTimeout(function () {
-                    plugged.sendChat(utils.replace(langfile.welcome.old, {username: user.username}), 60);
-                }, 6 * 1000)
-            } else {
-                if (config.options.welcome.new) setTimeout(function () {
-                    plugged.sendChat(utils.replace(langfile.welcome.new, {username: user.username}), 60);
-                }, 6 * 1000);
-                models.User.create({
-                    id: user.id,
-                    username: user.username,
-                    slug: user.slug,
-                    role: user.role,
-                    global_role: user.gRole,
-                    badge: user.badge,
-                    language: user.language,
-                    avatar_id: user.avatarID,
-                    blurb: user.blurb
-                });
-            }
-        });
-        story.info('join', utils.userLogString(user));
-    });
-
-    plugged.on(plugged.USER_JOIN, function (user) {
-        redis.set('user:chat:spam:' + user.id + ':points', 0);
-        redis.exists('user:chat:spam:' + user.id + ':warns').then(function (ex) {
-            if (ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        redis.set('user:afk:' + user.id, 1).then(function () {
+            redis.expire('user:afk:' + user.id, config.afk.time);
         });
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
@@ -484,10 +451,64 @@ plugged.on(plugged.JOINED_ROOM, function () {
         story.info('join', utils.userLogString(user));
     });
 
+    plugged.on(plugged.USER_JOIN, function (user) {
+        redis.set('user:chat:spam:' + user.id + ':points', 0);
+        redis.exists('user:chat:spam:' + user.id + ':warns').then(function (ex) {
+            if (ex === 0) redis.set('user:chat:spam:' + user.id + ':warns', 0);
+        });
+        redis.set('user:afk:' + user.id, 1).then(function () {
+            redis.expire('user:afk:' + user.id, config.afk.time);
+        });
+        if (config.options.dcmoveback && !config.state.eventmode) {
+            redis.exists('user:waitlist:position:' + user.id).then(function (ex) {
+                if (ex === 1) {
+                    redis.get('user:waitlist:position:' + user.id).then(function (pos) {
+                        pos = parseInt(pos, 10);
+                        if (pos !== -1 && pos <= utils.wlPosition(user)) {
+                            if (utils.wlPosition(user) === -1) plugged.addToWaitlist(user.id);
+                            plugged.moveDJ(user.id, pos);
+                        }
+                    });
+                }
+            });
+        }
+        models.User.find({where: {id: user.id}}).then(function (usr) {
+            if (usr !== null && usr !== undefined) {
+                if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
+                if (!usr.super_user && user.role !== usr.s_role) {
+                    if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
+                    else plugged.removeStaff(user.id);
+                }
+                usr.updateAttributes({status: true, slug: user.slug, username: user.username});
+                if (config.options.welcome.old) setTimeout(function () {
+                    plugged.sendChat(utils.replace(langfile.welcome.old, {username: user.username}), 60);
+                }, 6 * 1000)
+            } else {
+                if (config.options.welcome.new) setTimeout(function () {
+                    plugged.sendChat(utils.replace(langfile.welcome.new, {username: user.username}), 60);
+                }, 6 * 1000);
+                models.User.create({
+                    id: user.id,
+                    username: user.username,
+                    slug: user.slug,
+                    role: user.role,
+                    global_role: user.gRole,
+                    badge: user.badge,
+                    language: user.language,
+                    avatar_id: user.avatarID,
+                    blurb: user.blurb
+                });
+            }
+        });
+        story.info('join', utils.userLogString(user));
+    });
+
     plugged.on(plugged.USER_LEAVE, function (user) {
-        redis.del('user:role:save:' + user.id);
-        models.User.update({status: false}, {where: {id: user.id}});
-        story.info('leave', utils.userLogString(user));
+        if (user !== null && user !== undefined) {
+            redis.del('user:role:save:' + user.id);
+            models.User.update({status: false}, {where: {id: user.id}});
+            story.info('leave', utils.userLogString(user));
+        }
     });
 
     plugged.on(plugged.CHAT, function (data) {
@@ -569,6 +590,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
         redis.set('user:afk:' + data.id, 1).then(function () {
             redis.expire('user:afk:' + data.id, config.afk.time);
+            redis.set('user:afk:' + data.id + ':removes', 0);
         });
     });
 
@@ -651,6 +673,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
         redis.set('user:afk:' + data.id, 1).then(function () {
             redis.expire('user:afk:' + data.id, config.afk.time);
+            redis.set('user:afk:' + data.id + ':removes', 0);
         });
     });
 
@@ -716,5 +739,28 @@ plugged.on(plugged.JOINED_ROOM, function () {
         if (data.mi !== plugged.getSelf().id) {
             story.info('skip', utils.userLogString(data.m, data.mi));
         }
+    });
+
+    plugged.on(plugged.MOD_ADD_DJ, function (data) {
+        if (data.mi !== plugged.getSelf.id) {
+            story.info('Add', utils.userLogString(data.m, data.mi) + ' added ' + utils.userLogString(data.username, data.id));
+        }
+    });
+
+    plugged.on(plugged.WAITLIST_UPDATE, function (waitlist) {
+        waitlist = utils.clone(waitlist);
+        plugged.getUsers().forEach(function (user) {
+            redis.set('user:waitlist:position:' + user.id, utils.wlPosition(user, waitlist)).then(function () {
+                redis.expire('user:waitlist:position:' + user.id, config.afk.time);
+            });
+        });
+        waitlist.forEach(function (id) {
+            redis.exists('user:waitlist:ban:' + id).then(function (ex) {
+                if (ex === 1) {
+                    plugged.sendChat(utils.replace(langfile.wlban.remove, {username: plugged.getUserByID(id).username}));
+                    plugged.removeDJ(id);
+                }
+            });
+        });
     });
 });

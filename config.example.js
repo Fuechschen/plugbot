@@ -7,6 +7,7 @@ module.exports = {
         room: '',
         bouncer_plus: true,
         loglevel: 'INFO',
+        dcmoveback: true,
         welcome: {
             new: true,
             old: true
@@ -83,5 +84,14 @@ module.exports = {
     playlists: {
         play: 0,
         none: 0
+    },
+    afk: {
+        time: 3600,
+        warn: 120,
+        remove: 120,
+        kick: 2
+    },
+    pm2: {
+        pid: 'bot'
     }
 };

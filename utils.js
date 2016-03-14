@@ -125,7 +125,7 @@ module.exports = {
     loadConfigfromRedis: function () {
         var loaded = 0;
         redis.exists('meta:config:state:eventmode').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:state:eventmode').then(function (val) {
                     config.state.eventmode = val === '1';
                     load('eventmode', config.state.eventmode);
@@ -133,7 +133,7 @@ module.exports = {
             } else load('eventmode', 'not stored')
         });
         redis.exists('meta:config:voteskip:enabled').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:voteskip:enabled').then(function (val) {
                     config.voteskip.enabled = val === '1';
                     load('voteskip', config.voteskip.enabled)
@@ -141,7 +141,7 @@ module.exports = {
             } else load('voteskip', 'not stored')
         });
         redis.exists('meta:config:timeguard:enabled').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:timeguard:enabled').then(function (val) {
                     config.timeguard.enabled = val === '1';
                     load('timeguard', config.timeguard.enabled);
@@ -149,7 +149,7 @@ module.exports = {
             } else load('timeguard', 'not stored');
         });
         redis.exists('meta:config:history:skipenabled').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:history:skipenabled').then(function (val) {
                     config.history.skipenabled = val === '1';
                     load('historyskip', config.history.skipenabled);
@@ -157,7 +157,7 @@ module.exports = {
             } else load('historyskip', 'not stored');
         });
         redis.exists('meta:config:cleverbot:enabled').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:cleverbot:enabled').then(function (val) {
                     config.cleverbot.enabled = val === '1';
                     load('cleverbot', config.cleverbot.enabled);
@@ -165,7 +165,7 @@ module.exports = {
             } else load('cleverbot', 'not stored');
         });
         redis.exists('meta:config:lockskip:move_pos').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:lockskip:move_pos').then(function (val) {
                     config.lockskip.move_pos = parseInt(val);
                     load('lockskippos', config.lockskip.move_pos);
@@ -173,7 +173,7 @@ module.exports = {
             } else load('lockskippos', 'not stored');
         });
         redis.exists('meta:config:options:bouncer_plus').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:options:bouncer_plus').then(function (val) {
                     config.options.bouncer_plus = val === '1';
                     load('bouncer+', config.options.bouncer_plus);
@@ -181,7 +181,7 @@ module.exports = {
             } else load('bouncer+', 'not stored');
         });
         redis.exists('meta:config:state:lockdown').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:state:lockdown').then(function (val) {
                     config.state.lockdown = val === '1';
                     load('lockdown', config.state.lockdown);
@@ -189,17 +189,25 @@ module.exports = {
             } else load('lockdown', 'not stored');
         });
         redis.exists('meta:config:chatfilter:enabled').then(function (ex) {
-            if (ex) {
+            if (ex === 1) {
                 redis.get('meta:config:chatfilter:enabled').then(function (val) {
                     config.chatfilter.enabled = val === '1';
                     load('chatfilter', config.chatfilter.enabled);
                 });
             } else load('chatfilter', 'not stored');
         });
+        redis.exists('meta:config:options:dcmoveback').then(function (ex) {
+            if (ex === 1) {
+                redis.get('meta:config:options:dcmoveback').then(function (val) {
+                    config.options.dcmoveback = val === '1';
+                    load('dcmoveback', config.options.dcmoveback);
+                });
+            } else load('dcmoveback', 'not stored');
+        });
 
-        function load(name, val) {
+        function load (name, val) {
             loaded = loaded + 1;
-            story.debug('meta', 'Loaded ' + name + ' [' + val + '] from Redis. ' + loaded + '/8');
+            story.debug('meta', 'Loaded ' + name + ' [' + val.toString() + '] from Redis. ' + loaded + '/9');
         }
     },
     sendToCleverbot: function (data) {
@@ -241,7 +249,7 @@ module.exports = {
         options = options || {};
         if (options.deep === undefined) options.deep = false;
         if (options.exclude === undefined) options.exclude = [];
-        function copy(obj, level) {
+        function copy (obj, level) {
             if (obj == null || typeof obj !== 'object') return obj;
             var clone, i;
             if (obj instanceof Array) {
@@ -286,7 +294,7 @@ module.exports = {
     contains: function (string, array) {
         var str = S(string);
         for (var i = 0; i < array.length; i++) {
-            if(str.contains(array[i])) return true;
+            if (str.contains(array[i])) return true;
         }
         return false;
     },
@@ -294,7 +302,7 @@ module.exports = {
         return S(string).contains('https://plug.dj/');
         //return  string.match(/https?:\/\/plug\.dj\/.+/i).length === string.match(/https?:\/\/[sb][ul][po][pg]o?r?t?\.?plug\.dj\//i).length
     },
-    loadCleverbot: function(){
+    loadCleverbot: function () {
         try {
             var Cleverbot = require('cleverbot-node');
             cleverbot = new Cleverbot;
@@ -304,6 +312,84 @@ module.exports = {
             cleverbot = undefined;
             story.info('cleverbot', 'Unable to load cleverbot-integration.');
             story.debug('cleverbot', 'Unable to load cleverbot-integration.', {attach: e});
+        }
+    },
+    wlPosition: function (user, wl) {
+        wl = wl || plugged.getWaitlist();
+        return wl.indexOf(user.id);
+    },
+    afk: {
+        warn_1: function (arr) {
+            var usernames = '';
+            for (var i = 0; i < arr.length; i++) {
+                usernames += utils.replace(langfile.afk.usernames, {username: plugged.getUserByID(arr[i]).username});
+            }
+            plugged.sendChat(utils.replace(langfile.afk.warn_1, {usernames: usernames}));
+            setTimeout(function () {
+                utils.afk.warn_2(arr);
+            }, config.afk.warn * 1000);
+        },
+        warn_2: function (arr) {
+            var afks = [];
+            checkafks(0);
+
+            function checkafks (index) {
+                redis.exists('user:afk:' + arr[index]).then(function (ex) {
+                    if (ex === 1) afks.push(arr[index]);
+                    if (arr.length > index + 1) checkafks(index + 1);
+                    else {
+                        var usernames = '';
+                        for (var i = 0; i < afks.length; i++) {
+                            usernames += utils.replace(langfile.afk.usernames, {username: plugged.getUserByID(afks[i]).username});
+                        }
+                        plugged.sendChat(utils.replace(langfile.afk.warn_2, {usernames: usernames}));
+                        setTimeout(function () {
+                            utils.afk.remove(afks);
+                        }, config.afk.remove * 1000);
+                    }
+                });
+            }
+        },
+        remove: function (arr) {
+            var kicks = [];
+            var removes = [];
+            decide(0);
+
+            function decide (index) {
+                redis.exists('user:afk:' + arr[index]).then(function (ex) {
+                    if (ex === 1) {
+                        redis.get('user:afk:' + arr[index] + ':removes').then(function (rems) {
+                            rems = parseInt(rems, 10);
+                            if (rems >= config.afk.kick) kicks.push(arr[index]);
+                            else removes.push(arr[index]);
+                            if (arr.length > index + 1) decide(index + 1);
+                            else doitnow();
+                        })
+                    }
+                });
+            }
+
+            function doitnow () {
+                kicks.forEach(function (id) {
+                    kickafk(id)
+                });
+                var usernames = '';
+                for (var i = 0; i < removes.length; i++) {
+                    usernames += utils.replace(langfile.afk.usernames, {username: plugged.getUserByID(removes[i]).username});
+                }
+                plugged.sendChat(utils.replace(langfile.afk.remove, {usernames: usernames}));
+                removes.forEach(function (id) {
+                    plugged.removeDJ(id);
+                });
+            }
+
+            function kickafk (id) {
+                plugged.sendChat(utils.replace(langfile.afk.kick, {username: plugged.getUserByID(id).username}));
+                plugged.banUser(id, plugged.BANDURATION.HOUR, plugged.BANREASON.VIOLATING_COMMUNITY_RULES);
+                setTimeout(function () {
+                    plugged.unbanUser(id);
+                }, 10 * 1000);
+            }
         }
     }
 };

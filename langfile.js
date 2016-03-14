@@ -201,11 +201,39 @@ module.exports = {
             bouncer_plus: 'Bouncer+',
             cleverbot: 'Cleverbot',
             lockdown: 'Lockdown',
-            lockskippos: 'LockSkipPos'
+            lockskippos: 'LockSkipPos',
+            dcmoveback: 'DCMoveback'
 
         }
     },
     filterreset: {
         default: '[&{mod}: FilterReset] Reset spamscore for &{username}.'
+    },
+    afk: {
+        warn_1: '&{usernames} Looks like you are afk. Please chat within the next 4 minutes or you will be removed from the waitlist.',
+        warn_2: '&{usernames} You are still inactive. This is your last warning. Chat or you will be removed from the waitlist.',
+        remove: '&{usernames} You will now be removed from the waitlist for being afk.',
+        kick: '[Kicking @&{username} for autojoining the waitlist]',
+        usernames: '@&{username}'
+    },
+    reloadroles: {
+        default: '[&{username}: ReloadRoles] Roles reloaded.'
+    },
+    dcmoveback: {
+        default: '[DCMoveback]',
+        enabled: '[&{username}: DCMoveback enabled]',
+        disabled: '[&{username}: DCMoveback disabled]'
+    },
+    restart: {
+        error: '[&{username}: Restart] Error while restarting...',
+        default: '[&{username}: Restart]'
+    },
+    cleanwl: {
+        default: '[&{username}: Clean Waitlist] @djs, the waitlist will now be cleared and rebuilt afterwards to remove ghost djs.'
+    },
+    wlban: {
+        default: '[&{mod}: WLBan] @&{username}, you were banned from the waitlist. You will now be removed everytime you try to join.',
+        remove: '@&{username}, you are banned from the waitlist and are therefore not allowed to join the waitlist.',
+        unban: '[&{mod}: WLUnban] @&{username} was unbanned from the waitlist.'
     }
 };

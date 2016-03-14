@@ -10,19 +10,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Fuechschen/plugbot.git"
+    "url": "git+https://github.com/Fuechschen/plugbot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Fuechschen/plugbot/issues"
   },
   "dependencies": {
     "chalk": "^1.1.1",
     "ioredis": "^1.15.1",
     "moment": "^2.12.0",
     "mysql": "^2.10.2",
-    "node-persist": "0.0.8",
     "path": "^0.12.7",
     "plugged": "^2.5.3",
     "request": "^2.69.0",
     "sequelize": "^3.19.3",
-    "shortid": "^2.2.4",
     "storyboard": "0.0.3",
     "string": "^3.3.1",
     "underscore": "^1.8.3"

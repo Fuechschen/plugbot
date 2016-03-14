@@ -19,5 +19,17 @@ module.exports = {
             });
         });
     }, 900 * 1000),
-    afk: undefined
+    afk: setInterval(function (){
+        var afks = [];
+        var wl = utils.clone(plugged.getWaitlist());
+        check(0);
+
+        function check(index){
+            redis.exists('user:afk:' + wl[index]).then(function(ex){
+                if(ex === 0) afks.push(wl[index]);
+                if(wl.length > index + 1) check(index + 1);
+                else utils.afk.warn_1(afks);
+            });
+        }
+    })
 };
