@@ -93,5 +93,10 @@ module.exports = {
     },
     pm2: {
         pid: 'bot'
+    },
+    rdjskip: {
+        enabled: true,
+        max_staff_active: 2,
+        votes: 3
     }
 };

@@ -1,6 +1,6 @@
 chalk = require('chalk');
-utils = require('./utils.js');
-config = require('./load_config.js');
+utils = require('./lib/utils.js');
+config = require('./lib/load_config.js');
 story = require('./logger.js');
 langfile = require('./langfile.js');
 _ = require('underscore');
@@ -50,8 +50,8 @@ plugged = new Plugged();
 plugged.login(config.login);//, token);
 //    });
 //});
-commands = require('./commands.js');
-workers = require('./workers.js');
+commands = require('./lib/commands.js');
+workers = require('./lib/workers.js');
 plugged.on(plugged.LOGIN_SUCCESS, function () {
     plugged.cacheChat(true);
     plugged.connect(config.options.room);

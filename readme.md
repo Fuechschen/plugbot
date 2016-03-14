@@ -1,13 +1,7 @@
 # Plugbot
 
 ## Functions
-* Chatfilter
-* Blacklisting
-* Historyskip
-* Voteskip
-* Timeguard
-* YoutubeGuard
-* DCMoveback
+see all functions here: [functions.md](/docs/functions.md)
 
 ## Installation
 1. Run ```npm install```.

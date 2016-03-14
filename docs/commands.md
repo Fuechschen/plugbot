@@ -72,3 +72,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!superuser|!su|(@user)|Sets the given user as superuser|
 |!reloadroles| | |Reloads all roles from the database|
 |!restart| | |Restarts the bot|
+
+
+() = required argument
+[] = optional argument
