@@ -607,12 +607,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     }
                 });
             }
+            if(!S(data.message).contains('[AFK]')){
+                redis.set('user:afk:' + data.id, 1).then(function () {
+                    redis.expire('user:afk:' + data.id, config.afk.time);
+                    redis.set('user:afk:' + data.id + ':removes', 0);
+                });
+            }
         }
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
-        redis.set('user:afk:' + data.id, 1).then(function () {
-            redis.expire('user:afk:' + data.id, config.afk.time);
-            redis.set('user:afk:' + data.id + ':removes', 0);
-        });
     });
 
     plugged.on(plugged.CHAT_MENTION, function (data) {
@@ -701,12 +703,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     }
                 });
             }
+            if(!S(data.message).contains('[AFK]')){
+                redis.set('user:afk:' + data.id, 1).then(function () {
+                    redis.expire('user:afk:' + data.id, config.afk.time);
+                    redis.set('user:afk:' + data.id + ':removes', 0);
+                });
+            }
         }
         story.info('chat', data.username + '[' + data.id + ']: ' + data.message);
-        redis.set('user:afk:' + data.id, 1).then(function () {
-            redis.expire('user:afk:' + data.id, config.afk.time);
-            redis.set('user:afk:' + data.id + ':removes', 0);
-        });
     });
 
     plugged.on(plugged.MOD_STAFF, function (data) {
