@@ -10,7 +10,8 @@ module.exports = {
         reload: '[&{username}: Reloaded Blacklist with &{count} items]',
         reasons: {
             u: 'Song unavailable.',
-            n: 'Song nsfw.'
+            n: 'Song nsfw.',
+            t: 'Song doesn\'t fit the room theme.'
         },
         unbl: {
             default: '[&{username}: UnBl] Removed "&{song}" from the blacklist.'
@@ -235,5 +236,13 @@ module.exports = {
         default: '[&{mod}: WLBan] @&{username}, you were banned from the waitlist. You will now be removed everytime you try to join.',
         remove: '@&{username}, you are banned from the waitlist and are therefore not allowed to join the waitlist.',
         unban: '[&{mod}: WLUnban] @&{username} was unbanned from the waitlist.'
+    },
+    define: {
+        no_definition_found: "[&{username}: Defin] No definition for &{word} found",
+        default: "[&{username}: Define] [ &{word} ] &{definition}"
+    },
+    rdjskip: {
+        default: '[&{username}: Skip] Vote added!',
+        skip: '[&{username}: Skip] Our residents decided to skip the current dj.'
     }
 };

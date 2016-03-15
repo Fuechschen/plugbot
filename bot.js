@@ -1,7 +1,7 @@
 chalk = require('chalk');
 utils = require('./lib/utils.js');
 config = require('./lib/load_config.js');
-story = require('./logger.js');
+story = require('./lib/logger.js');
 langfile = require('./langfile.js');
 _ = require('underscore');
 path = require('path');
@@ -31,6 +31,9 @@ redis.keys('user:role:save:*').then(function (keys) {
     keys.forEach(function (key) {
         redis.del(key);
     });
+});
+redis.exists('meta:data:staff:active').then(function(ex){
+   if(ex === 0) redis.set('meta:data:staff:active', 1);
 });
 
 utils.loadConfigfromRedis();
@@ -409,7 +412,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
             });
             story.info('score', utils.mediatitlelog(prev.media) + ' woots: ' + prev.score.positive + ' | grabs: ' + prev.score.grabs + ' | mehs: ' + prev.score.negative);
         }
-
+        redis.del('meta:data:rdjskip:votes');
     });
 
     plugged.on(plugged.FRIEND_JOIN, function (user) {
@@ -544,7 +547,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     }
                     else if (config.chatfilter.enabled) {
                         redis.get('user:role:save:' + data.id).then(function (perm) {
-                            if (perm < 2) {
+                            if (perm < 1) {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
                                 redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
                                     if (data.message === lastmsg) {
