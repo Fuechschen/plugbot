@@ -244,5 +244,9 @@ module.exports = {
     rdjskip: {
         default: '[&{username}: Skip] Vote added!',
         skip: '[&{username}: Skip] Our residents decided to skip the current dj.'
+    },
+    customcommand: {
+        default: '[&{username}: .&{trigger}] &{msg}',
+        reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.'
     }
 };

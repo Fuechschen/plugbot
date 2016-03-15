@@ -80,7 +80,7 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             story.info('meta', 'Loaded blacklist with ' + songs.length + ' entries.');
         });
     });
-    models.CustomCommand.findAll().then(function(ccs){
+    models.CustomCommand.findAll({where: {status: true}}).then(function(ccs){
        ccs.forEach(function(cc){
            redis.set('customcommands:command:' + cc.trigger, cc.message);
        }) ;
@@ -534,7 +534,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 redis.exists('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
                    if(ex === 1){
                        redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
-                          plugged.sendChat(utils.replace(cc, {username: data.username, botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population}));
+                          plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                        });
                    }
                 });
