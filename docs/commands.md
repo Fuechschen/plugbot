@@ -4,7 +4,8 @@
 
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
-|!link| | |Gives a link to the current song.|
+|!link| | |Gives a link to the current song|
+|!define| |(word)|Defines the given word|
 
 ## RDj Commands
 
@@ -13,6 +14,7 @@
 |!demote| | |Removes you as staff|
 |!promote| | |Adds you back as staff|
 |!ping| | |Pong!|
+|!skip|!fs| |Votes for skip|
 
 ## Bouncer Commands
 
@@ -35,6 +37,7 @@
 ## Bouncer+ Commands
 
 These commands are only available for bouncers when bouncer+ is enabled.
+
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
 |!add|!addwl|(@user)|Adds the given user to the waitlist|
@@ -58,8 +61,13 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!filterreset| |(@user)|Resets all chatfilterscores for the given user|
 |!clearhistory| | |Clears the songhistory|
 |!reloadblacklist| | |Reloads the blacklist from the database|
+|!reloadroles| | |Reloads all roles from the database|
+|!reloadcustomcommands|!reloadcc| |Reloads all CustomCommands from the database|
 |!lockskippos|!lspos|(position)|Sets the position for lockskip|
-|!chatlevel|!chatlvl|(level)|Sets the room chat level to the given level|
+|!chatlevel|!chatlvl/!clvl|(level)|Sets the room chat level to the given level|
+|!customcommand|!cc|WIP|WIP|
+|!woot|!w| |Let's the bot woot|
+|!meh|!m| |Let's the bot meh|
 
 ## Manager Commands
 
@@ -70,7 +78,6 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!welcomemsg| | |Sets the room welcome message|
 |!roomname| | |Sets the roomname|
 |!superuser|!su|(@user)|Sets the given user as superuser|
-|!reloadroles| | |Reloads all roles from the database|
 |!restart| | |Restarts the bot|
 
 
