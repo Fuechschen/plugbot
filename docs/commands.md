@@ -60,7 +60,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!chatfilter| | |Toggles chatfilter|
 |!filterreset| |(@user)|Resets all chatfilterscores for the given user|
 |!clearhistory| | |Clears the songhistory|
-|!reloadblacklist| | |Reloads the blacklist from the database|
+|!reloadblacklist|!reloadbl| |Reloads the blacklist from the database|
 |!reloadroles| | |Reloads all roles from the database|
 |!reloadcustomcommands|!reloadcc| |Reloads all CustomCommands from the database|
 |!lockskippos|!lspos|(position)|Sets the position for lockskip|
