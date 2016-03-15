@@ -5,7 +5,7 @@ These keys are needed to access some third-party ressources.
 ### Soundcloud
 This key is needed to return clean links for soundcloud-tracks
 
-0. Register an account at https://aoundcloud.com if aren't having one
+0. Register an account at https://soundcloud.com if aren't having one
 1. Go to your [app settings](http://soundcloud.com/you/apps) on soundcloud.
 2. Click on 'Register new application'
 3. Give the app a name of your choice (this is only to identify the app for you), read and accept the term and click on 'Register'
