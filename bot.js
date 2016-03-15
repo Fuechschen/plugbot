@@ -16,7 +16,8 @@ sequelize = new Sequelize(config.sequelize.database, config.sequelize.username, 
 models = {
     User: sequelize.import(path.join(__dirname, 'models', 'User')),
     Play: sequelize.import(path.join(__dirname, 'models', 'Play')),
-    Song: sequelize.import(path.join(__dirname, 'models', 'Song'))
+    Song: sequelize.import(path.join(__dirname, 'models', 'Song')),
+    CustomCommand: sequelize.import(path.join(__dirname, 'models', 'CustomCommand'))
 };
 models.Play.belongsTo(models.Song);
 models.Song.hasMany(models.Play);
@@ -78,6 +79,12 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             });
             story.info('meta', 'Loaded blacklist with ' + songs.length + ' entries.');
         });
+    });
+    models.CustomCommand.findAll().then(function(ccs){
+       ccs.forEach(function(cc){
+           redis.set('customcommands:command:' + cc.trigger, cc.message);
+       }) ;
+        story.info('meta', 'Loaded ' + ccs.length + ' customcommands.');
     });
     story.info('meta', 'Successfully authed to plug.dj');
     utils.loadCleverbot();
@@ -522,6 +529,15 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     commands[split[0]].handler(data);
                     story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
                 }
+            }
+            if(S(data.message).startsWith(config.customcommands.trigger) && config.customcommands.enabled){
+                redis.exists('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
+                   if(ex === 1){
+                       redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
+                          plugged.sendChat(utils.replace(cc, {username: data.username, botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population}));
+                       });
+                   }
+                });
             }
             if (config.state.lockdown) {
                 redis.get('user:role:save:' + data.id).then(function (perm) {
