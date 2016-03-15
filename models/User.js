@@ -16,6 +16,7 @@ module.exports = function(sequelize, Sequelize) {
         joined: {type: Sequelize.DATE, defaultValue: Sequelize.NOW},
         birthday: {type: Sequelize.DATE},
         status: {type: Sequelize.BOOLEAN, defaultValue: true},
+        afk_msg: {type: Sequelize.TEXT, allowNull: true},
         last_seen: {type: Sequelize.DATE, defaultValue: Sequelize.NOW},
         last_active: {type: Sequelize.DATE, defaultValue: Sequelize.NOW}
     }, {

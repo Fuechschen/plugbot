@@ -92,14 +92,27 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
 
 plugged.on(plugged.CONN_ERROR, function (err) {
     story.error('Error', 'Error while connecting to plug.dj.', {attach: err});
+    throw new Error('ConnecionError: ' + err.code + ' \n' + err.message);
 });
 
 plugged.on(plugged.LOGIN_ERROR, function (err) {
     story.error('Error', 'Error while logging in.', {attach: err});
+    throw new Error('LoginError: ' + err.code + ' \n' + err.message);
 });
 
 plugged.on(plugged.PLUG_ERROR, function (err) {
     story.error('Error', 'plug.dj encountered an error.', {attach: err});
+    throw new Error('PlugError: ' + err.code + ' \n' + err.message);
+});
+
+plugged.on(plugged.CONN_PART, function(err){
+    story.error('Error', 'The connection dropped unexpectedly', {attach: err});
+    throw new Error('ConnectionPart: ' + err.code + ' \n' + err.message);
+});
+
+plugged.on(plugged.PLUG_UPDATE, function(){
+    story.error('Update', 'plug.dj gets an update was therefore closed.');
+    throw new Error('PlugUpdate');
 });
 
 plugged.on(plugged.JOINED_ROOM, function () {
@@ -800,5 +813,10 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
             });
         });
+    });
+
+    plugged.on(plugged.MAINTENANCE_MODE, function(){
+       story.info('maintenance', 'Plug.dj went into maintenance mode, you may have to restart the bot.');
+        throw new Error('Maintenance Mode!');
     });
 });

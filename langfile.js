@@ -215,7 +215,11 @@ module.exports = {
         warn_2: '&{usernames} You are still inactive. This is your last warning. Chat or you will be removed from the waitlist.',
         remove: '&{usernames} You will now be removed from the waitlist for being afk.',
         kick: '[Kicking @&{username} for autojoining the waitlist]',
-        usernames: '@&{username}'
+        usernames: '@&{username}',
+        afk_msg: {
+            default: '@&{username}, &{user} is AFK [&{msg}]',
+            no_msg: '@&{username}, &{user} is AFK.'
+        }
     },
     reloadroles: {
         default: '[&{username}: ReloadRoles] Roles reloaded.'
