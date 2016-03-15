@@ -541,6 +541,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
             }
             if (config.state.lockdown) {
                 redis.get('user:role:save:' + data.id).then(function (perm) {
+                    perm = parseInt(perm, 10);
                     if (perm < 2) plugged.removeChatMessage(data.cid);
                 });
             } else {
@@ -563,6 +564,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     }
                     else if (config.chatfilter.enabled) {
                         redis.get('user:role:save:' + data.id).then(function (perm) {
+                            perm = parseInt(perm, 10);
                             if (perm < 1) {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
                                 redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
@@ -622,8 +624,18 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
                 }
             }
+            if(S(data.message).startsWith(config.customcommands.trigger) && config.customcommands.enabled){
+                redis.exists('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
+                    if(ex === 1){
+                        redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
+                            plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
+                        });
+                    }
+                });
+            }
             if (config.state.lockdown) {
                 redis.get('user:role:save:' + data.id).then(function (perm) {
+                    perm = parseInt(perm, 10);
                     if (perm < 2) plugged.removeChatMessage(data.cid);
                 });
             } else {
@@ -642,7 +654,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
                         }
                     } else {
                         redis.get('user:role:save:' + data.id).then(function (perm) {
-                            if (perm < 2) {
+                            perm = parseInt(perm, 10);
+                            if (perm < 1) {
                                 redis.incr('user:chat:spam:' + data.id + ':points');
                                 redis.get('user:chat:spam:' + data.id + ':lastmsg').then(function (lastmsg) {
                                     if (data.message === lastmsg) {
@@ -700,6 +713,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         data = data[0];
         if (data.moderatorID !== plugged.getSelf().id) {
             redis.get('user:role:save:' + data.moderatorID).then(function (perm) {
+                perm = parseInt(perm, 10);
                 if (perm > 2) {
                     redis.set('user:role:save:' + data.id, data.role);
                     models.User.update({s_role: data.role}, {where: {id: data.id}});
@@ -719,6 +733,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
     plugged.on(plugged.MOD_BAN, function (data) {
         if (data.moderatorID !== plugged.getSelf().id) {
             redis.get('user:role:save:' + data.moderatorID).then(function (perm) {
+                perm = parseInt(perm, 10);
                 if (perm < 2 && data.duration === plugged.BANDURATION.PERMA) {
                     plugged.sendChat(utils.replace(langfile.ban.no_staff_ban, {username: data.moderator}), 60);
                     plugged.unbanUser(data.id);
