@@ -97,7 +97,8 @@ module.exports = {
         }
     },
     ping: {
-        default: 'Pong!'
+        default: '[&{username}: Ping] Pong!',
+        pong: '[&{username}: Pong] Ping!'
     },
     link: {
         default: '[&{username}: Link] &{link}',
