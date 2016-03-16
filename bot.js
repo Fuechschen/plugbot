@@ -403,8 +403,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                 });
                             });
                         } else if(config.soundcloudGuard.enabled && plugged.getCurrentMedia().id === now.media.id && now.media.format === 2){
-                            request.get('https://api.soundcloud.com/tracks/' + now.emdia.cid + '?client_id=' + config.apiKeys.soundcloud, function(err, resp, body){
-                                if (!error && plugged.getCurrentMedia().id === now.media.id) {
+                            request.get('https://api.soundcloud.com/tracks/' + now.media.cid + '?client_id=' + config.apiKeys.soundcloud, function(err, resp){
+                                if (!err && plugged.getCurrentMedia().id === now.media.id) {
                                     if(resp.statusCode === 404){
                                         plugged.sendChat(langfile.soundcloudGuard.skip);
                                         plugged.skipDJ(booth.dj);
