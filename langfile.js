@@ -253,7 +253,7 @@ module.exports = {
         unban: '[&{mod}: WLUnban] @&{username} was unbanned from the waitlist.'
     },
     define: {
-        no_definition_found: "[&{username}: Defin] No definition for &{word} found",
+        no_definition_found: "[&{username}: Define] No definition for &{word} found",
         default: "[&{username}: Define] [ &{word} ] &{definition}"
     },
     rdjskip: {
