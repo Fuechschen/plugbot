@@ -69,7 +69,8 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!chatlevel|!chatlvl/!clvl|(level)|Sets the room chat level to the given level|
 |!youtubeguard|!ytguard| |Toggles YouTubeGuard|
 |!soundcloudguard|!scguard| |Toggles SoundCloudGuard|
-|!customcommand|!cc|WIP|WIP|
+|!togglecustomcommands|!togglecc| |Toggles CustomCommands|
+|!customcommands|!cc|WIP|WIP|
 |!woot|!w| |Let's the bot woot|
 |!meh|!m| |Let's the bot meh|
 

@@ -263,7 +263,9 @@ module.exports = {
     },
     customcommand: {
         default: '[&{username}: .&{trigger}] &{msg}',
-        reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.'
+        reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.',
+        enabled: '[&{username}: CustomCommands enabled]',
+        disabled: '[&{username}: CustomCommands disabled]'
     },
     chatlevel: {
         default: '[&{username}: Chatlevel]'
