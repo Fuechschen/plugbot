@@ -611,6 +611,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                        redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
                           plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                        });
+                       plugged.deleteMessage(data.cid);
                    }
                 });
             }
@@ -707,6 +708,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                         redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
                             plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                         });
+                        plugged.deleteMessage(data.cid);
                     }
                 });
             }
