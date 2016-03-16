@@ -258,5 +258,8 @@ module.exports = {
     },
     uptime: {
         default: '[&{username}: Uptime] Started &{time}'
+    },
+    songinfo: {
+        default: '[&{username}: SongInfo] &{title} - blacklisted: &{bl} - history: &{his}'
     }
 };
