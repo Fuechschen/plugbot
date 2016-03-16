@@ -67,6 +67,8 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!reloadcustomcommands|!reloadcc| |Reloads all CustomCommands from the database|
 |!lockskippos|!lspos|(position)|Sets the position for lockskip|
 |!chatlevel|!chatlvl/!clvl|(level)|Sets the room chat level to the given level|
+|!youtubeguard| | |Toggles YouTubeGuard|
+|!soundcloudguard| | |Toggles SoundCloudGuard|
 |!customcommand|!cc|WIP|WIP|
 |!woot|!w| |Let's the bot woot|
 |!meh|!m| |Let's the bot meh|

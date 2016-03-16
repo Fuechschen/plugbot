@@ -600,8 +600,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
         if (data.id !== plugged.getSelf().id) {
             if (S(data.message).startsWith('!')) {
                 var split = S(data.message).chompLeft('!').s.split(' ');
-                if (commands[split[0]] !== undefined) {
-                    commands[split[0]].handler(data);
+                if (commands[split[0].toLowerCase()] !== undefined) {
+                    commands[split[0].toLowerCase()].handler(data);
                     story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
                 }
             }
@@ -696,8 +696,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
         if (data.id !== plugged.getSelf().id) {
             if (S(data.message).startsWith('!')) {
                 var split = S(data.message).chompLeft('!').s.split(' ');
-                if (commands[split[0]] !== undefined) {
-                    commands[split[0]].handler(data);
+                if (commands[split[0].toLowerCase()] !== undefined) {
+                    commands[split[0].toLowerCase()].handler(data);
                     story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
                 }
             }

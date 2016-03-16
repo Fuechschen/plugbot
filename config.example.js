@@ -47,7 +47,8 @@ module.exports = {
     },
     apiKeys: {
         youtube: '',
-        soundcloud: ''
+        soundcloud: '',
+        wordnik: ''
     },
     state: {
         eventmode: false,
@@ -81,11 +82,15 @@ module.exports = {
             countries: ['DE']
         }
     },
+    soundcloudGuard: {
+        enabled: true
+    },
     playlists: {
         play: 0,
         none: 0
     },
     afk: {
+        enabled: false,
         time: 3600,
         warn: 120,
         remove: 120,
@@ -98,5 +103,9 @@ module.exports = {
         enabled: true,
         max_staff_active: 2,
         votes: 3
+    },
+    customcommands: {
+        enabled: true,
+        trigger: '.'
     }
 };

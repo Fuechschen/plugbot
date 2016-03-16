@@ -28,6 +28,10 @@ Disconnected users get moved back to their waitlist spot when they rejoin.
 
 Automatic check of youtube videos for their avability.
 
+## SoundCloudGuard
+
+Like YouTubeGuard, but for SoundCloud
+
 ## Eventmode
 
 Special mode to toggle historyskip, voteskip, timeguard and dcmoveback at once.

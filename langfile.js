@@ -188,14 +188,18 @@ module.exports = {
         embeddable: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
             bl_reason: 'Video not embeddable'
-        }
+        },
+        enabled: '[&{username}: YouTubeGuard enabled]',
+        disabled: '[&{username}: YouTubeGuard disabled]'
     },
     soundcloudGuard: {
         skip: '[SoundCloudGuard]',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
             bl_reason: 'Song was deleted.'
-        }
+        },
+        enabled: '[&{username}: SoundCloudGuard enabled]',
+        disabled: '[&{username}: SoundCloudGuard disabled]'
     },
     state: {
         default: '[&{username}: State]',
