@@ -255,5 +255,8 @@ module.exports = {
     },
     chatlevel: {
         default: '[&{username}: Chatlevel]'
+    },
+    uptime: {
+        default: '[&{username}: Uptime] Started &{time}'
     }
 };

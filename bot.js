@@ -43,6 +43,8 @@ timeouts = {
     stuck: null,
     tskip: null
 };
+
+starttime = moment();
 plugged = new Plugged();
 /*redis.get('meta:auth:save:token').then(function (token) {
  redis.get('meta:auth:save:jar').then(function (jar) {

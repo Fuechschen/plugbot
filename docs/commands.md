@@ -15,6 +15,7 @@
 |!promote| | |Adds you back as staff|
 |!ping| | |Pong!|
 |!skip|!fs| |Votes for skip|
+|!uptime| | |Displays uptime|
 
 ## Bouncer Commands
 
