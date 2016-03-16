@@ -221,7 +221,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                             }, 4 * 1000);
                         } else if (config.youtubeGuard.enabled && now.media.format === 1 && plugged.getCurrentMedia().id === now.media.id) {
                             request.get('https://www.googleapis.com/youtube/v3/videos?part=contentDetails,status&id=' + now.media.cid + '&key=' + config.apiKeys.youtube, function (error, resp, body) {
-                                if (!error && resp.statusCode === 200) {
+                                if (!error && resp.statusCode === 200 && plugged.getCurrentMedia().id === now.media.id) {
                                     body = JSON.parse(body);
                                     if (body.items.length > 0) {
                                         if (body.items[0] !== undefined) {
@@ -367,6 +367,33 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                 }, 4 * 1000);
                                             }
                                         }
+                                    } else {
+                                        plugged.sendChat(langfile.youtubeGuard.skip);
+                                        plugged.skipDJ(booth.dj);
+                                        setTimeout(function () {
+                                            plugged.sendChat(utils.replace(langfile.youtubeGuard.deleted.default, {
+                                                username: plugged.getUserByID(booth.dj).username,
+                                                song: utils.mediatitle(now.media)
+                                            }), 60);
+                                            models.Song.findOrCreate({
+                                                where: {
+                                                    format: now.media.format,
+                                                    cid: now.media.cid,
+                                                    plug_id: now.media.id
+                                                }, defaults: {
+                                                    format: now.media.format,
+                                                    cid: now.media.cid,
+                                                    plug_id: now.media.id,
+                                                    idBanned: true,
+                                                    ban_reason: langfile.youtubeGuard.deleted.bl_reason
+                                                }
+                                            }).spread(function (track) {
+                                                track.updateAttributes({
+                                                    isBanned: true,
+                                                    ban_reason: langfile.youtubeGuard.deleted.bl_reason
+                                                });
+                                            });
+                                        }, 4 * 1000);
                                     }
                                 } else story.warn('YoutubeApi', 'Error during youtube-api call.', {
                                     attach: {
@@ -374,6 +401,39 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                         response: resp
                                     }
                                 });
+                            });
+                        } else if(config.soundcloudGuard.enabled && plugged.getCurrentMedia().id === now.media.id && now.media.format === 2){
+                            request.get('https://api.soundcloud.com/tracks/' + now.emdia.cid + '?client_id=' + config.apiKeys.soundcloud, function(err, resp, body){
+                                if (!error && plugged.getCurrentMedia().id === now.media.id) {
+                                    if(resp.statusCode === 404){
+                                        plugged.sendChat(langfile.soundcloudGuard.skip);
+                                        plugged.skipDJ(booth.dj);
+                                        setTimeout(function () {
+                                            plugged.sendChat(utils.replace(langfile.soundcloudGuard.deleted.default, {
+                                                username: plugged.getUserByID(booth.dj).username,
+                                                song: utils.mediatitle(now.media)
+                                            }), 60);
+                                            models.Song.findOrCreate({
+                                                where: {
+                                                    format: now.media.format,
+                                                    cid: now.media.cid,
+                                                    plug_id: now.media.id
+                                                }, defaults: {
+                                                    format: now.media.format,
+                                                    cid: now.media.cid,
+                                                    plug_id: now.media.id,
+                                                    idBanned: true,
+                                                    ban_reason: langfile.soundcloudGuard.deleted.bl_reason
+                                                }
+                                            }).spread(function (track) {
+                                                track.updateAttributes({
+                                                    isBanned: true,
+                                                    ban_reason: langfile.soundcloudGuard.deleted.bl_reason
+                                                });
+                                            });
+                                        }, 4 * 1000);
+                                    }
+                                }
                             });
                         }
                     });

@@ -190,6 +190,13 @@ module.exports = {
             bl_reason: 'Video not embeddable'
         }
     },
+    soundcloudGuard: {
+        skip: '[SoundCloudGuard]',
+        deleted: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
+            bl_reason: 'Song was deleted.'
+        }
+    },
     state: {
         default: '[&{username}: State]',
         format: '[&{key}] --> &{val}',
