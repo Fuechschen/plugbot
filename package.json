@@ -30,6 +30,10 @@
   },
   "optionalDependencies": {
     "cleverbot-node": "git://github.com/avatarkava/cleverbot-node.git",
-    "pm2": "^1.0.2"
+    "pg": "^4.5.1",
+    "pg-hstore": "^2.3.2",
+    "pm2": "^1.0.2",
+    "sqlite3": "^3.1.1",
+    "tedious": "^1.13.2"
   }
 }
