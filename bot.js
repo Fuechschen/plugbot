@@ -827,6 +827,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     models.User.update({s_role: data.role}, {where: {id: data.id}});
                 } else {
                     redis.get('user:role:save:' + data.id).then(function (permlvl) {
+                        permlvl = parseInt(permlvl, 10);
                         var role = utils.role(permlvl);
                         if (role === plugged.USERROLE.NONE) plugged.removeStaff(data.id);
                         else plugged.addStaff(data.id, role);
@@ -834,7 +835,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 }
             });
-            story.info('promote', util.userLogString(data.moderator, data.moderatorID) + ': ' + utils.userLogString(data.username, data.id) + ' --> ' + utils.rolename(data.role));
+            story.info('promote', utils.userLogString(data.moderator, data.moderatorID) + ': ' + utils.userLogString(data.username, data.id) + ' --> ' + utils.rolename(data.role));
         }
     });
 
@@ -848,6 +849,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     plugged.banUser(data.id, plugged.BANDURATION.DAY, plugged.BANREASON.VIOLATING_COMMUNITY_RULES);
                 } else {
                     redis.get('user:role:save:' + data.id).then(function (plvl) {
+                        plvl = parseInt(plvl, 10);
                         if (plvl > 1) {
                             plugged.sendChat(utils.replace(langfile.ban.staff_ban, {username: data.moderator}), 60);
                             plugged.unbanUser(data.id);
@@ -855,7 +857,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 }
             });
-            story.info('ban', util.userLogString(data.moderator, data.moderatorID) + ': ' + data.username + ' --> ' + data.duration);
+            story.info('ban', utils.userLogString(data.moderator, data.moderatorID) + ': ' + data.username + ' --> ' + data.duration);
         }
     });
 
