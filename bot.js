@@ -84,7 +84,8 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
     });
     models.CustomCommand.findAll({where: {status: true}}).then(function(ccs){
        ccs.forEach(function(cc){
-           redis.set('customcommands:command:' + cc.trigger, cc.message);
+           if(cc.senderinfo) redis.set('customcommands:command:senderinfo:' + cc.trigger, cc.message);
+           else redis.set('customcommands:command:nosenderinfo:' + cc.trigger, cc.message);
        }) ;
         story.info('meta', 'Loaded ' + ccs.length + ' customcommands.');
     });
@@ -633,12 +634,21 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
             }
             if(S(data.message).startsWith(config.customcommands.trigger) && config.customcommands.enabled){
-                redis.exists('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
+                redis.exists('customcommands:command:senderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
                    if(ex === 1){
-                       redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
+                       redis.get('customcommands:command:senderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
                           plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                        });
                        plugged.deleteMessage(data.cid);
+                   } else {
+                       redis.exists('customcommands:command:nosenderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
+                           if(ex === 1){
+                               redis.get('customcommands:command:nosenderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
+                                   plugged.sendChat(utils.replace(langfile.customcommand.nosenderinfo, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
+                               });
+                               plugged.deleteMessage(data.cid);
+                           }
+                       });
                    }
                 });
             }
@@ -730,12 +740,21 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
             }
             if(S(data.message).startsWith(config.customcommands.trigger) && config.customcommands.enabled){
-                redis.exists('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
+                redis.exists('customcommands:command:senderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
                     if(ex === 1){
-                        redis.get('customcommands:command:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
+                        redis.get('customcommands:command:senderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
                             plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                         });
                         plugged.deleteMessage(data.cid);
+                    } else {
+                        redis.exists('customcommands:command:nosenderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
+                            if(ex === 1){
+                                redis.get('customcommands:command:nosenderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
+                                    plugged.sendChat(utils.replace(langfile.customcommand.nosenderinfo, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
+                                });
+                                plugged.deleteMessage(data.cid);
+                            }
+                        });
                     }
                 });
             }
