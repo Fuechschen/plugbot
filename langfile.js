@@ -199,6 +199,10 @@ module.exports = {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
             bl_reason: 'Song was deleted.'
         },
+        private: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it was set to private.',
+            bl_reason: 'Song is private.'
+        },
         enabled: '[&{username}: SoundCloudGuard enabled]',
         disabled: '[&{username}: SoundCloudGuard disabled]'
     },

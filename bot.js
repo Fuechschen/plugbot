@@ -432,6 +432,33 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                 });
                                             });
                                         }, 4 * 1000);
+                                    } else if(resp.statusCode === 403){
+                                        plugged.sendChat(langfile.soundcloudGuard.skip);
+                                        plugged.skipDJ(booth.dj);
+                                        setTimeout(function () {
+                                            plugged.sendChat(utils.replace(langfile.soundcloudGuard.private.default, {
+                                                username: plugged.getUserByID(booth.dj).username,
+                                                song: utils.mediatitle(now.media)
+                                            }), 60);
+                                            models.Song.findOrCreate({
+                                                where: {
+                                                    format: now.media.format,
+                                                    cid: now.media.cid,
+                                                    plug_id: now.media.id
+                                                }, defaults: {
+                                                    format: now.media.format,
+                                                    cid: now.media.cid,
+                                                    plug_id: now.media.id,
+                                                    idBanned: true,
+                                                    ban_reason: langfile.soundcloudGuard.private.bl_reason
+                                                }
+                                            }).spread(function (track) {
+                                                track.updateAttributes({
+                                                    isBanned: true,
+                                                    ban_reason: langfile.soundcloudGuard.private.bl_reason
+                                                });
+                                            });
+                                        }, 4 * 1000);
                                     }
                                 }
                             });
