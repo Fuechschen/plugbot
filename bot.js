@@ -847,12 +847,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     plugged.sendChat(utils.replace(langfile.ban.no_staff_ban, {username: data.moderator}), 60);
                     plugged.unbanUser(data.id);
                     plugged.banUser(data.id, plugged.BANDURATION.DAY, plugged.BANREASON.VIOLATING_COMMUNITY_RULES);
+                    plugged.removeStaff(data.moderatorID);
                 } else {
                     redis.get('user:role:save:' + data.id).then(function (plvl) {
                         plvl = parseInt(plvl, 10);
                         if (plvl > 1) {
                             plugged.sendChat(utils.replace(langfile.ban.staff_ban, {username: data.moderator}), 60);
                             plugged.unbanUser(data.id);
+                            plugged.removeStaff(data.moderatorID);
                         }
                     });
                 }
@@ -886,6 +888,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 perm = parseInt(perm, 10);
                 if(perm < 2){
                     plugged.sendChat(utils.replace(langfile.skip.no_mod_skip, {username: data.m}));
+                    plugged.removeStaff(data.mi);
                 }
             });
         }
