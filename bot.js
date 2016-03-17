@@ -877,6 +877,26 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
             });
         });
+        if(waitlist.length < 50){
+            redis.exists('meta:addqueue').then(function(ex){
+                if(ex === 1){
+                    redis.smemebers('meta:addqueue').then(function(q){
+                        redis.get('meta:addqueue:user::' + q[0]).then(function(pos){
+                            pos = parseInt(pos);
+                           redis.srem('meta:addqueue', q[0]).then(function(){
+                               plugged.addToWaitlist(q[0], function(err){
+                                  if(!err){
+                                      if(pos !== -1){
+                                          plugged.moveDJ(q[0], pos);
+                                      }
+                                  } else redis.sadd('meta:addqueue', q[0]);
+                               });
+                           })
+                        });
+                    });
+                }
+            });
+        }
     });
 
     plugged.on(plugged.MAINTENANCE_MODE, function(){

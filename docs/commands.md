@@ -7,6 +7,7 @@
 |!link| | |Gives a link to the current song|
 |!define| |(word)|Defines the given word|
 |!songinfo|!sinfo|[format:cid]|Gives information about the song|
+|!catfact|!catfacts| |Gives a catfact|
 
 ## RDj Commands
 

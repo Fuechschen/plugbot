@@ -275,5 +275,8 @@ module.exports = {
     },
     songinfo: {
         default: '[&{username}: SongInfo] &{title} - ID: &{sid} - blacklisted: &{bl} - history: &{his}'
+    },
+    catfact: {
+        default: '[&{username}: CatFact] &{fact}'
     }
 };
