@@ -18,6 +18,7 @@
 |!ping| | |Pong!|
 |!skip|!fs| |Votes for skip|
 |!uptime| | |Displays uptime|
+|!next| | |Gives the next song on the bot's playlist|
 
 ## Bouncer Commands
 
@@ -36,6 +37,7 @@
 |!leavewl| | |Let's the bot leave the waitlist|
 |!state| | |Gives the current settings|
 |!wlban| |(@user)|Bans the given user from the waitlist|
+|!shuffleplaylist|!shufflepl| |Shuffles the bot's playlist|
 
 ## Bouncer+ Commands
 

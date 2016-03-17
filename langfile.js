@@ -282,5 +282,11 @@ module.exports = {
     },
     catfact: {
         default: '[&{username}: CatFact] &{fact}'
+    },
+    next: {
+        default: '[&{username}: Next] Next Media on List: &{title}'
+    },
+    shuffle: {
+        default: '[&{username}: Shuffled playlist]'
     }
 };
