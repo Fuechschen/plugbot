@@ -637,14 +637,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 redis.exists('customcommands:command:senderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
                    if(ex === 1){
                        redis.get('customcommands:command:senderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
-                          plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
+                          plugged.sendChat(utils.replace(langfile.customcommand.default, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {username: data.username, botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                        });
                        plugged.deleteMessage(data.cid);
                    } else {
                        redis.exists('customcommands:command:nosenderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(ex){
                            if(ex === 1){
                                redis.get('customcommands:command:nosenderinfo:' + S(data.message).chompLeft(config.customcommands.trigger).s).then(function(cc){
-                                   plugged.sendChat(utils.replace(langfile.customcommand.nosenderinfo, {username: data.username, trigger: S(data.message).chompLeft(config.customcommands.trigger).s, msg: utils.replace(cc, {botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
+                                   plugged.sendChat(utils.replace(langfile.customcommand.nosenderinfo, {msg: utils.replace(cc, {username: data.username, botname: plugged.getSelf().username, roomname: plugged.getRoomMeta().name, guests: plugged.getRoomMeta().guests, usercount: plugged.getRoomMeta().population})}));
                                });
                                plugged.deleteMessage(data.cid);
                            }
