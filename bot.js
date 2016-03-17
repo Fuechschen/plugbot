@@ -880,6 +880,12 @@ plugged.on(plugged.JOINED_ROOM, function () {
     plugged.on(plugged.MOD_SKIP, function (data) {
         if (data.mi !== plugged.getSelf().id) {
             story.info('skip', utils.userLogString(data.m, data.mi));
+            redis.get('user:role:save:' + data.mi).then(function (perm) {
+                perm = parseInt(perm, 10);
+                if(perm < 2){
+                    plugged.sendChat(utils.replace(langfile.skip.no_mod_skip, {username: data.m}));
+                }
+            });
         }
     });
 

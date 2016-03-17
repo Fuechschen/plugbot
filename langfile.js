@@ -51,7 +51,8 @@ module.exports = {
             default: '@&{username}, your song "&{song}" is over the maximum of &{time} seconds.',
             enabled: '[&{username}: Timeguard enabled]',
             disabled: '[&{username}: Timeguard disabled]'
-        }
+        },
+        no_mod_skip: '@&{username} but why?'
     },
     error: {
         user_not_found: 'User wasn\'t found!',
