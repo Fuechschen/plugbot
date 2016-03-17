@@ -290,5 +290,23 @@ module.exports = {
     },
     shuffle: {
         default: '[&{username}: Shuffled playlist]'
+    },
+    lottery: {
+        default: '[&{username}: Lottery] Lottery in &{time} minutes. Join the waitlist and be active in chat to have a chence to be moved to #1. @djs',
+        one_minute: '[&{username}: Lottery] Lottery in one minute! @djs',
+        winner: '[&{mod}: Lottery] Our lucky winner is @&{username}.',
+        no_winner: '[&{username}: Lottery] No winner could be selected. Get active you little shits @djs'
+    },
+    roulette: {
+        default: '[&{username}: Roulette] A roulette was was started with &{moves} moves. Type !join to join.',
+        join: '[&{username: Join] Type !leave if you regret it.',
+        already_joined: '[&{username: Join] You can\'t join twice.',
+        leave: '[&{username}: Leave]',
+        not_joined: '[&{username}: Leave] You haven\'t joined any roulette.',
+        no_roulette: '[&{username: Join] There is nothing to join.',
+        no_joins: '[&{username}: Roulette] Nobody wants to play roulette? Okay...',
+        started: '[&{username}: Roulette] Starting roulette with &{users} users...',
+        lucky_winners: 'And our lucky winners are....',
+        winner: '&{username}'
     }
 };

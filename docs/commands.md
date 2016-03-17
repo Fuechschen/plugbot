@@ -81,7 +81,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!woot|!w| |Let's the bot woot|
 |!meh|!m| |Let's the bot meh|
 |!lottery| |[time]|Starts a lottery|
-|!roulette| |[time]|Starts a roulette|
+|!roulette| |(moves)[time]|Starts a roulette|
 
 ## Manager Commands
 Manager commands include bouncer and bouncer+ commands

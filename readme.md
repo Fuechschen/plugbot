@@ -16,3 +16,6 @@ To use features like ```!restart``` or autorestart, you have to use pm2.
 3. Start the with ```pm2 start bot.js --name bot```
 
 If you want to use another processname, remember to specify it in your config.
+
+
+License: [MIT](LICENSE.md)
