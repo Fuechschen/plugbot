@@ -298,7 +298,7 @@ module.exports = {
         no_winner: '[&{username}: Lottery] No winner could be selected. Get active you little shits @djs'
     },
     roulette: {
-        default: '[&{username}: Roulette] A roulette was was started with &{moves} moves. Type !join to join.',
+        default: '[&{username}: Roulette] A roulette was was started with &{moves} moves. Type !join to join. @djs',
         join: '[&{username}: Join] Type !leave if you regret it.',
         already_joined: '[&{username}: Join] You can\'t join twice.',
         leave: '[&{username}: Leave]',
