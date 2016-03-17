@@ -169,11 +169,7 @@ module.exports = {
         },
         rejected: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been rejected by YouTube with the following reason: &{reason}',
-            bl_reason: 'Rejected by YouTube: &{reason}'
-        },
-        private: {
-            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because the publisher made it private. Contact a staffmemeber when you think it\'s available again to remove it from the blacklist.',
-            bl_reason: 'Video is set to private.',
+            bl_reason: 'Rejected by YouTube: &{reason}',
             reasons: {
                 claim: 'The video was claimed.',
                 copyright: 'The video contained content with copyright.',
@@ -185,6 +181,10 @@ module.exports = {
                 uploaderAccountClosed: 'The Uploader\'s account has been closed',
                 uploaderAccountSuspended: 'The Uploader\'s account has been suspendend'
             }
+        },
+        private: {
+            default: '@&{username}, your song "&{song}" was automatically added to the blacklist because the publisher made it private. Contact a staffmemeber when you think it\'s available again to remove it from the blacklist.',
+            bl_reason: 'Video is set to private.'
         },
         embeddable: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
