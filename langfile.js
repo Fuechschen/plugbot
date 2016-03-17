@@ -308,5 +308,8 @@ module.exports = {
         started: '[&{username}: Roulette] Starting roulette with &{users} users...',
         lucky_winners: 'And our lucky winners are....',
         winner: '&{username}'
+    },
+    everyone: {
+        default: '[&{username}: @everyone] &{msg}'
     }
 };

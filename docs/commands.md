@@ -82,6 +82,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!meh|!m| |Let's the bot meh|
 |!lottery| |[time]|Starts a lottery|
 |!roulette| |(moves)[time]|Starts a roulette|
+|!everyone| |[msg]|Mentions everyone|
 
 ## Manager Commands
 Manager commands include bouncer and bouncer+ commands
