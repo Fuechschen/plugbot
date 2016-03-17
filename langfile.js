@@ -236,7 +236,9 @@ module.exports = {
         afk_msg: {
             default: '@&{username}, &{user} is AFK [&{msg}]',
             no_msg: '@&{username}, &{user} is AFK.'
-        }
+        },
+        enabled: '[&{username}: AFKRemoval enabled]',
+        disabled: '[&{username}: AFKR disabled]'
     },
     reloadroles: {
         default: '[&{username}: ReloadRoles] Roles reloaded.'

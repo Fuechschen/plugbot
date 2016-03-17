@@ -83,6 +83,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!lottery| |[time]|Starts a lottery|
 |!roulette| |(moves)[time]|Starts a roulette|
 |!everyone| |[msg]|Mentions everyone|
+|!toggleafk| | |Toggles AFKRemoval|
 
 ## Manager Commands
 Manager commands include bouncer and bouncer+ commands
