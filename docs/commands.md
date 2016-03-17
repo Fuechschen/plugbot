@@ -10,6 +10,7 @@
 |!catfact|!catfacts| |Gives a catfact|
 
 ## RDj Commands
+RDj commands include user commands
 
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
@@ -21,6 +22,7 @@
 |!next| | |Gives the next song on the bot's playlist|
 
 ## Bouncer Commands
+Bouncer commands include Rdj commands
 
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
@@ -78,6 +80,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!meh|!m| |Let's the bot meh|
 
 ## Manager Commands
+Manager commands include bouncer and bouncer+ commands
 
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
