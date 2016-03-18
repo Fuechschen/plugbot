@@ -282,7 +282,8 @@ module.exports = {
         default: '[&{username}: Uptime] Started &{time}'
     },
     songinfo: {
-        default: '[&{username}: SongInfo] &{title} - ID: &{sid} - blacklisted: &{bl} - history: &{his}'
+        default: '[&{username}: SongInfo] &{title} - ID: &{sid} - blacklisted: &{bl} - history: &{his}',
+        bl_reason: '[&{reason}]'
     },
     catfact: {
         default: '[&{username}: CatFact] &{fact}'
