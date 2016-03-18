@@ -63,7 +63,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!voteskip| | |Toggles voteskip|
 |!timeguard| | |Toggles timeguard|
 |!cleverbot| | |Toggles cleverbot|
-|!eventmode| |[-c/-l][-dc/-ec]|Toggles eventmode|
+|!eventmode| |[-c/-l/-u][-dc/-ec]|Toggles eventmode|
 |!lockdown| | |Toggles lockdown|
 |!dcmoveback| | |Toggles DCMoveback|
 |!chatfilter| | |Toggles chatfilter|
