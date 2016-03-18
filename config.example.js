@@ -8,6 +8,7 @@ module.exports = {
         bouncer_plus: true,
         loglevel: 'INFO',
         dcmoveback: true,
+        command_prefix: '!',
         welcome: {
             new: true,
             old: true

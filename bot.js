@@ -533,6 +533,19 @@ plugged.on(plugged.JOINED_ROOM, function () {
         redis.set('user:afk:' + user.id, 1).then(function () {
             redis.expire('user:afk:' + user.id, config.afk.time);
         });
+        if (config.options.dcmoveback && !config.state.eventmode) {
+            redis.exists('user:waitlist:position:' + user.id).then(function (ex) {
+                if (ex === 1) {
+                    redis.get('user:waitlist:position:' + user.id).then(function (pos) {
+                        pos = parseInt(pos, 10);
+                        if (pos !== -1 && pos <= utils.wlPosition(user)) {
+                            if (utils.wlPosition(user) === -1) plugged.addToWaitlist(user.id);
+                            plugged.moveDJ(user.id, pos);
+                        }
+                    });
+                }
+            });
+        }
         models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
@@ -626,8 +639,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.CHAT, function (data) {
         if (data.id !== plugged.getSelf().id) {
-            if (S(data.message).startsWith('!')) {
-                var split = S(data.message).chompLeft('!').s.split(' ');
+            if (S(data.message).startsWith(config.options.command_prefix)) {
+                var split = S(data.message).chompLeft(config.options.command_prefix).s.split(' ');
                 if (commands[split[0].toLowerCase()] !== undefined) {
                     commands[split[0].toLowerCase()].handler(data);
                     story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
@@ -664,7 +677,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 redis.exists('user:mute:' + data.id).then(function (exm) {
                     if (exm === 1) {
                         plugged.removeChatMessage(data.cid);
-                        if (!S(data.message).startsWith('!')) {
+                        if (!S(data.message).startsWith(config.options.command_prefix)) {
                             redis.incr('user:mute:' + data.id + ':violation').then(function () {
                                 redis.get('user:mute:' + data.id + ':violation').then(function (val) {
                                     if (parseInt(val, 10) > config.chatfilter.spam.mute_violation) {
@@ -732,8 +745,8 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.CHAT_MENTION, function (data) {
         if (data.id !== plugged.getSelf().id) {
-            if (S(data.message).startsWith('!')) {
-                var split = S(data.message).chompLeft('!').s.split(' ');
+            if (S(data.message).startsWith(config.options.command_prefix)) {
+                var split = S(data.message).chompLeft(config.options.command_prefix).s.split(' ');
                 if (commands[split[0].toLowerCase()] !== undefined) {
                     commands[split[0].toLowerCase()].handler(data);
                     story.info('command', utils.userLogString(data.username, data.id) + ': ' + split[0] + ' [' + data.message + ']');
@@ -767,7 +780,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 redis.exists('user:mute:' + data.id).then(function (exm) {
                     if (exm === 1) {
                         plugged.removeChatMessage(data.cid);
-                        if (!S(data.message).startsWith('!')) {
+                        if (!S(data.message).startsWith(config.options.command_prefix)) {
                             redis.incr('user:mute:' + data.id + ':violation').then(function () {
                                 redis.get('user:mute:' + data.id + ':violation').then(function (val) {
                                     if (val > config.chatfilter.spam.mute_violation) {
@@ -812,14 +825,14 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                                 } else if (utils.containsplug(data.message)) {
                                                     plugged.removeChatMessage(data.cid);
                                                     redis.incrby('user:chat:spam:' + data.id + ':points', 20);
-                                                } else if (!S(data.message).startsWith('!')) {
+                                                } else if (!S(data.message).startsWith(config.options.command_prefix)) {
                                                     utils.sendToCleverbot(data);
                                                 }
                                             }
                                         });
                                     });
                                 });
-                            } else if (!S(data.message).startsWith('!')) {
+                            } else if (!S(data.message).startsWith(config.options.command_prefix)) {
                                 utils.sendToCleverbot(data);
                             }
                         });
