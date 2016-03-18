@@ -507,7 +507,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
             redis.set('media:history:' + prev.media.format + ':' + prev.media.cid, 1).then(function () {
                 redis.expire('media:history:' + prev.media.format + ':' + prev.media.cid, config.history.time * 60);
             });
-            models.Song.find({where: {plug_id: now.media.id}}).then(function (song) {
+            models.Song.find({where: {plug_id: prev.media.id}}).then(function (song) {
                 models.User.find({where: {id: prev.dj.id}}).then(function (user) {
                     models.Play.create({
                         time: new Date,
