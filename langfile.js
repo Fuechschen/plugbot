@@ -313,6 +313,6 @@ module.exports = {
         winner: '&{username}'
     },
     everyone: {
-        default: '[&{username}: @everyone] &{msg}'
+        default: '[&{username}: @everyone ] &{msg}'
     }
 };
