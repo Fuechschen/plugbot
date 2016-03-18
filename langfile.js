@@ -274,7 +274,11 @@ module.exports = {
         reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.',
         enabled: '[&{username}: CustomCommands enabled]',
         disabled: '[&{username}: CustomCommands disabled]',
-        created: '[&{username}: CustomCommand created]'
+        created: '[&{username}: CustomCommand "&{trigger}" created]',
+        cc_enabled: '[&{username}: CustomCommand "&{trigger}" enabled]',
+        cc_disabled: '[&{username}: CustomCommand "&{trigger}" disabled]',
+        senderinfo_enabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]',
+        senderinfo_disabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]'
     },
     chatlevel: {
         default: '[&{username}: Chatlevel]'

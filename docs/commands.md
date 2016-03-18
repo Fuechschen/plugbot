@@ -77,7 +77,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!youtubeguard|!ytguard| |Toggles YouTubeGuard|
 |!soundcloudguard|!scguard| |Toggles SoundCloudGuard|
 |!togglecustomcommands|!togglecc| |Toggles CustomCommands|
-|!customcommands|!cc|WIP|WIP|
+|!customcommands|!cc|add(trigger)(message)/enable(trigger)/disable(trigger)/senderenable(trigger)/senderdisable(trigger)|Edits a CustomCommand|
 |!woot|!w| |Let's the bot woot|
 |!meh|!m| |Let's the bot meh|
 |!lottery| |[time]|Starts a lottery|
