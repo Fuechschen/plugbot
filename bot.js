@@ -220,6 +220,15 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: config.timeguard.time
                                 }), 60);
                             }, 4 * 1000);
+                        } else if(config.titleguard.enabled && utils.contains(utils.songtitle(now.media.author, now.media.title), config.titleguard.not_contain)){
+                            plugged.sendChat(langfile.titleguard.skip);
+                            plugged.skipDJ(booth.dj);
+                            setTimeout(function () {
+                                plugged.sendChat(utils.replace(langfile.titleguard.contained, {
+                                    username: plugged.getUserByID(booth.dj).username,
+                                    song: utils.songtitle(now.media.author, now.media.title)
+                                }), 60);
+                            }, 4 * 1000);
                         } else if (config.youtubeGuard.enabled && now.media.format === 1 && plugged.getCurrentMedia().id === now.media.id) {
                             request.get('https://www.googleapis.com/youtube/v3/videos?part=contentDetails,status&id=' + now.media.cid + '&key=' + config.apiKeys.youtube, function (error, resp, body) {
                                 if (!error && resp.statusCode === 200 && plugged.getCurrentMedia().id === now.media.id) {

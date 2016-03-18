@@ -87,6 +87,10 @@ module.exports = {
     soundcloudGuard: {
         enabled: true
     },
+    titleguard: {
+        enabled: true,
+        not_contain: ['big dick']
+    },
     playlists: {
         play: 0,
         none: 0

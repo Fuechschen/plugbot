@@ -321,5 +321,11 @@ module.exports = {
     },
     everyone: {
         default: '[&{username}: @everyone ] &{msg}'
+    },
+    titleguard: {
+        enabled: '[&{username}: TitleGuard enabled]',
+        disabled: '[&{username}: TitleGuard disabled]',
+        skip: '[TitleGuard]',
+        contained: '@&{username}, your song "&{title}" was automatically added to the blacklist because it\'s title contained a blacklisted phrase.'
     }
 };
