@@ -76,6 +76,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!chatlevel|!chatlvl/!clvl|(level)|Sets the room chat level to the given level|
 |!youtubeguard|!ytguard| |Toggles YouTubeGuard|
 |!soundcloudguard|!scguard| |Toggles SoundCloudGuard|
+|!titleguard| | |Toggles TitleGuard|
 |!togglecustomcommands|!togglecc| |Toggles CustomCommands|
 |!customcommands|!cc|add(trigger)(message)/enable(trigger)/disable(trigger)/senderenable(trigger)/senderdisable(trigger)|Edits a CustomCommand|
 |!woot|!w| |Let's the bot woot|

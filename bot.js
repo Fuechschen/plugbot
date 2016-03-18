@@ -220,7 +220,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                                     time: config.timeguard.time
                                 }), 60);
                             }, 4 * 1000);
-                        } else if(config.titleguard.enabled && utils.contains(utils.songtitle(now.media.author, now.media.title), config.titleguard.not_contain)){
+                        } else if(config.titleguard.enabled && utils.contains(utils.songtitle(now.media.author, now.media.title), config.titleguard.not_contain) && !config.state.eventmode){
                             plugged.sendChat(langfile.titleguard.skip);
                             plugged.skipDJ(booth.dj);
                             setTimeout(function () {
