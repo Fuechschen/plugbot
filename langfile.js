@@ -273,7 +273,8 @@ module.exports = {
         nosenderinfo: '&{msg}',
         reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.',
         enabled: '[&{username}: CustomCommands enabled]',
-        disabled: '[&{username}: CustomCommands disabled]'
+        disabled: '[&{username}: CustomCommands disabled]',
+        created: '[&{username}: CustomCommand created]'
     },
     chatlevel: {
         default: '[&{username}: Chatlevel]'
