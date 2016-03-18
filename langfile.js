@@ -156,7 +156,9 @@ module.exports = {
     },
     eventmode: {
         enabled: '[&{username}: Eventmode enabled]',
-        disabled: '[&{username}: Eventmode disabled]'
+        disabled: '[&{username}: Eventmode disabled]',
+        clear: '[&{username}: Eventmode] We\'re now going into eventmode. Waitlist will be locked and cleared! You will not be able to get your spot back @djs.',
+        lock: '[&{username}: Eventmode] We\'re now switching to eventmode. Waitlist will be locked! @djs'
     },
     youtubeGuard: {
         skip: '[YouTubeGuard]',
