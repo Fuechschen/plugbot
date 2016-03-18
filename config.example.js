@@ -9,6 +9,7 @@ module.exports = {
         loglevel: 'INFO',
         dcmoveback: true,
         command_prefix: '!',
+        disable_emote: true,
         welcome: {
             new: true,
             old: true
