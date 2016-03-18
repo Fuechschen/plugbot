@@ -26,7 +26,8 @@
     "sequelize": "^3.19.3",
     "storyboard": "0.0.3",
     "string": "^3.3.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "validator": "^5.1.0"
   },
   "optionalDependencies": {
     "cleverbot-node": "git://github.com/avatarkava/cleverbot-node.git",

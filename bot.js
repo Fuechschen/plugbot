@@ -3,6 +3,7 @@ utils = require('./lib/utils.js');
 config = require('./lib/load_config.js');
 story = require('./lib/logger.js');
 langfile = require('./langfile.js');
+validator = require('validator');
 _ = require('underscore');
 path = require('path');
 S = require('string');
