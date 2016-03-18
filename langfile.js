@@ -326,6 +326,7 @@ module.exports = {
         enabled: '[&{username}: TitleGuard enabled]',
         disabled: '[&{username}: TitleGuard disabled]',
         skip: '[TitleGuard]',
-        contained: '@&{username}, your song "&{title}" was automatically added to the blacklist because it\'s title contained a blacklisted phrase.'
+        contained: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s title contained a blacklisted phrase.',
+        bl_reason: 'Title contains blacklisted phrase.'
     }
 };
