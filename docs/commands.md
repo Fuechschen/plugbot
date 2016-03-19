@@ -6,7 +6,7 @@
 |---|---|---|---|
 |!link| | |Gives a link to the current song|
 |!define| |(word)|Defines the given word|
-|!songinfo|!sinfo|[format:cid]|Gives information about the song|
+|!songinfo|!sinfo|[format:cid / media-url]|Gives information about the song|
 |!catfact|!catfacts| |Gives a catfact|
 |!join| | |Joins an open roulette|
 |!leave| | |Leaves an open roulette|
@@ -51,7 +51,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |---|---|---|---|
 |!add|!addwl|(@user)|Adds the given user to the waitlist|
 |!move|!mv|(@user)(position)|Moves the given user to the given position|
-|!unblacklist|!unbl/!rmbl|(format:cid)|Removes the given song from the blacklist|
+|!unblacklist|!unbl/!rmbl|(format:cid / media-url)|Removes the given song from the blacklist|
 |!unmute| |(@user)|Unmutes the given user|
 |!wlunban| |(@user)|Unbans the given user from the waitlist|
 |!cleanwl| | |Clears and rebuilds the waitlist to remove ghost users|
