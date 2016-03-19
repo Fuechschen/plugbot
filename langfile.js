@@ -222,7 +222,8 @@ module.exports = {
             cleverbot: 'Cleverbot',
             lockdown: 'Lockdown',
             lockskippos: 'LockSkipPos',
-            dcmoveback: 'DCMoveback'
+            dcmoveback: 'DCMoveback',
+            titleguard: 'TitleGuard'
 
         }
     },
