@@ -1,35 +1,25 @@
-chalk = require('chalk');
-utils = require('./lib/utils.js');
-config = require('./lib/load_config.js');
-story = require('./lib/logger.js');
-langfile = require('./langfile.js');
-validator = require('validator');
-_ = require('underscore');
-path = require('path');
-S = require('string');
-moment = require('moment');
-request = require('request');
-URL = require('url');
-var Plugged = require('plugged');
-var Sequelize = require('sequelize');
-var IoRedis = require('ioredis');
+var chalk = require('chalk');
+var utils = require('./lib/utils.js');
+var config = require('./lib/load_config.js');
+var storyboard = require('storyboard');
+var langfile = require('./langfile.js');
+var validator = require('validator');
+var _ = require('underscore');
+var path = require('path');
+var S = require('string');
+var moment = require('moment');
+var request = require('request');
 
-sequelize = new Sequelize(config.sequelize.database, config.sequelize.username, config.sequelize.password, config.sequelize.options);
-models = {
-    User: sequelize.import(path.join(__dirname, 'models', 'User')),
-    Play: sequelize.import(path.join(__dirname, 'models', 'Play')),
-    Song: sequelize.import(path.join(__dirname, 'models', 'Song')),
-    CustomCommand: sequelize.import(path.join(__dirname, 'models', 'CustomCommand'))
-};
-models.Play.belongsTo(models.Song);
-models.Song.hasMany(models.Play);
-models.Play.belongsTo(models.User);
-models.User.hasMany(models.Play);
-sequelize.sync();
+var plugged = require('./lib/client');
+var redis = require('./lib/db/redis_db');
+var db = require('./lib/db/sql_db');
+
+var story = storyboard.mainStory;
+storyboard.config({filter: '*:' + config.options.loglevel});
 
 moment.locale(langfile.moment_locale);
 
-redis = new IoRedis(config.redis);
+
 redis.keys('user:role:save:*').then(function (keys) {
     keys.forEach(function (key) {
         redis.del(key);
@@ -41,25 +31,15 @@ redis.exists('meta:data:staff:active').then(function(ex){
 
 utils.loadConfigfromRedis();
 
-timeouts = {
+var timeouts = {
     stuck: null,
     tskip: null
 };
 
-startTime = moment();
-plugged = new Plugged();
-/*redis.get('meta:auth:save:token').then(function (token) {
- redis.get('meta:auth:save:jar').then(function (jar) {
- if (jar !== null && token !== null) {
- plugged.setJar(JSON.parse(jar));
- } else {
- token = undefined;
- }*/
-plugged.login(config.login);//, token);
-//    });
-//});
-commands = require('./lib/commands.js');
-workers = require('./lib/workers.js');
+var commands = require('./lib/commands.js');
+
+//todo rework with cron jobs
+var workers = require('./lib/workers.js');
 plugged.on(plugged.LOGIN_SUCCESS, function () {
     plugged.cacheChat(true);
     plugged.connect(config.options.room);
@@ -77,14 +57,14 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
         keys.forEach(function (key) {
             redis.del(key);
         });
-        models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
+       db.models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
             songs.forEach(function (song) {
                 redis.set('media:blacklist:' + song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
             });
             story.info('meta', 'Loaded blacklist with ' + songs.length + ' entries.');
         });
     });
-    models.CustomCommand.findAll({where: {status: true}}).then(function(ccs){
+   db.models.CustomCommand.findAll({where: {status: true}}).then(function(ccs){
        ccs.forEach(function(cc){
            if(cc.senderinfo) redis.set('customcommands:command:senderinfo:' + cc.trigger, cc.message);
            else redis.set('customcommands:command:nosenderinfo:' + cc.trigger, cc.message);
@@ -97,34 +77,34 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
 
 plugged.on(plugged.CONN_ERROR, function (err) {
     story.error('Error', 'Error while connecting to plug.dj.', {attach: err});
-    throw new Error('ConnecionError: ' + err.code + ' \n' + err.message);
+    process.exit(1);
 });
 
 plugged.on(plugged.LOGIN_ERROR, function (err) {
     story.error('Error', 'Error while logging in.', {attach: err});
-    throw new Error('LoginError: ' + err.code + ' \n' + err.message);
+    process.exit(1);
 });
 
 plugged.on(plugged.PLUG_ERROR, function (err) {
     story.error('Error', 'plug.dj encountered an error.', {attach: err});
-    throw new Error('PlugError: ' + err.code + ' \n' + err.message);
+    process.exit(1);
 });
 
 plugged.on(plugged.CONN_PART, function(err){
     story.error('Error', 'The connection dropped unexpectedly', {attach: err});
-    throw new Error('ConnectionPart: ' + err.code + ' \n' + err.message);
+    process.exit(1);
 });
 
 plugged.on(plugged.PLUG_UPDATE, function(){
     story.error('Update', 'plug.dj gets an update was therefore closed.');
-    throw new Error('PlugUpdate');
+    process.exit(1);
 });
 
 plugged.on(plugged.JOINED_ROOM, function () {
     story.info('meta', 'Joined room ' + config.options.room);
     plugged.getUsers().forEach(function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
-        models.User.find({where: {id: user.id}}).then(function (usr) {
+       db.models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
                 if (!usr.super_user && user.role !== usr.s_role) {
@@ -137,7 +117,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     role: user.role
                 });
             } else {
-                models.User.create({
+               db.models.User.create({
                     id: user.id,
                     username: user.username,
                     slug: user.slug,
@@ -152,12 +132,12 @@ plugged.on(plugged.JOINED_ROOM, function () {
         });
     });
 
-    models.User.find({where: {id: plugged.getSelf().id}}).then(function (usr) {
+   db.models.User.find({where: {id: plugged.getSelf().id}}).then(function (usr) {
         if (usr !== null && usr !== undefined) {
             if (usr.s_role > 0) redis.set('user:role:save:' + plugged.getSelf().id, usr.s_role);
             usr.updateAttributes({status: true});
         } else {
-            models.User.create({
+           db.models.User.create({
                 id: plugged.getSelf().id,
                 username: plugged.getSelf().username,
                 slug: plugged.getSelf().slug,
@@ -343,7 +323,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                     });
                 }
             });
-            models.Song.findOrCreate({
+           db.models.Song.findOrCreate({
                 where: {cid: now.media.cid, format: now.media.format}, defaults: {
                     title: now.media.title,
                     author: now.media.author,
@@ -383,9 +363,9 @@ plugged.on(plugged.JOINED_ROOM, function () {
             redis.set('media:history:' + prev.media.format + ':' + prev.media.cid, 1).then(function () {
                 redis.expire('media:history:' + prev.media.format + ':' + prev.media.cid, config.history.time * 60);
             });
-            models.Song.find({where: {plug_id: prev.media.id}}).then(function (song) {
-                models.User.find({where: {id: prev.dj.id}}).then(function (user) {
-                    models.Play.create({
+           db.models.Song.find({where: {plug_id: prev.media.id}}).then(function (song) {
+               db.models.User.find({where: {id: prev.dj.id}}).then(function (user) {
+                   db.models.Play.create({
                         time: new Date,
                         woots: prev.score.positive,
                         mehs: prev.score.negative,
@@ -422,7 +402,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
             });
         }
-        models.User.find({where: {id: user.id}}).then(function (usr) {
+       db.models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
                 if (!usr.super_user && user.role !== usr.s_role) {
@@ -437,7 +417,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 if (config.options.welcome.new) setTimeout(function () {
                     plugged.sendChat(utils.replace(langfile.welcome.new, {username: user.username}), 60);
                 }, 6 * 1000);
-                models.User.create({
+               db.models.User.create({
                     id: user.id,
                     username: user.username,
                     slug: user.slug,
@@ -474,7 +454,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 }
             });
         }
-        models.User.find({where: {id: user.id}}).then(function (usr) {
+       db.models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
                 if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
                 if (!usr.super_user && user.role !== usr.s_role) {
@@ -489,7 +469,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 if (config.options.welcome.new) setTimeout(function () {
                     plugged.sendChat(utils.replace(langfile.welcome.new, {username: user.username}), 60);
                 }, 6 * 1000);
-                models.User.create({
+               db.models.User.create({
                     id: user.id,
                     username: user.username,
                     slug: user.slug,
@@ -508,7 +488,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
     plugged.on(plugged.USER_LEAVE, function (user) {
         if (user !== null && user !== undefined) {
             redis.del('user:role:save:' + user.id);
-            models.User.update({status: false}, {where: {id: user.id}});
+           db.models.User.update({status: false}, {where: {id: user.id}});
             story.info('leave', utils.userLogString(user));
         }
     });
@@ -732,7 +712,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
                 perm = parseInt(perm, 10);
                 if (perm > 2) {
                     redis.set('user:role:save:' + data.id, data.role);
-                    models.User.update({s_role: data.role}, {where: {id: data.id}});
+                   db.models.User.update({s_role: data.role}, {where: {id: data.id}});
                 } else {
                     redis.get('user:role:save:' + data.id).then(function (permlvl) {
                         permlvl = parseInt(permlvl, 10);
