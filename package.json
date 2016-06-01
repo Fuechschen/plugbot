@@ -16,6 +16,7 @@
     "url": "https://github.com/Fuechschen/plugbot/issues"
   },
   "dependencies": {
+    "bluebird": "^3.4.0",
     "chalk": "^1.1.1",
     "ioredis": "^1.15.1",
     "moment": "^2.12.0",
