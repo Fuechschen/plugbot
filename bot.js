@@ -50,7 +50,7 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             songs.forEach(function (song) {
                 redis.set('media:blacklist:' + song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
             });
-            story.info('meta', 'Loaded blacklist with ' + songs.length + ' entries.');
+            story.info('Loaded blacklist with ' + songs.length + ' entries.');
         });
     });
     db.models.CustomCommand.findAll({where: {status: true}}).then(function (ccs) {
@@ -58,9 +58,9 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             if (cc.senderinfo) redis.set('customcommands:command:senderinfo:' + cc.trigger, cc.message);
             else redis.set('customcommands:command:nosenderinfo:' + cc.trigger, cc.message);
         });
-        story.info('meta', 'Loaded ' + ccs.length + ' customcommands.');
+        story.info('Loaded ' + ccs.length + ' customcommands.');
     });
-    story.info('meta', 'Successfully authed to plug.dj');
+    story.info('Successfully authed to plug.dj');
 });
 
 plugged.on(plugged.CONN_ERROR, function (err) {
@@ -94,7 +94,7 @@ plugged.on(plugged.MAINTENANCE_MODE, function () {
 });
 
 plugged.on(plugged.JOINED_ROOM, function () {
-    story.info('meta', 'Joined room ' + config.options.room);
+    story.info('Joined room ' + config.options.room);
     plugged.getUsers().forEach(function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
         db.models.User.find({where: {id: user.id}}).then(function (usr) {
