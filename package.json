@@ -1,6 +1,6 @@
 {
   "name": "plugbot",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "bot.js",
   "description": "A simple bot for plug.dj",
   "author": "Fuechschen <me@fuechschen.org>",
