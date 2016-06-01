@@ -13,6 +13,9 @@ module.exports = {
         welcome: {
             new: true,
             old: true
+        },
+        plugged: {
+            verbosity: 1
         }
     },
     redis: {

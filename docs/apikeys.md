@@ -27,5 +27,5 @@ This key is needed to lookup countryblocks
 2. Click on 'Use Google APIs'
 3. Now select 'YouTube Data Api' and click on enable.
 4. Select 'Credentials' on the left sidebar, click on 'Create Credentials', select 'API key' and click on 'Server-Key' in the next window
-5. Name your key (this only for you to keep track on requests and organize your keys) and fill in an IP-Address if the machine dubbot is running on has a static IP-Address. If your machine has a changing IP-Address (e.g. you are running dubbot from a computer at home) leave this field empty.
+5. Name your key (this only for you to keep track on requests and organize your keys) and fill in an IP-Address if the machine plugbot is running on has a static IP-Address. If your machine has a changing IP-Address (e.g. you are running dubbot from a computer at home) leave this field empty.
 6. Copy the key and paste it in your configfile for apiKeys.youtube
