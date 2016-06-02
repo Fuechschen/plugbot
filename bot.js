@@ -17,12 +17,8 @@ storyboard.config({filter: '*:' + config.options.loglevel});
 
 moment.locale(langfile.moment_locale);
 
+redis.del('user:roles');
 
-redis.keys('user:role:save:*').then(function (keys) {
-    keys.forEach(function (key) {
-        redis.del(key);
-    });
-});
 redis.exists('meta:data:staff:active').then(function (ex) {
     if (ex === 0) redis.set('meta:data:staff:active', 1);
 });
@@ -107,7 +103,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
         db.models.User.find({where: {id: user.id}}).then(function (usr) {
             if (usr !== null && usr !== undefined) {
-                if (usr.s_role > 0) redis.set('user:role:save:' + user.id, usr.s_role);
+                if (usr.s_role > 0) redis.hset('user:roles', user.id, usr.s_role);
                 if (!usr.super_user && user.role !== usr.s_role) {
                     if (usr.s_role > 0) plugged.addStaff(user.id, usr.s_role);
                     else plugged.removeStaff(user.id);
@@ -135,7 +131,7 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     db.models.User.find({where: {id: plugged.getSelf().id}}).then(function (usr) {
         if (usr !== null && usr !== undefined) {
-            if (usr.s_role > 0) redis.set('user:role:save:' + plugged.getSelf().id, usr.s_role);
+            if (usr.s_role > 0) redis.hset('user:roles', plugged.getSelf().id, usr.s_role);
             usr.updateAttributes({status: true});
         } else {
             db.models.User.create({
