@@ -30,8 +30,7 @@ module.exports = {
             dialect: 'mariadb',
             host: '',
             port: 3306,
-            storage: undefined,
-            logging: utils.dblog
+            storage: undefined
         }
 
     },
@@ -116,5 +115,11 @@ module.exports = {
     customcommands: {
         enabled: true,
         trigger: '.'
+    },
+    web: {
+        enabled: false,
+        port: 3000,
+        root_redirect: 'https://example.com',
+        cors: '*'
     }
 };

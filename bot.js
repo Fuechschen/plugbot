@@ -3,7 +3,6 @@ var config = require('./lib/load_config.js');
 var storyboard = require('storyboard');
 var langfile = require('./langfile.js');
 var validator = require('validator');
-var _ = require('underscore');
 var path = require('path');
 var moment = require('moment');
 var request = require('request');
@@ -46,6 +45,7 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
         keys.forEach(function (key) {
             redis.del(key);
         });
+        //noinspection JSUnresolvedFunction
         db.models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
             songs.forEach(function (song) {
                 redis.set('media:blacklist:' + song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
@@ -53,6 +53,7 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             story.info('Loaded blacklist with ' + songs.length + ' entries.');
         });
     });
+    //noinspection JSUnresolvedFunction
     db.models.CustomCommand.findAll({where: {status: true}}).then(function (ccs) {
         ccs.forEach(function (cc) {
             if (cc.senderinfo) redis.set('customcommands:command:senderinfo:' + cc.trigger, cc.message);
@@ -171,3 +172,5 @@ plugged.on(plugged.JOINED_ROOM, function () {
 
     plugged.on(plugged.CHAT_COMMAND, require('./lib/eventhandlers/chat_command'));
 });
+
+module.exports = {plugged: plugged, app: (config.web.enabled ? require('./web/index') : null)};
