@@ -65,6 +65,7 @@ module.exports = {
     },
     bp_actions: {
         add: '[&{username}: Add]',
+        add_queue: '[&{mod}: Add] &{username} has been added to the AddQueue',
         remove: '[&{username}: Remove]',
         lock: '[&{username}: Lock]',
         unlock: '[&{username}: Unlock]',
@@ -148,7 +149,8 @@ module.exports = {
         cancel: '[&{username}: TSkip] Skip canceld.'
     },
     move: {
-        default: '[&{username}: Move]'
+        default: '[&{username}: Move]',
+        addqueue: '[&{mod}: Move] &{username} will be added to position &{pos} as soon as a spot is available.'
     },
     superuser: {
         add: '[&{mod}: SuperUser] Set &{username} as Super-User.',
@@ -331,5 +333,8 @@ module.exports = {
         skip: '[TitleGuard]',
         contained: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s title contained a blacklisted phrase.',
         bl_reason: 'Title contains blacklisted phrase.'
+    },
+    addqueue: {
+        default: '[Adding &{username} to waitlist since he is in the AddQueue]'
     }
 };

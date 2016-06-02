@@ -6,6 +6,7 @@ var validator = require('validator');
 var path = require('path');
 var moment = require('moment');
 var request = require('request');
+var Promise = require('bluebird');
 
 var plugged = require('./lib/client');
 var redis = require('./lib/db/redis_db');
@@ -28,6 +29,7 @@ redis.exists('meta:data:staff:active').then(function (ex) {
 
 //todo rework with cron jobs
 var workers = require('./lib/workers.js');
+
 plugged.on(plugged.LOGIN_SUCCESS, function () {
     plugged.cacheChat(true);
     plugged.connect(config.options.room);
@@ -41,26 +43,31 @@ plugged.on(plugged.LOGIN_SUCCESS, function () {
             });
         }
     });
-    redis.keys('media:blacklist:*').then(function (keys) {
-        keys.forEach(function (key) {
-            redis.del(key);
-        });
+    redis.del('media:blacklist').then(function () {
         //noinspection JSUnresolvedFunction
-        db.models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
-            songs.forEach(function (song) {
-                redis.set('media:blacklist:' + song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
-            });
-            story.info('Loaded blacklist with ' + songs.length + ' entries.');
-        });
+        return db.models.Song.findAll({where: {isBanned: true}});
+    }).then(function (songs) {
+        return Promise.all(songs.map(function (song) {
+            return redis.hset('media:blacklist', song.format + ':' + song.cid, ((song.ban_reason !== undefined && song.ban_reason !== null) ? song.ban_reason : 1));
+        }));
+    }).then(function (songs) {
+        story.info('Loaded blacklist with ' + songs.length + ' entries.');
+    }).catch(function (err) {
+        story.error('Failed to load blacklist: ', {attach: err});
     });
+
     //noinspection JSUnresolvedFunction
     db.models.CustomCommand.findAll({where: {status: true}}).then(function (ccs) {
-        ccs.forEach(function (cc) {
-            if (cc.senderinfo) redis.set('customcommands:command:senderinfo:' + cc.trigger, cc.message);
-            else redis.set('customcommands:command:nosenderinfo:' + cc.trigger, cc.message);
-        });
+        return Promise.all(ccs.map(function (cc) {
+            if (cc.senderinfo) return redis.set('customcommands:command:senderinfo:' + cc.trigger, cc.message);
+            else return redis.set('customcommands:command:nosenderinfo:' + cc.trigger, cc.message);
+        }));
+    }).then(function (ccs) {
         story.info('Loaded ' + ccs.length + ' customcommands.');
+    }).catch(function (err) {
+        story.error('Failed to load customcommands: ', {attach: err});
     });
+
     story.info('Successfully authed to plug.dj');
 });
 
