@@ -38,7 +38,8 @@ module.exports = {
             default: '@&{username}, your song "&{song}" was played &{time} and will be skippped now.',
             enabled: '[&{username}: Historyskip enabled]',
             disabled: '[&{username}: Historyskip disabled]',
-            clear: '[&{username}: History cleared]'
+            clear: '[&{username}: History cleared]',
+            remove: '[&{username}: RemoveHistory]'
         },
         vote: {
             skip: '[Voteskip]',
