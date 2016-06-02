@@ -1,12 +1,12 @@
 module.exports = {
     moment_locale: 'en',
     blacklist: {
-        default: '[&{username}: Blacklist]',
+        default: '/me [&{username}: Blacklist]',
         with_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}: &{reason}',
         without_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}.',
         skip_reason: '@&{username}, your song "&{song}" is blacklisted: &{reason}',
         skip: '@&{username}, your song "&{song}" is blacklisted',
-        skip_first: '[Blacklist]',
+        skip_first: '/me [Blacklist]',
         reload: '[&{username}: Reloaded Blacklist with &{count} items]',
         reasons: {
             u: 'Song unavailable.',
@@ -17,14 +17,14 @@ module.exports = {
             default: '[&{username}: UnBl] Removed "&{song}" from the blacklist.'
         },
         idbl: {
-            default: '[&{username}: Blacklist] Added "&{song}" to the blacklist.'
+            default: '/me [&{username}: Blacklist] Added "&{song}" to the blacklist.'
         }
     },
     skip: {
-        default: '[&{username}: Skip]',
-        lockskip: '[&{username}: Lockskip]',
+        default: '/me [&{username}: Skip]',
+        lockskip: '/me [&{username}: Lockskip]',
         lockskippos: '[&{username}: Set Lockskip-Position to &{pos}]',
-        cycleskip: '[&{username}: CycleSkip]',
+        cycleskip: '/me [&{username}: CycleSkip]',
         reasons: {
             u: '@&{username}, your song "&{song}" was unvailable.',
             h: '@&{username}, your song "&{song}" is in the history.',
@@ -34,7 +34,7 @@ module.exports = {
             default: 'This song seems to stuck. Skipping...'
         },
         history: {
-            skip: '[History]',
+            skip: '/me [History]',
             default: '@&{username}, your song "&{song}" was played &{time} and will be skippped now.',
             enabled: '[&{username}: Historyskip enabled]',
             disabled: '[&{username}: Historyskip disabled]',
@@ -42,13 +42,13 @@ module.exports = {
             remove: '[&{username}: RemoveHistory]'
         },
         vote: {
-            skip: '[Voteskip]',
+            skip: '/me [Voteskip]',
             default: '@&{username}, your song "&{song}" recieved to many mehs.',
             enabled: '[&{username}: Voteskip enabled]',
             disabled: '[&{username}: Voteskip disabled]'
         },
         timeguard: {
-            skip: '[Timeguard]',
+            skip: '/me [Timeguard]',
             default: '@&{username}, your song "&{song}" is over the maximum of &{time} seconds.',
             enabled: '[&{username}: Timeguard enabled]',
             disabled: '[&{username}: Timeguard disabled]'
@@ -65,13 +65,13 @@ module.exports = {
         disabled: '[&{username}: Bouncer+ disabled]'
     },
     bp_actions: {
-        add: '[&{username}: Add]',
-        add_queue: '[&{mod}: Add] &{username} has been added to the AddQueue',
-        remove: '[&{username}: Remove]',
-        lock: '[&{username}: Lock]',
-        unlock: '[&{username}: Unlock]',
-        clear: '[&{username}: Clear]',
-        cycle: '[&{username}: Cycle]'
+        add: '/me [&{username}: Add]',
+        add_queue: '/me [&{mod}: Add] &{username} has been added to the AddQueue',
+        remove: '/me [&{username}: Remove]',
+        lock: '/me [&{username}: Lock]',
+        unlock: '/me [&{username}: Unlock]',
+        clear: '/me [&{username}: Clear]',
+        cycle: '/me [&{username}: Cycle]'
     },
     delchat: {
         clear: '[&{username}: Deleted &{count} messages]',
@@ -144,13 +144,13 @@ module.exports = {
     },
     tksip: {
         default: '[TSkip] This song will be automatically skipped after &{time} seconds.',
-        skip: '[TSkip]',
+        skip: '/me [TSkip]',
         set: '[&{username}: TSkip] Time set to &{time} seconds.',
         clear: '[&{username}: TSkip] Time cleared.',
         cancel: '[&{username}: TSkip] Skip canceld.'
     },
     move: {
-        default: '[&{username}: Move]',
+        default: '/me [&{username}: Move]',
         addqueue: '[&{mod}: Move] &{username} will be added to position &{pos} as soon as a spot is available.'
     },
     superuser: {
@@ -164,7 +164,7 @@ module.exports = {
         lock: '[&{username}: Eventmode] We\'re now switching to eventmode. Waitlist will be locked! @djs'
     },
     youtubeGuard: {
-        skip: '[YouTubeGuard]',
+        skip: '/me [YouTubeGuard]',
         api_unreachable: '@staff, I couldn\'t reach YouTube to check the avability of the current song. Please check.',
         blocked: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
@@ -201,7 +201,7 @@ module.exports = {
         disabled: '[&{username}: YouTubeGuard disabled]'
     },
     soundcloudGuard: {
-        skip: '[SoundCloudGuard]',
+        skip: '/me [SoundCloudGuard]',
         api_unreachable: '@staff, I couldn\'t reach SoundCloud to check the avability of the current song. Please check.',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
@@ -289,7 +289,7 @@ module.exports = {
         senderinfo_disabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]'
     },
     chatlevel: {
-        default: '[&{username}: Chatlevel]'
+        default: '/me [&{username}: Chatlevel]'
     },
     uptime: {
         default: '[&{username}: Uptime] Started &{time}'
@@ -337,5 +337,8 @@ module.exports = {
     },
     addqueue: {
         default: '[Adding &{username} to waitlist since he is in the AddQueue]'
+    },
+    commands: {
+        reload_commands: '[&{username}: Reloaded Commands]'
     }
 };
