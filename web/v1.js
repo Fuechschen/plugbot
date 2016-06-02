@@ -1,15 +1,20 @@
 var app = require('express').Router();
 
 var plugged = require('../lib/client');
+var db = require('../lib/db/sql_db');
 
 app.get('/', function (req, res) {
     res.json({
-        urls: {
+        plug_data: {
             all: '/v1/all',
             users: '/v1/users',
             media: '/v1/media',
             history: '/v1/history',
             room: '/v1/room'
+        },
+        bot_data: {
+            customCommands: '/v1/customcommands',
+            bestVotedSongs: '/v1/highscore'
         }
     })
 });
@@ -62,6 +67,51 @@ app.get('/all', function (req, res) {
                 return e;
             }))
         })
+    });
+});
+
+app.get('/customcommands', function (req, res) {
+    db.models.CustomCommand.findAll().map(function (e) {
+        return {id: e.id, trigger: e.trigger, message: e.message, enabled: e.status};
+    }).then(function (ccs) {
+        res.json({data: ccs});
+    }).catch(function (err) {
+        story.warn('web', 'Error getting CustomCommands', {attach: err});
+        res.status(500).end();
+    });
+});
+
+app.get('/highscore', function (req, res) {
+    var limit = parseInt(req.query.limit) || 10;
+    db.models.Play.findAll({order: [['woots', 'DESC']], limit: limit}).then(function (plays) {
+        Promise.all(plays.map(function (e) {
+            return e.getUser();
+        })).then(function (users) {
+            Promise.all(plays.map(function (e) {
+                return e.getSong();
+            })).then(function (songs) {
+                var data = [];
+                plays.forEach(function (play, i) {
+                    var p = {
+                        id: play.id,
+                        score: {woots: play.woots, mehs: play.mehs, grabs: play.grabs},
+                        time: play.time
+                    };
+                    p.user = {id: users[i].id, username: users[i].username};
+                    p.song = {
+                        id: songs[i].plug_id,
+                        author: songs[i].author,
+                        title: songs[i].title,
+                        format: songs[i].format,
+                        cid: songs[i].cid,
+                        duration: songs[i].duration,
+                        image: songs[i].image
+                    };
+                    data.push(p);
+                });
+                res.json({data:data});
+            });
+        });
     });
 });
 

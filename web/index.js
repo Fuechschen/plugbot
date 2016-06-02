@@ -9,6 +9,9 @@ var app = express();
 
 var http = require('http').createServer(app);
 
+app.set('trust proxy', 'loopback');
+app.set('json spaces', 4);
+
 app.use(logger('short', {
     stream: {
         write: function (toLog) {
