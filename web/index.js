@@ -15,6 +15,7 @@ app.set('json spaces', 4);
 app.use(logger('short', {
     stream: {
         write: function (toLog) {
+            //noinspection JSUnresolvedFunction
             story.info('web', S(toLog).chompRight('\n').s);
         }
     }

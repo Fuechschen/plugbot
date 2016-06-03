@@ -150,30 +150,23 @@ plugged.on(plugged.JOINED_ROOM, function () {
     });
 
     plugged.on(plugged.ADVANCE, require('./lib/eventhandlers/advance'));
+    plugged.on(plugged.WAITLIST_UPDATE, require('./lib/eventhandlers/waitlist_update'));
 
     plugged.on(plugged.FRIEND_JOIN, require('./lib/eventhandlers/friend_join'));
-
     plugged.on(plugged.USER_JOIN, require('./lib/eventhandlers/user_join'));
 
     plugged.on(plugged.USER_LEAVE, require('./lib/eventhandlers/user_leave'));
 
     plugged.on(plugged.CHAT, require('./lib/eventhandlers/chat'));
-
     plugged.on(plugged.CHAT_MENTION, require('./lib/eventhandlers/chat'));
-
-    plugged.on(plugged.MOD_STAFF, require('./lib/eventhandlers/mod_staff'));
-
-    plugged.on(plugged.MOD_BAN, require('./lib/eventhandlers/mod_ban'));
+    plugged.on(plugged.CHAT_COMMAND, require('./lib/eventhandlers/chat_command'));
 
     plugged.on(plugged.VOTE, require('./lib/eventhandlers/vote'));
 
+    plugged.on(plugged.MOD_STAFF, require('./lib/eventhandlers/mod_staff'));
+    plugged.on(plugged.MOD_BAN, require('./lib/eventhandlers/mod_ban'));
     plugged.on(plugged.MOD_SKIP, require('./lib/eventhandlers/mod_skip'));
-
     plugged.on(plugged.MOD_ADD_DJ, require('./lib/eventhandlers/mod_add_dj'));
-
-    plugged.on(plugged.WAITLIST_UPDATE, require('./lib/eventhandlers/waitlist_update'));
-
-    plugged.on(plugged.CHAT_COMMAND, require('./lib/eventhandlers/chat_command'));
 });
 
 module.exports = {plugged: plugged, app: (config.web.enabled ? require('./web/index') : null)};

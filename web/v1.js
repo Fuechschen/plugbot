@@ -1,4 +1,6 @@
 var app = require('express').Router();
+var story = require('storyboard').mainStory;
+var Promise = require('bluebird');
 
 var plugged = require('../lib/client');
 var db = require('../lib/db/sql_db');
@@ -71,6 +73,7 @@ app.get('/all', function (req, res) {
 });
 
 app.get('/customcommands', function (req, res) {
+    //noinspection JSUnresolvedFunction
     db.models.CustomCommand.findAll().map(function (e) {
         return {id: e.id, trigger: e.trigger, message: e.message, enabled: e.status};
     }).then(function (ccs) {
@@ -83,11 +86,13 @@ app.get('/customcommands', function (req, res) {
 
 app.get('/highscore', function (req, res) {
     var limit = parseInt(req.query.limit) || 10;
+    //noinspection JSUnresolvedFunction
     db.models.Play.findAll({order: [['woots', 'DESC']], limit: limit}).then(function (plays) {
         Promise.all(plays.map(function (e) {
             return e.getUser();
         })).then(function (users) {
             Promise.all(plays.map(function (e) {
+                //noinspection JSUnresolvedFunction
                 return e.getSong();
             })).then(function (songs) {
                 var data = [];

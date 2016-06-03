@@ -308,7 +308,7 @@ module.exports = {
         default: '[&{username}: Shuffled playlist]'
     },
     lottery: {
-        default: '[&{username}: Lottery] Lottery in &{time} minutes. Join the waitlist and be active in chat to have a chence to be moved to #1. @djs',
+        default: '[&{username}: Lottery] Lottery in &{time} minutes. Join the waitlist and be active in chat to have a chance to be moved to #1. @djs',
         one_minute: '[&{username}: Lottery] Lottery in one minute! @djs',
         winner: '[&{mod}: Lottery] Our lucky winner is @&{username}.',
         no_winner: '[&{username}: Lottery] No winner could be selected. Get active you little shits @djs'
