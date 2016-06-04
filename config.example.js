@@ -32,7 +32,6 @@ module.exports = {
             port: 3306,
             storage: undefined
         }
-
     },
     history: {
         skipenabled: false,

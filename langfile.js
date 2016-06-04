@@ -340,5 +340,8 @@ module.exports = {
     },
     commands: {
         reload_commands: '[&{username}: Reloaded Commands]'
+    },
+    joinmode:{
+        addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.'
     }
 };
