@@ -99,6 +99,12 @@ plugged.on(plugged.MAINTENANCE_MODE, function () {
 
 plugged.on(plugged.JOINED_ROOM, function () {
     story.info('Joined room ' + config.options.room);
+    redis.hget('meta:options', 'isRestart').then(function (is) {
+        if (is !== null && is === '1') {
+            plugged.sendChat(langfile.restart.back_up, 45);
+            redis.hdel('meta:options', 'isRestart');
+        }
+    });
     plugged.getUsers().forEach(function (user) {
         redis.set('user:chat:spam:' + user.id + ':points', 0);
         db.models.User.find({where: {id: user.id}}).then(function (usr) {

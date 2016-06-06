@@ -258,7 +258,8 @@ module.exports = {
     },
     restart: {
         error: '[&{username}: Restart] Error while restarting...',
-        default: '[&{username}: Restart]'
+        default: '[&{username}: Restart]',
+        back_up: '[Restart done]'
     },
     cleanwl: {
         default: '[&{username}: Clean Waitlist] @djs, the waitlist will now be cleared and rebuilt afterwards to remove ghost djs.'

@@ -92,7 +92,7 @@ Manager commands include bouncer and bouncer+ commands
 
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
-|!setstaff| |(role)(@user)|Sets the given user tot he given role|
+|!setstaff| |(role)(@user)|Sets the given user to the given role|
 |!bouncer+| | |Toggles bouncer+|
 |!welcomemsg| | |Sets the room welcome message|
 |!roomname| | |Sets the roomname|
