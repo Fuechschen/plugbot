@@ -127,7 +127,7 @@ app.get('/highscore', function (req, res) {
 
 app.get('/blacklist', function (req, res) {
     //noinspection JSUnresolvedFunction
-    db.models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
+    db.models.Song.findAll({where: {is_banned: true}}).then(function (songs) {
         res.json({
             blacklist: songs.map(function (song) {
                 return {
@@ -137,7 +137,7 @@ app.get('/blacklist', function (req, res) {
                     format: song.format,
                     cid: song.cid,
                     image: song.image,
-                    isBanned: song.isBanned,
+                    isBanned: song.is_banned,
                     banReason: song.ban_reason
                 };
             })
@@ -161,8 +161,8 @@ app.get('/check', function (req, res) {
                             format: song.format,
                             cid: song.cid,
                             image: song.image,
-                            isBanned: song.isBanned,
-                            banReason: (song.isBanned ? song.ban_reason : null)
+                            is_banned: song.is_banned,
+                            banReason: (song.is_banned ? song.ban_reason : null)
                         }
                     });
                 } else res.status(404).json({error: 'song not found'});
