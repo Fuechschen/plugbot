@@ -10,6 +10,7 @@ module.exports = {
         dcmoveback: true,
         command_prefix: '!',
         disable_emote: true,
+        joinmode: true,
         welcome: {
             new: true,
             old: true
@@ -118,20 +119,23 @@ module.exports = {
     web: {
         enabled: false,
         port: 3000,
-        cors: '*'
+        cors: '*',
+        websocket: false,
+        useUWS: false,
+        path: ''
     },
     defaultCC: {
         commands: {
             msg: 'You need my commands? https://git.io/vawDs',
-            sender:true
+            sender: true
         },
         bot: {
             msg: 'I\'m powered by Fuechschen\'s plugbot: https://git.io/vawDB',
-            sender:true
+            sender: true
         },
         license: {
-            msg:'My software is licensed under the MIT License: https://git.io/vawDl',
-            sender:true
+            msg: 'My software is licensed under the MIT License: https://git.io/vawDl',
+            sender: true
         }
     }
 };

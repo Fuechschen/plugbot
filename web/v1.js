@@ -5,22 +5,24 @@ var Promise = require('bluebird');
 var plugged = require('../lib/client');
 var db = require('../lib/db/sql_db');
 var utils = require('../lib/utils');
+var config = require('../lib/load_config');
 
 app.get('/', function (req, res) {
     res.json({
         plug_data: {
-            all: '/v1/all',
-            users: '/v1/users',
-            media: '/v1/media',
-            history: '/v1/history',
-            room: '/v1/room'
+            all: config.web.path + '/v1/all',
+            users: config.web.path + '/v1/users',
+            media: config.web.path + '/v1/media',
+            history: config.web.path + '/v1/history',
+            room: config.web.path + '/v1/room'
         },
         bot_data: {
-            customCommands: '/v1/customcommands',
-            bestVotedSongs: '/v1/highscore',
-            blacklist: '/v1/blacklist',
-            check: '/v1/check?s={string}'
-        }
+            customCommands: config.web.path + '/v1/customcommands',
+            bestVotedSongs: config.web.path + '/v1/highscore',
+            blacklist: config.web.path + '/v1/blacklist',
+            check: config.web.path + '/v1/check?s={string}'
+        },
+        socket: config.web.path + '/v1/socket'
     })
 });
 

@@ -52,4 +52,4 @@ plugged.on(plugged.MOD_BAN, require('./lib/eventhandlers/mod_ban'));
 plugged.on(plugged.MOD_SKIP, require('./lib/eventhandlers/mod_skip'));
 plugged.on(plugged.MOD_ADD_DJ, require('./lib/eventhandlers/mod_add_dj'));
 
-module.exports = {plugged: plugged, app: (config.web.enabled ? require('./web/index') : null)};
+module.exports = {plugged: plugged, app: (config.web.enabled ? require('./web/index').app : null)};
