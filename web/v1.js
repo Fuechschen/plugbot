@@ -106,7 +106,7 @@ app.get('/highscore', function (req, res) {
                         time: play.time
                     };
                     p.user = {id: users[i].id, username: users[i].username};
-                    p.song = {
+                    p.song = (songs[i] !== null ? {
                         id: songs[i].plug_id,
                         author: songs[i].author,
                         title: songs[i].title,
@@ -114,7 +114,7 @@ app.get('/highscore', function (req, res) {
                         cid: songs[i].cid,
                         duration: songs[i].duration,
                         image: songs[i].image
-                    };
+                    } : null);
                     data.push(p);
                 });
                 res.json({data: data});
