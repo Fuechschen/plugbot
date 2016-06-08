@@ -84,9 +84,19 @@ module.exports = {
                     if (ws !== null)ws.broadcast(JSON.stringify({t: 'chat', d: msg}));
                 };
                 break;
+            case 'skip':
+                return function (user) {
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'skip', d: user}));
+                };
+                break;
+            case 'userban':
+                return function (ban) {
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'ban', d: ban}));
+                };
+                break;
             default:
                 return function () {
-
+                    
                 };
                 break;
         }

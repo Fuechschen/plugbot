@@ -15,7 +15,7 @@ This key is needed to return clean links for soundcloud-tracks
 This key is needed for !define
 
 0. Create an [Wordnik-Account](https://www.wordnik.com/signup) if aren't having one
-1. Go to http://developer.wordnik.com, fill both fields on the right and click on 'Sign me up for an API key'
+1. Go to [developer.wordnik.com](http://developer.wordnik.com), fill both fields on the right and click on 'Sign me up for an API key'
 2. You will have to wait for an email containing a link to your profile page.
 3. Scroll down to 'Your Wordnik API key', copy the key and paste it under 'apiKeys.wordnik' in your config file
 
@@ -23,7 +23,7 @@ This key is needed for !define
 This key is needed to lookup countryblocks
 
 0. Create a google-account if aren't having one
-1. Head over to https://console.developers.google.com and create a new project.
+1. Head over to [console.developers.google.com](https://console.developers.google.com) and create a new project.
 2. Click on 'Use Google APIs'
 3. Now select 'YouTube Data Api' and click on enable.
 4. Select 'Credentials' on the left sidebar, click on 'Create Credentials', select 'API key' and click on 'Server-Key' in the next window
