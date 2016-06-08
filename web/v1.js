@@ -124,6 +124,7 @@ app.get('/highscore', function (req, res) {
 });
 
 app.get('/blacklist', function (req, res) {
+    //noinspection JSUnresolvedFunction
     db.models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
         res.json({
             blacklist: songs.map(function (song) {
@@ -139,7 +140,7 @@ app.get('/blacklist', function (req, res) {
                 };
             })
         });
-    }).catch(function (err) {
+    }).catch(function () {
         res.status(500).json({error: 'SQL Error'});
     });
 });
@@ -150,7 +151,7 @@ app.get('/check', function (req, res) {
             var split = cid.split(':');
             db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(function (song) {
                 if (song !== undefined && song !== null) {
-                    res.json({
+                    res.json({data: {
                         id: song.id,
                         author: song.author,
                         title: song.title,
@@ -159,9 +160,9 @@ app.get('/check', function (req, res) {
                         image: song.image,
                         isBanned: song.isBanned,
                         banReason: (song.isBanned ? song.ban_reason : null)
-                    });
+                    }});
                 } else res.status(404).json({error: 'song not found'});
-            }).catch(function (err) {
+            }).catch(function () {
                 res.status(500).json({error: 'SQL Error'});
             });
         }).catch(function (error) {
