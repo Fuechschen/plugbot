@@ -120,8 +120,8 @@ module.exports = {
         enabled: false,
         port: 3000,
         cors: '*',
-        websocket: false,
-        useUWS: false,
+        websocket: false,                                       
+        useUWS: true,
         path: ''
     },
     defaultCC: {
