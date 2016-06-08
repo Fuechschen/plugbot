@@ -31,7 +31,7 @@ app.get('/users', function (req, res) {
 });
 
 app.get('/media', function (req, res) {
-    res.json(plugged.getMedia());
+    res.json({data: (plugged.getMedia().id !== -1 ? plugged.getMedia() : null)});
 });
 
 app.get('/history', function (req, res) {
@@ -63,7 +63,7 @@ app.get('/all', function (req, res) {
                 meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
                 return meta;
             }(),
-            media: plugged.getMedia(),
+            media: (plugged.getMedia().id !== -1 ? plugged.getMedia() : null),
             users: plugged.getUsers().map(function (e) {
                 return {id: e.id, username: e.username, slug: e.slug, gRole: e.gRole, role: e.role, level: e.level};
             }),
@@ -151,16 +151,18 @@ app.get('/check', function (req, res) {
             var split = cid.split(':');
             db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(function (song) {
                 if (song !== undefined && song !== null) {
-                    res.json({data: {
-                        id: song.id,
-                        author: song.author,
-                        title: song.title,
-                        format: song.format,
-                        cid: song.cid,
-                        image: song.image,
-                        isBanned: song.isBanned,
-                        banReason: (song.isBanned ? song.ban_reason : null)
-                    }});
+                    res.json({
+                        data: {
+                            id: song.id,
+                            author: song.author,
+                            title: song.title,
+                            format: song.format,
+                            cid: song.cid,
+                            image: song.image,
+                            isBanned: song.isBanned,
+                            banReason: (song.isBanned ? song.ban_reason : null)
+                        }
+                    });
                 } else res.status(404).json({error: 'song not found'});
             }).catch(function () {
                 res.status(500).json({error: 'SQL Error'});
