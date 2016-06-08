@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 
 var plugged = require('../lib/client');
 var db = require('../lib/db/sql_db');
+var utils = require('../lib/utils');
 
 app.get('/', function (req, res) {
     res.json({
@@ -16,7 +17,9 @@ app.get('/', function (req, res) {
         },
         bot_data: {
             customCommands: '/v1/customcommands',
-            bestVotedSongs: '/v1/highscore'
+            bestVotedSongs: '/v1/highscore',
+            blacklist: '/v1/blacklist',
+            check: '/v1/check?s={string}'
         }
     })
 });
@@ -114,10 +117,57 @@ app.get('/highscore', function (req, res) {
                     };
                     data.push(p);
                 });
-                res.json({data:data});
+                res.json({data: data});
             });
         });
     });
+});
+
+app.get('/blacklist', function (req, res) {
+    db.models.Song.findAll({where: {isBanned: true}}).then(function (songs) {
+        res.json({
+            blacklist: songs.map(function (song) {
+                return {
+                    id: song.id,
+                    author: song.author,
+                    title: song.title,
+                    format: song.format,
+                    cid: song.cid,
+                    image: song.image,
+                    isBanned: song.isBanned,
+                    banReason: song.ban_reason
+                };
+            })
+        });
+    }).catch(function (err) {
+        res.status(500).json({error: 'SQL Error'});
+    });
+});
+
+app.get('/check', function (req, res) {
+    if (req.query.s !== undefined) {
+        utils.resolveCID(req.query.s).then(function (cid) {
+            var split = cid.split(':');
+            db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(function (song) {
+                if (song !== undefined && song !== null) {
+                    res.json({
+                        id: song.id,
+                        author: song.author,
+                        title: song.title,
+                        format: song.format,
+                        cid: song.cid,
+                        image: song.image,
+                        isBanned: song.isBanned,
+                        banReason: (song.isBanned ? song.ban_reason : null)
+                    });
+                } else res.status(404).json({error: 'song not found'});
+            }).catch(function (err) {
+                res.status(500).json({error: 'SQL Error'});
+            });
+        }).catch(function (error) {
+            res.json({error: error.message});
+        });
+    } else res.status(400).json({error: 'invalid query'});
 });
 
 module.exports = app;

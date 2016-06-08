@@ -29,15 +29,20 @@ app.use(function (req, res, next) {
 app.use('/v1', require('./v1'));
 
 app.get('/', function (req, res) {
-    res.redirect(config.web.root_redirect);
+    res.json({
+        versions: {
+            "1": '/v1'
+        }
+    });
 });
 
 app.use(function (req, res) {
-    res.status(404).send('Not Found');
+    res.status(404).json({error: 'Not Found'});
 });
 
 if (config.web.port !== null) http.listen(config.web.port || 3000, function () {
     story.info('web', 'Listening on port ' + (config.web.port || 3000));
 });
+else story.info('web', 'Not Listening on a port because port is set to null');
 
 module.exports = app;

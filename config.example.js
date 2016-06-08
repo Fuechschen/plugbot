@@ -118,7 +118,20 @@ module.exports = {
     web: {
         enabled: false,
         port: 3000,
-        root_redirect: 'https://example.com',
         cors: '*'
+    },
+    defaultCC: {
+        commands: {
+            msg: 'You need my commands? https://git.io/vawDs',
+            sender:true
+        },
+        bot: {
+            msg: 'I\'m powered by Fuechschen\'s plugbot: https://git.io/vawDB',
+            sender:true
+        },
+        license: {
+            msg:'My software is licensed under the MIT License: https://git.io/vawDl',
+            sender:true
+        }
     }
 };
