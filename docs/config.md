@@ -15,7 +15,7 @@
 |options.disable_emote|boolean|Sets if the bot should automatically delete all /me-messages from non-staff|
 |options.welcome|object|welcome settings|
 |options.welcome.new|boolean|Sets if the bot should welcome new users|
-|options.welcome.old|Sets if the bot should welcome old users|
+|options.welcome.old|boolean|Sets if the bot should welcome old users|
 |options.plugged|object|Some settings for plugged, the underlying module to connect to plug.dj|
 |options.plugged.verbosity|number|Sets plugged verbosity, defaults to 1, set it higher to get more messages|
 |redis|various|Settings to connect to redis, pass a redis-url, or an object containing at least a host-value. To set port/db/password, just add these properties to the object|
