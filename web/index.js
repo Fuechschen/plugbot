@@ -72,7 +72,23 @@ else story.info('web', 'Not Listening on a port because port is set to null');
 
 module.exports = {
     app: app,
-    wsAdvance: function (update) {
-        if (ws !== null)ws.broadcast(JSON.stringify({t: 'adv', d: update}));
+    wsGet: function (type) {
+        switch (type) {
+            case 'advance':
+                return function (update) {
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'adv', d: update}));
+                };
+                break;
+            case 'chat':
+                return function (msg) {
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'chat', d: msg}));
+                };
+                break;
+            default:
+                return function () {
+
+                };
+                break;
+        }
     }
 };
