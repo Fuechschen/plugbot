@@ -98,7 +98,6 @@ Manager commands include bouncer and bouncer+ commands
 |!roomname| | |Sets the roomname|
 |!superuser|!su|(@user)|Sets the given user as superuser|
 |!restart| | |Restarts the bot|
-|!reloadcommands| | |Reloads all commands from their file. Prefer restart over this|
 
 
 () = required argument
