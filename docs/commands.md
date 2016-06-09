@@ -80,8 +80,8 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!titleguard| | |Toggles TitleGuard|
 |!togglecustomcommands|!togglecc| |Toggles CustomCommands|
 |!customcommands|!cc|add(trigger)(message)/enable(trigger)/disable(trigger)/senderenable(trigger)/senderdisable(trigger)|Edits a CustomCommand|
-|!woot|!w| |Let's the bot woot|
-|!meh|!m| |Let's the bot meh|
+|!woot|!w|[-s]|Let's the bot woot. Use -s to save the vote|
+|!meh|!m|[-s]|Let's the bot meh. Use -s to save the vote|
 |!lottery| |[time]|Starts a lottery|
 |!roulette| |(moves)[time]|Starts a roulette|
 |!everyone| |[msg]|Mentions everyone|
