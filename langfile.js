@@ -344,5 +344,9 @@ module.exports = {
     },
     joinmode:{
         addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.'
+    },
+    tskip: {
+        default: '[TSKIP] This song will be skipped after &{time} seconds.',
+        skip: '[TSKIP]'
     }
 };
