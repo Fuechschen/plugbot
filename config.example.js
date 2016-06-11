@@ -10,6 +10,7 @@ module.exports = {
         dcmoveback: true,
         command_prefix: '!',
         disable_emote: true,
+        joinmode: true,
         welcome: {
             new: true,
             old: true
@@ -30,10 +31,8 @@ module.exports = {
             dialect: 'mariadb',
             host: '',
             port: 3306,
-            storage: undefined,
-            logging: utils.dblog
+            storage: undefined
         }
-
     },
     history: {
         skipenabled: false,
@@ -79,6 +78,10 @@ module.exports = {
         },
         words: {
             blacklist: []
+        },
+        language: {
+            enabled: false,
+            allowed: []
         }
     },
     youtubeGuard: {
@@ -116,5 +119,31 @@ module.exports = {
     customcommands: {
         enabled: true,
         trigger: '.'
+    },
+    web: {
+        enabled: false,
+        port: 3000,
+        cors: '*',
+        websocket: false,                                       
+        useUWS: true,
+        path: ''
+    },
+    defaultCC: {
+        commands: {
+            msg: 'You need my commands? https://git.io/vawDs',
+            sender: true
+        },
+        bot: {
+            msg: 'I\'m powered by Fuechschen\'s plugbot: https://git.io/vawDB',
+            sender: true
+        },
+        license: {
+            msg: 'My software is licensed under the MIT License: https://git.io/vawDl',
+            sender: true
+        },
+        tskip:{
+            msg: 'TSKIP automatically skips songs after a certain amount of time to avoid playing outros, etc.',
+            sender:true
+        }
     }
 };

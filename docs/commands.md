@@ -69,6 +69,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!chatfilter| | |Toggles chatfilter|
 |!filterreset| |(@user)|Resets all chatfilterscores for the given user|
 |!clearhistory| | |Clears the songhistory|
+|!removehistory|!rmh|(format:cid / media-url)|Removes the given media from the history|
 |!reloadblacklist|!reloadbl| |Reloads the blacklist from the database|
 |!reloadroles| | |Reloads all roles from the database|
 |!reloadcustomcommands|!reloadcc| |Reloads all CustomCommands from the database|
@@ -79,8 +80,8 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!titleguard| | |Toggles TitleGuard|
 |!togglecustomcommands|!togglecc| |Toggles CustomCommands|
 |!customcommands|!cc|add(trigger)(message)/enable(trigger)/disable(trigger)/senderenable(trigger)/senderdisable(trigger)|Edits a CustomCommand|
-|!woot|!w| |Let's the bot woot|
-|!meh|!m| |Let's the bot meh|
+|!woot|!w|[-s/-d]|Let's the bot woot. Use -s to save the vote|
+|!meh|!m|[-s/-d]|Let's the bot meh. Use -s to save the vote|
 |!lottery| |[time]|Starts a lottery|
 |!roulette| |(moves)[time]|Starts a roulette|
 |!everyone| |[msg]|Mentions everyone|
@@ -91,7 +92,7 @@ Manager commands include bouncer and bouncer+ commands
 
 |Command|Alias|Arguments|Description|
 |---|---|---|---|
-|!setstaff| |(role)(@user)|Sets the given user tot he given role|
+|!setstaff| |(role)(@user)|Sets the given user to the given role|
 |!bouncer+| | |Toggles bouncer+|
 |!welcomemsg| | |Sets the room welcome message|
 |!roomname| | |Sets the roomname|
