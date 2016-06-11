@@ -123,6 +123,9 @@ module.exports = {
         bannedword: {
             warn: '@&{username}, you used a word which is on our blacklist.',
             mute: '@&{username} was muted for using blacklisted words.'
+        },
+        language: {
+            warn: '@&{username}, please have look at our rules. You are speaking the wrong language!'
         }
     },
     unmute: {
