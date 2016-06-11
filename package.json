@@ -35,8 +35,10 @@
   },
   "optionalDependencies": {
     "body-parser": "^1.15.1",
+    "cld": "^2.4.6",
     "cleverbot-node": "git://github.com/avatarkava/cleverbot-node.git",
     "express": "^4.13.4",
+    "languagedetect": "^1.1.1",
     "morgan": "^1.7.0",
     "pg": "^4.5.1",
     "pg-hstore": "^2.3.2",

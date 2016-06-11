@@ -115,6 +115,14 @@ module.exports = {
             warn: '@&{username}, please stop spamming!',
             mute: '@&{username} was muted for spamming.',
             hard_mute: '@&{username} refused to stop spamming, now hard muting him...'
+        },
+        repeat: {
+            warn: '@&{username}, please don\'t repeat yourself.',
+            mute: '@&{username} was muted for repeating himself over and over.'
+        },
+        bannedword: {
+            warn: '@&{username}, you used a word which is on our blacklist.',
+            mute: '@&{username} was muted for using blacklisted words.'
         }
     },
     unmute: {

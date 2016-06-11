@@ -136,6 +136,10 @@ module.exports = {
         license: {
             msg: 'My software is licensed under the MIT License: https://git.io/vawDl',
             sender: true
+        },
+        tskip:{
+            msg: 'TSKIP automatically skips songs after a certain amount of time to avoid playing outros, etc.',
+            sender:true
         }
     }
 };
