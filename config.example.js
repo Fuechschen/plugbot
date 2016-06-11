@@ -78,6 +78,10 @@ module.exports = {
         },
         words: {
             blacklist: []
+        },
+        language: {
+            enabled: false,
+            allowed: []
         }
     },
     youtubeGuard: {
