@@ -291,7 +291,8 @@ module.exports = {
     customcommand: {
         default: '[&{username}: .&{trigger}] &{msg}',
         nosenderinfo: '&{msg}',
-        reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.',
+        mentionAppend: '  [&{mentions}]',
+        reload: '[&{username}: ReloadCC]',
         enabled: '[&{username}: CustomCommands enabled]',
         disabled: '[&{username}: CustomCommands disabled]',
         created: '[&{username}: CustomCommand "&{trigger}" created]',
