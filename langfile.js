@@ -360,5 +360,8 @@ module.exports = {
     tskip: {
         default: '[TSKIP] This song will be skipped after &{time} seconds.',
         skip: '[TSKIP]'
+    },
+    swap: {
+        default: '[&{username}: Swap]'
     }
 };
