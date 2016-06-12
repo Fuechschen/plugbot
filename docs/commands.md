@@ -10,6 +10,7 @@
 |!catfact|!catfacts| |Gives a catfact|
 |!join| | |Joins an open roulette|
 |!leave| | |Leaves an open roulette|
+|!disconnected|!dc| |Places you back in the waitlist if you lost your spot|
 
 ## RDj Commands
 RDj commands include user commands

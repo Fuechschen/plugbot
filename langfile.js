@@ -267,7 +267,13 @@ module.exports = {
         enabled: '[&{username}: DCMoveback enabled]',
         disabled: '[&{username}: DCMoveback disabled]',
         move: 'You should be at position &{pos}.',
-        addqueue: 'You should be at position &{pos} and will be added as soon there is a spot free.'
+        addqueue: 'You should be at position &{pos} and will be added as soon there is a spot free.',
+        command: {
+            move: '[&{username}: DCMoveback] You should be at position &{pos}.',
+            addqueue: '[&{username}: DCMoveback] You should be at position &{pos}. You will be added as soon as there is a free spot.',
+            no_dc: '[&{username}: DCMoveback] I haven\'t seen you disconnect.',
+            on_wl: '[&{username}: DCMoveback] You are already on a higher position than when you disconnected.'
+        }
     },
     restart: {
         error: '[&{username}: Restart] Error while restarting...',
