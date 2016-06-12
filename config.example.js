@@ -153,5 +153,10 @@ module.exports = {
             msg: 'TSKIP automatically skips songs after a certain amount of time to avoid playing outros, etc.',
             sender:true
         }
+    },
+    dcmoveback: {
+        enabled: true,
+        auto: true,
+        timeout: 3600
     }
 };

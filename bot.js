@@ -36,7 +36,7 @@ plugged.on(plugged.JOINED_ROOM, require('./lib/eventhandlers/joined_room'));
 plugged.on(plugged.ADVANCE, require('./lib/eventhandlers/advance'));
 plugged.on(plugged.WAITLIST_UPDATE, require('./lib/eventhandlers/waitlist_update'));
 
-plugged.on(plugged.FRIEND_JOIN, require('./lib/eventhandlers/friend_join'));
+plugged.on(plugged.FRIEND_JOIN, require('./lib/eventhandlers/user_join'));
 plugged.on(plugged.USER_JOIN, require('./lib/eventhandlers/user_join'));
 
 plugged.on(plugged.USER_LEAVE, require('./lib/eventhandlers/user_leave'));

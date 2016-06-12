@@ -265,7 +265,9 @@ module.exports = {
     dcmoveback: {
         default: '[DCMoveback]',
         enabled: '[&{username}: DCMoveback enabled]',
-        disabled: '[&{username}: DCMoveback disabled]'
+        disabled: '[&{username}: DCMoveback disabled]',
+        move: 'You should be at position &{pos}.',
+        addqueue: 'You should be at position &{pos} and will be added as soon there is a spot free.'
     },
     restart: {
         error: '[&{username}: Restart] Error while restarting...',
