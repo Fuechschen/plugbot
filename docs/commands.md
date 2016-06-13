@@ -99,6 +99,7 @@ Manager commands include bouncer and bouncer+ commands
 |!roomname| | |Sets the roomname|
 |!superuser|!su|(@user)|Sets the given user as superuser|
 |!restart| | |Restarts the bot|
+|!clearghosts| | |Clears ghost-users from the community. Use with care, may result in a ban for the bot|
 
 
 () = required argument
