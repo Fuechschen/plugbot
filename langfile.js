@@ -373,6 +373,6 @@ module.exports = {
         default: '[&{username}: Swap]'
     },
     clearghosts: {
-        default: '[&{username}: ClearGhosts] We will now be kicking all possible ghost-users out of the room. Be sure to have at least used the chat within the 50 hours @everyone'
+        default: '[&{username}: ClearGhosts] We will now be kicking all possible ghost-users out of the room to increase performance for the others. Be sure to have at least used the chat within the 50 hours @everyone'
     }
 };
