@@ -20,7 +20,8 @@ app.get('/', function (req, res) {
             customCommands: config.web.path + '/v1/customcommands',
             bestVotedSongs: config.web.path + '/v1/highscore',
             blacklist: config.web.path + '/v1/blacklist',
-            check: config.web.path + '/v1/check?s={string}'
+            check: config.web.path + '/v1/check?s={string}',
+            user: config.web.path + '/v1/user?id={userid}&name={username}'
         },
         socket: config.web.path + '/v1/socket'
     })
@@ -173,6 +174,34 @@ app.get('/check', function (req, res) {
             res.json({error: error.message});
         });
     } else res.status(400).json({error: 'invalid query'});
+});
+
+app.get('/user', function (req, res) {
+    var search = {};
+    if (req.query.id !== undefined) search.id = req.query.id;
+    if (req.query.name !== undefined && req.query.id === undefined) search.username = req.query.name;
+
+    if (req.query.id === undefined && req.query.name === undefined) res.status(400).json({error: 'invalid query'});
+    else {
+        db.models.User.find({where: search}).then(function (user) {
+            if (user !== undefined && user !== null) {
+                res.json({
+                    data: {
+                        id: user.id,
+                        username: user.username,
+                        avatar: user.avatar_id,
+                        badge: user.badge,
+                        grole: user.global_role,
+                        role: user.s_role,
+                        level: user.level,
+                        status: user.status
+                    }
+                });
+            } else res.statusCode(404).json({error: 'User not found'});
+        }).catch(function () {
+            res.status(500).json({error: 'SQL Error'});
+        })
+    }
 });
 
 module.exports = app;
