@@ -18,6 +18,14 @@ module.exports = {
         },
         idbl: {
             default: '/me [&{username}: Blacklist] Added "&{song}" to the blacklist.'
+        },
+        channelblacklist: {
+            enabled: '[&{username}: ChannelBlacklist enabled]',
+            disabled: '[&{username}: ChannelBlacklist disabled]',
+            skip: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room.',
+            skip_reason: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room: &{reason}',
+            add: '[&{username}: ChannelBlacklist] Added "&{cid}" to the channelblacklist.',
+            remove: '[&{username}: ChannelBlacklist] Removed "&{cid}" from the channelblacklist.'
         }
     },
     skip: {
@@ -363,10 +371,10 @@ module.exports = {
     commands: {
         reload_commands: '[&{username}: Reloaded Commands]'
     },
-    joinmode:{
+    joinmode: {
         addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.',
         wlban: '[&{username}: Play] You are not allowed to join the waitlist.',
-        enabled:'[&{username}: Joinmode enabled]',
+        enabled: '[&{username}: Joinmode enabled]',
         disabled: '[&{username}: Joinmode disabled]'
     },
     tskip: {

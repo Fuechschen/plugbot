@@ -68,7 +68,8 @@ module.exports = {
         lockskip: false
     },
     blacklist: {
-        lockskip: true
+        lockskip: true,
+        channelblacklist:true
     },
     chatfilter: {
         enabled: true,
