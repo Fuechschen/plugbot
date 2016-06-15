@@ -40,6 +40,7 @@
 |timeguard.time|number|Sets the maximum songlength before the timeguard skips|
 |chatfilter|object|Settings for the chatfilter|
 |chatfilter.enabled|boolean|The default value for chatfilter|
+|chatfilter.ignorerole|number|Minimum role to ignore chatfilters. Defaults to 1 (resident-dj)|
 |chatfilter.spam|object|Settings for the aggresivity of the chatfilter, ONLY EDIT IF YOU KNOW WHAT YOU ARE DOING|
 |chatfilter.links|object|Settings for blocking links|
 |chatfilter.links.plugdj|boolean|Sets the blocker for plugdj-links|
