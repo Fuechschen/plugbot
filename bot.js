@@ -3,13 +3,14 @@ var storyboard = require('storyboard');
 var langfile = require('./langfile.js');
 var moment = require('moment');
 
+storyboard.config({filter: '*:' + config.options.loglevel});
+storyboard.mainStory.info('Starting plugbot version ' + require('./package.json').version);
+
+moment.locale(langfile.moment_locale);
+
 var plugged = require('./lib/client');
 var redis = require('./lib/db/redis_db');
 var db = require('./lib/db/sql_db');
-
-storyboard.config({filter: '*:' + config.options.loglevel});
-
-moment.locale(langfile.moment_locale);
 
 redis.del('user:roles');
 
@@ -36,7 +37,7 @@ plugged.on(plugged.JOINED_ROOM, require('./lib/eventhandlers/joined_room'));
 plugged.on(plugged.ADVANCE, require('./lib/eventhandlers/advance'));
 plugged.on(plugged.WAITLIST_UPDATE, require('./lib/eventhandlers/waitlist_update'));
 
-plugged.on(plugged.FRIEND_JOIN, require('./lib/eventhandlers/friend_join'));
+plugged.on(plugged.FRIEND_JOIN, require('./lib/eventhandlers/user_join'));
 plugged.on(plugged.USER_JOIN, require('./lib/eventhandlers/user_join'));
 
 plugged.on(plugged.USER_LEAVE, require('./lib/eventhandlers/user_leave'));

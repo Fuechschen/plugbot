@@ -36,7 +36,8 @@ module.exports = {
     },
     history: {
         skipenabled: false,
-        time: 120
+        time: 120,
+        lockskip: true
     },
     lockskip: {
         move_pos: 1
@@ -63,7 +64,11 @@ module.exports = {
     },
     timeguard: {
         enabled: true,
-        time: 600
+        time: 600,
+        lockskip: false
+    },
+    blacklist: {
+        lockskip: true
     },
     chatfilter: {
         enabled: true,
@@ -88,14 +93,17 @@ module.exports = {
         enabled: true,
         countryblocks: {
             countries: ['DE']
-        }
+        },
+        lockskip: true
     },
     soundcloudGuard: {
-        enabled: true
+        enabled: true,
+        lockskip: true
     },
     titleguard: {
         enabled: true,
-        not_contain: ['big dick']
+        not_contain: ['big dick'],
+        lockskip: false
     },
     playlists: {
         play: 0,
@@ -145,5 +153,10 @@ module.exports = {
             msg: 'TSKIP automatically skips songs after a certain amount of time to avoid playing outros, etc.',
             sender:true
         }
+    },
+    dcmoveback: {
+        enabled: true,
+        auto: true,
+        timeout: 3600
     }
 };

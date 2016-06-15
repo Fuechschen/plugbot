@@ -58,7 +58,8 @@ module.exports = {
     error: {
         user_not_found: 'User wasn\'t found!',
         argument: '[&{username}: &{cmd}] Error on arguments, please check command syntax.',
-        eventmode: '[&{username}: &{cmd}] This command isn\'t available in eventmode.'
+        eventmode: '[&{username}: &{cmd}] This command isn\'t available in eventmode.',
+        wl_banned: '[&{username}: &{cmd}] Cannot execute the command since the user isn\t allowed to join the waitlist'
     },
     bouncer_plus: {
         enabled: '[&{username}: Bouncer+ enabled]',
@@ -239,8 +240,8 @@ module.exports = {
             lockdown: 'Lockdown',
             lockskippos: 'LockSkipPos',
             dcmoveback: 'DCMoveback',
-            titleguard: 'TitleGuard'
-
+            titleguard: 'TitleGuard',
+            joinmode: 'Joinmode'
         }
     },
     filterreset: {
@@ -265,7 +266,15 @@ module.exports = {
     dcmoveback: {
         default: '[DCMoveback]',
         enabled: '[&{username}: DCMoveback enabled]',
-        disabled: '[&{username}: DCMoveback disabled]'
+        disabled: '[&{username}: DCMoveback disabled]',
+        move: 'You should be at position &{pos}.',
+        addqueue: 'You should be at position &{pos} and will be added as soon there is a spot free.',
+        command: {
+            move: '[&{username}: DCMoveback] You should be at position &{pos}.',
+            addqueue: '[&{username}: DCMoveback] You should be at position &{pos}. You will be added as soon as there is a free spot.',
+            no_dc: '[&{username}: DCMoveback] I haven\'t seen you disconnect.',
+            on_wl: '[&{username}: DCMoveback] You are already on a higher position than when you disconnected.'
+        }
     },
     restart: {
         error: '[&{username}: Restart] Error while restarting...',
@@ -291,7 +300,8 @@ module.exports = {
     customcommand: {
         default: '[&{username}: .&{trigger}] &{msg}',
         nosenderinfo: '&{msg}',
-        reload: '[&{username}: ReloadCC] Loaded &{count} CustomCommands.',
+        mentionAppend: '  [&{mentions}]',
+        reload: '[&{username}: ReloadCC]',
         enabled: '[&{username}: CustomCommands enabled]',
         disabled: '[&{username}: CustomCommands disabled]',
         created: '[&{username}: CustomCommand "&{trigger}" created]',
@@ -354,10 +364,21 @@ module.exports = {
         reload_commands: '[&{username}: Reloaded Commands]'
     },
     joinmode:{
-        addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.'
+        addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.',
+        wlban: '[&{username}: Play] You are not allowed to join the waitlist.',
+        enabled:'[&{username}: Joinmode enabled]',
+        disabled: '[&{username}: Joinmode disabled]'
     },
     tskip: {
         default: '[TSKIP] This song will be skipped after &{time} seconds.',
         skip: '[TSKIP]'
+    },
+    swap: {
+        default: '[&{username}: Swaping &{u1} with &{u2}]',
+        no_wl: '[&{username}: Swap] None of the specified users are in the waitlist.',
+        usage: '[&{username}: Swap] !swap @user1 @user2'
+    },
+    clearghosts: {
+        default: '[&{username}: ClearGhosts] We will now be kicking all possible ghost-users out of the room to increase performance for the others. Be sure to have at least used the chat within the 50 hours @everyone'
     }
 };
