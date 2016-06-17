@@ -18,6 +18,8 @@ redis.exists('meta:data:staff:active').then(function (ex) {
     if (ex === 0) redis.set('meta:data:staff:active', 1);
 });
 
+plugged.on(plugged.SOCK_ERROR, require('./lib/eventhandlers/sock_error'));
+
 plugged.on(plugged.LOGIN_SUCCESS, require('./lib/eventhandlers/login_success'));
 plugged.on(plugged.LOGIN_ERROR, require('./lib/eventhandlers/login_error'));
 
