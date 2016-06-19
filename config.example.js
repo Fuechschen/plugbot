@@ -159,5 +159,9 @@ module.exports = {
         enabled: true,
         auto: true,
         timeout: 3600
+    },
+    userfilter:{
+        enabled: false,
+        username_disallowed:[]
     }
 };

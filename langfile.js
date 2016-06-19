@@ -388,5 +388,13 @@ module.exports = {
     },
     clearghosts: {
         default: '[&{username}: ClearGhosts] We will now be kicking all possible ghost-users out of the room to increase performance for the others. Be sure to have at least used the chat within the 50 hours @everyone'
+    },
+    userfilter:{
+        enabled: '[&{username}: UserFilter enabled]',
+        disabled: '[&{username}: UserFilter disabled]',
+        username: {
+            warn: '@&{username}, you name doesn\'t fit the room rules. Please change it or you will be banned within 60 seconds.',
+            ban: '@&{username} was banned for using a name against the room rules.'
+        }
     }
 };
