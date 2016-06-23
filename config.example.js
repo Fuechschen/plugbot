@@ -69,7 +69,7 @@ module.exports = {
     },
     blacklist: {
         lockskip: true,
-        channelblacklist:true
+        channelblacklist: true
     },
     chatfilter: {
         enabled: true,
@@ -92,6 +92,7 @@ module.exports = {
     },
     youtubeGuard: {
         enabled: true,
+        block: false,
         countryblocks: {
             countries: ['DE']
         },
@@ -99,6 +100,7 @@ module.exports = {
     },
     soundcloudGuard: {
         enabled: true,
+        block: false,
         lockskip: true
     },
     titleguard: {
@@ -133,7 +135,7 @@ module.exports = {
         enabled: false,
         port: 3000,
         cors: '*',
-        websocket: false,                                       
+        websocket: false,
         useUWS: true,
         path: ''
     },
@@ -150,9 +152,9 @@ module.exports = {
             msg: 'My software is licensed under the MIT License: https://git.io/vawDl',
             sender: true
         },
-        tskip:{
+        tskip: {
             msg: 'TSKIP automatically skips songs after a certain amount of time to avoid playing outros, etc.',
-            sender:true
+            sender: true
         }
     },
     dcmoveback: {
@@ -160,8 +162,8 @@ module.exports = {
         auto: true,
         timeout: 3600
     },
-    userfilter:{
+    userfilter: {
         enabled: false,
-        username_disallowed:[]
+        username_disallowed: []
     }
 };

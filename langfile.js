@@ -186,6 +186,9 @@ module.exports = {
     youtubeGuard: {
         skip: '/me [YouTubeGuard]',
         api_unreachable: '@staff, I couldn\'t reach YouTube to check the avability of the current song. Please check.',
+        block:'@&{username}, YouTube is currently blocked in this room.',
+        block_enabled:'[&{username}: YouTubeBlock enabled]',
+        block_disabled:'[&{username}: YouTubeBlock disabled]',
         blocked: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
             bl_reason: 'Blocked in the following countries: &{countries}'
@@ -226,6 +229,9 @@ module.exports = {
     soundcloudGuard: {
         skip: '/me [SoundCloudGuard]',
         api_unreachable: '@staff, I couldn\'t reach SoundCloud to check the avability of the current song. Please check.',
+        block:'@&{username}, SoundCloud is currently blocked in this room.',
+        block_enabled:'[&{username}: SoundCloudBlock enabled]',
+        block_disabled:'[&{username}: SoundCloudBlock disabled]',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
             bl_reason: 'Song was deleted.'
