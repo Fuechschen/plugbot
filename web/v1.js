@@ -130,7 +130,7 @@ app.get('/blacklist', function (req, res) {
     //noinspection JSUnresolvedFunction
     db.models.Song.findAll({where: {is_banned: true}}).then(function (songs) {
         res.json({
-            blacklist: songs.map(function (song) {
+            data: songs.map(function (song) {
                 return {
                     id: song.id,
                     author: song.author,
@@ -140,6 +140,23 @@ app.get('/blacklist', function (req, res) {
                     image: song.image,
                     isBanned: song.is_banned,
                     banReason: song.ban_reason
+                };
+            })
+        });
+    }).catch(function () {
+        res.status(500).json({error: 'SQL Error'});
+    });
+});
+
+app.get('/channelblacklist', function (req, res) {
+    db.models.Channel.findAll({where: {is_banned: true}}).then(function (channels) {
+        res.json({
+            data: channels.map(function (c) {
+                return {
+                    name: c.name,
+                    channel_id: c.cid,
+                    is_banned: c.is_banned,
+                    ban_reason: c.ban_reason
                 };
             })
         });
