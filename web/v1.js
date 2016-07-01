@@ -20,6 +20,7 @@ app.get('/', function (req, res) {
             customCommands: config.web.path + '/v1/customcommands',
             bestVotedSongs: config.web.path + '/v1/highscore',
             blacklist: config.web.path + '/v1/blacklist',
+            channelblacklist: config.web.path + '/v1/channelblacklist',
             check: config.web.path + '/v1/check?s={string}',
             user: config.web.path + '/v1/user?id={userid}&name={username}'
         },
