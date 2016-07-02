@@ -120,7 +120,7 @@ module.exports = {
                 break;
             case 'chatDelete':
                 return function (data) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'chatDelete', d: d}));
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'chatDelete', d: data}));
                 };
                 break;
             default:
