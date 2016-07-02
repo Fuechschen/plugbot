@@ -14,7 +14,8 @@ app.get('/', function (req, res) {
             users: config.web.path + '/v1/users',
             media: config.web.path + '/v1/media',
             history: config.web.path + '/v1/history',
-            room: config.web.path + '/v1/room'
+            room: config.web.path + '/v1/room',
+            waitlist: config.web.path + '/v1/waitlist'
         },
         bot_data: {
             customCommands: config.web.path + '/v1/customcommands',
@@ -58,6 +59,14 @@ app.get('/room', function (req, res) {
     }());
 });
 
+app.get('/waitlist', function (req, res) {
+    res.json({
+        data: plugged.getWaitlist().map(function (id) {
+            return plugged.getUserByID(id);
+        })
+    });
+});
+
 app.get('/all', function (req, res) {
     plugged.getRoomHistory(function (err, history) {
         res.json({
@@ -74,7 +83,10 @@ app.get('/all', function (req, res) {
             history: (err ? null : history.map(function (e) {
                 e.room = undefined;
                 return e;
-            }))
+            })),
+            waitlist: plugged.getWaitlist().map(function (id) {
+                return plugged.getUserByID(id);
+            })
         })
     });
 });
