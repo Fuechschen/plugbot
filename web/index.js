@@ -100,12 +100,12 @@ module.exports = {
                 break;
             case 'join':
                 return function (user) {
-                    if (ws !== null) ws.broadcast(JSON.stringify({t: 'join', d: user}));
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'join', d: user}));
                 };
                 break;
             case 'leave':
                 return function (user) {
-                    if (ws !== null) ws.broadcast(JSON.stringify({t: 'leave', d: user}));
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'leave', d: user}));
                 };
                 break;
             case 'waitlist':
@@ -116,6 +116,11 @@ module.exports = {
             case 'vote':
                 return function (votes) {
                     if (ws !== null)ws.broadcast(JSON.stringify({t: 'v', d: votes}));
+                };
+                break;
+            case 'chatDelete':
+                return function (data) {
+                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'chatDelete', d: d}));
                 };
                 break;
             default:
