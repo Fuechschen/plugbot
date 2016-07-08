@@ -43,6 +43,9 @@
 |chatfilter.ignorerole|number|Minimum role to ignore chatfilters. Defaults to 1 (resident-dj)|
 |chatfilter.spam|object|Settings for the aggresivity of the chatfilter, ONLY EDIT IF YOU KNOW WHAT YOU ARE DOING|
 |chatfilter.links|object|Settings for blocking links|
+|chatfilter.links.enabled|boolean|Default value for the link filter|
+|chatfilter.links.mode|ENUM('blacklist','whitelist')|Sets the mode for the linkfilter|
+|chatfilter.links.filter|array[string]|Sets the filter for links. Put whitelisted/blacklisted hosts here (without http:///https://)|
 |chatfilter.links.plugdj|boolean|Sets the blocker for plugdj-links|
 |chatfilter.words.blacklist|array[string]|Sets blacklisted words|
 |youtubeGuard|object|Settings for youtubeGuard|

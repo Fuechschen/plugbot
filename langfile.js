@@ -135,6 +135,10 @@ module.exports = {
         },
         language: {
             warn: '@&{username}, please have look at our rules. You are speaking the wrong language!'
+        },
+        link:{
+            warn: '@&{username}, please stop sending these links.',
+            mute: '@&{username} didn\'t stop to send links, now he can\'t...'
         }
     },
     unmute: {
