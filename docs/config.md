@@ -46,7 +46,8 @@
 |chatfilter.links.enabled|boolean|Default value for the link filter|
 |chatfilter.links.mode|ENUM('blacklist','whitelist')|Sets the mode for the linkfilter|
 |chatfilter.links.filter|array[string]|Sets the filter for links. Put whitelisted/blacklisted hosts here (without http:///https://)|
-|chatfilter.links.plugdj|boolean|Sets the blocker for plugdj-links|
+|chatfilter.links.plugdj|object|Config for the plug.dj-link blocker|
+|chatfilter.links.plugdj.enabled|string|Sets the plug.dj-link blocker|
 |chatfilter.words.blacklist|array[string]|Sets blacklisted words|
 |youtubeGuard|object|Settings for youtubeGuard|
 |youtubeGuard.enabled|boolean|The default value for youtubeGuard|
