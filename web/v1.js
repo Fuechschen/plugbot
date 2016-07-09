@@ -80,13 +80,13 @@ app.get('/all', function (req, res) {
             users: plugged.getUsers().map(function (e) {
                 return {id: e.id, username: e.username, slug: e.slug, gRole: e.gRole, role: e.role, level: e.level};
             }),
+            waitlist: plugged.getWaitlist().map(function (id) {
+                return plugged.getUserByID(id);
+            }),
             history: (err ? null : history.map(function (e) {
                 e.room = undefined;
                 return e;
-            })),
-            waitlist: plugged.getWaitlist().map(function (id) {
-                return plugged.getUserByID(id);
-            })
+            }))
         })
     });
 });
