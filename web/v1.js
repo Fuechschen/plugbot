@@ -14,13 +14,16 @@ app.get('/', function (req, res) {
             users: config.web.path + '/v1/users',
             media: config.web.path + '/v1/media',
             history: config.web.path + '/v1/history',
-            room: config.web.path + '/v1/room'
+            room: config.web.path + '/v1/room',
+            waitlist: config.web.path + '/v1/waitlist'
         },
         bot_data: {
             customCommands: config.web.path + '/v1/customcommands',
             bestVotedSongs: config.web.path + '/v1/highscore',
             blacklist: config.web.path + '/v1/blacklist',
-            check: config.web.path + '/v1/check?s={string}'
+            channelblacklist: config.web.path + '/v1/channelblacklist',
+            check: config.web.path + '/v1/check?s={string}',
+            user: config.web.path + '/v1/user?id={userid}&name={username}'
         },
         socket: config.web.path + '/v1/socket'
     })
@@ -56,6 +59,14 @@ app.get('/room', function (req, res) {
     }());
 });
 
+app.get('/waitlist', function (req, res) {
+    res.json({
+        data: plugged.getWaitlist().map(function (id) {
+            return plugged.getUserByID(id);
+        })
+    });
+});
+
 app.get('/all', function (req, res) {
     plugged.getRoomHistory(function (err, history) {
         res.json({
@@ -68,6 +79,9 @@ app.get('/all', function (req, res) {
             media: (plugged.getMedia().id !== -1 ? plugged.getMedia() : null),
             users: plugged.getUsers().map(function (e) {
                 return {id: e.id, username: e.username, slug: e.slug, gRole: e.gRole, role: e.role, level: e.level};
+            }),
+            waitlist: plugged.getWaitlist().map(function (id) {
+                return plugged.getUserByID(id);
             }),
             history: (err ? null : history.map(function (e) {
                 e.room = undefined;
@@ -129,7 +143,7 @@ app.get('/blacklist', function (req, res) {
     //noinspection JSUnresolvedFunction
     db.models.Song.findAll({where: {is_banned: true}}).then(function (songs) {
         res.json({
-            blacklist: songs.map(function (song) {
+            data: songs.map(function (song) {
                 return {
                     id: song.id,
                     author: song.author,
@@ -139,6 +153,23 @@ app.get('/blacklist', function (req, res) {
                     image: song.image,
                     isBanned: song.is_banned,
                     banReason: song.ban_reason
+                };
+            })
+        });
+    }).catch(function () {
+        res.status(500).json({error: 'SQL Error'});
+    });
+});
+
+app.get('/channelblacklist', function (req, res) {
+    db.models.Channel.findAll({where: {is_banned: true}}).then(function (channels) {
+        res.json({
+            data: channels.map(function (c) {
+                return {
+                    name: c.name,
+                    channel_id: c.cid,
+                    is_banned: c.is_banned,
+                    ban_reason: c.ban_reason
                 };
             })
         });
@@ -173,6 +204,34 @@ app.get('/check', function (req, res) {
             res.json({error: error.message});
         });
     } else res.status(400).json({error: 'invalid query'});
+});
+
+app.get('/user', function (req, res) {
+    var search = {};
+    if (req.query.id !== undefined) search.id = req.query.id;
+    if (req.query.name !== undefined && req.query.id === undefined) search.username = req.query.name;
+
+    if (req.query.id === undefined && req.query.name === undefined) res.status(400).json({error: 'invalid query'});
+    else {
+        db.models.User.find({where: search}).then(function (user) {
+            if (user !== undefined && user !== null) {
+                res.json({
+                    data: {
+                        id: user.id,
+                        username: user.username,
+                        avatar: user.avatar_id,
+                        badge: user.badge,
+                        grole: user.global_role,
+                        role: user.s_role,
+                        level: user.level,
+                        status: user.status
+                    }
+                });
+            } else res.statusCode(404).json({error: 'User not found'});
+        }).catch(function () {
+            res.status(500).json({error: 'SQL Error'});
+        })
+    }
 });
 
 module.exports = app;

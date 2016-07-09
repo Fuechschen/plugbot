@@ -18,6 +18,14 @@ module.exports = {
         },
         idbl: {
             default: '/me [&{username}: Blacklist] Added "&{song}" to the blacklist.'
+        },
+        channelblacklist: {
+            enabled: '[&{username}: ChannelBlacklist enabled]',
+            disabled: '[&{username}: ChannelBlacklist disabled]',
+            skip: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room.',
+            skip_reason: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room: &{reason}',
+            add: '[&{username}: ChannelBlacklist] Added "&{cid}" to the channelblacklist.',
+            remove: '[&{username}: ChannelBlacklist] Removed "&{cid}" from the channelblacklist.'
         }
     },
     skip: {
@@ -127,6 +135,10 @@ module.exports = {
         },
         language: {
             warn: '@&{username}, please have look at our rules. You are speaking the wrong language!'
+        },
+        link:{
+            warn: '@&{username}, please stop sending these links.',
+            mute: '@&{username} didn\'t stop to send links, now he can\'t...'
         }
     },
     unmute: {
@@ -178,6 +190,9 @@ module.exports = {
     youtubeGuard: {
         skip: '/me [YouTubeGuard]',
         api_unreachable: '@staff, I couldn\'t reach YouTube to check the avability of the current song. Please check.',
+        block:'@&{username}, YouTube is currently blocked in this room.',
+        block_enabled:'[&{username}: YouTubeBlock enabled]',
+        block_disabled:'[&{username}: YouTubeBlock disabled]',
         blocked: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
             bl_reason: 'Blocked in the following countries: &{countries}'
@@ -209,12 +224,18 @@ module.exports = {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
             bl_reason: 'Video not embeddable'
         },
+        ytUnavalable:{
+          default:'@&{username}, YouTube seems to be unavailable. Your song "&{song}" has therefore be skipped.'
+        },
         enabled: '[&{username}: YouTubeGuard enabled]',
         disabled: '[&{username}: YouTubeGuard disabled]'
     },
     soundcloudGuard: {
         skip: '/me [SoundCloudGuard]',
         api_unreachable: '@staff, I couldn\'t reach SoundCloud to check the avability of the current song. Please check.',
+        block:'@&{username}, SoundCloud is currently blocked in this room.',
+        block_enabled:'[&{username}: SoundCloudBlock enabled]',
+        block_disabled:'[&{username}: SoundCloudBlock disabled]',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
             bl_reason: 'Song was deleted.'
@@ -252,7 +273,7 @@ module.exports = {
         warn_2: '&{usernames} You are still inactive. This is your last warning. Chat or you will be removed from the waitlist.',
         remove: '&{usernames} You will now be removed from the waitlist for being afk.',
         kick: '[Kicking @&{username} for autojoining the waitlist]',
-        usernames: '@&{username}',
+        usernames: '@&{username} ',
         afk_msg: {
             default: '@&{username}, &{user} is AFK [&{msg}]',
             no_msg: '@&{username}, &{user} is AFK.'
@@ -363,10 +384,10 @@ module.exports = {
     commands: {
         reload_commands: '[&{username}: Reloaded Commands]'
     },
-    joinmode:{
+    joinmode: {
         addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.',
         wlban: '[&{username}: Play] You are not allowed to join the waitlist.',
-        enabled:'[&{username}: Joinmode enabled]',
+        enabled: '[&{username}: Joinmode enabled]',
         disabled: '[&{username}: Joinmode disabled]'
     },
     tskip: {
@@ -380,5 +401,13 @@ module.exports = {
     },
     clearghosts: {
         default: '[&{username}: ClearGhosts] We will now be kicking all possible ghost-users out of the room to increase performance for the others. Be sure to have at least used the chat within the 50 hours @everyone'
+    },
+    userfilter:{
+        enabled: '[&{username}: UserFilter enabled]',
+        disabled: '[&{username}: UserFilter disabled]',
+        username: {
+            warn: '@&{username}, you name doesn\'t fit the room rules. Please change it or you will be banned within 60 seconds.',
+            ban: '@&{username} was banned for using a name against the room rules.'
+        }
     }
 };

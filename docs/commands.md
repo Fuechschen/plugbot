@@ -87,6 +87,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!roulette| |(moves)[time]|Starts a roulette|
 |!everyone| |[msg]|Mentions everyone|
 |!toggleafk| | |Toggles AFKRemoval|
+|!channelblacklist|!cbl|add (cid)/rem (cid)/toggle|Adds/Removes a whole youtube channel from the blacklist/toggles the channelblacklist|
 
 ## Manager Commands
 Manager commands include bouncer and bouncer+ commands
