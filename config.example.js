@@ -7,6 +7,7 @@ module.exports = {
         room: '',
         bouncer_plus: true,
         loglevel: 'INFO',
+        sql_debug: true,
         dcmoveback: true,
         command_prefix: '!',
         disable_emote: true,
@@ -21,6 +22,7 @@ module.exports = {
     },
     redis: {
         host: '',
+        password: undefined,
         db: 2
     },
     sequelize: {
@@ -102,7 +104,7 @@ module.exports = {
         enabled: true,
         block: false,
         countryblocks: {
-            countries: ['DE']
+            countries: []
         },
         lockskip: true
     },
