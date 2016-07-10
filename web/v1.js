@@ -162,6 +162,7 @@ app.get('/blacklist', function (req, res) {
 });
 
 app.get('/channelblacklist', function (req, res) {
+    //noinspection JSUnresolvedFunction
     db.models.Channel.findAll({where: {is_banned: true}}).then(function (channels) {
         res.json({
             data: channels.map(function (c) {

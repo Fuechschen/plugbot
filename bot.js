@@ -15,6 +15,7 @@ var plugged = require('./lib/client');
 var redis = require('./lib/db/redis_db');
 var db = require('./lib/db/sql_db');
 
+//noinspection JSUnresolvedFunction
 redis.del('user:roles');
 
 redis.exists('meta:data:staff:active').then(function (ex) {

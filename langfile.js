@@ -224,7 +224,7 @@ module.exports = {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
             bl_reason: 'Video not embeddable'
         },
-        ytUnavalable:{
+        ytUnavailable:{
           default:'@&{username}, YouTube seems to be unavailable. Your song "&{song}" has therefore be skipped.'
         },
         enabled: '[&{username}: YouTubeGuard enabled]',
