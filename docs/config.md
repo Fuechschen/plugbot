@@ -13,6 +13,7 @@
 |options.dcmoveback|boolean|Default setting for DCMoveBack|
 |options.command_prefix|string|Sets the commandprefix, defaults to !|
 |options.disable_emote|boolean|Sets if the bot should automatically delete all /me-messages from non-staff|
+|options.redis_substitute|boolean|Enables a Substitute for redis basing on SQL (Not yet implemented, Work in progress)|
 |options.welcome|object|welcome settings|
 |options.welcome.new|boolean|Sets if the bot should welcome new users|
 |options.welcome.old|boolean|Sets if the bot should welcome old users|

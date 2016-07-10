@@ -12,6 +12,7 @@ module.exports = {
         command_prefix: '!',
         disable_emote: true,
         joinmode: true,
+        redis_substitute: false,  //leave this false for now
         welcome: {
             new: true,
             old: true
