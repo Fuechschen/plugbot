@@ -7,6 +7,7 @@ var langfile = require('./langfile.js');
 var story = storyboard.mainStory;
 
 storyboard.config({filter: '*:' + config.options.loglevel});
+storyboard.addListener(require('storyboard/lib/listeners/console').default);
 storyboard.mainStory.info('Starting plugbot version ' + require('./package.json').version);
 
 moment.locale(langfile.moment_locale);
