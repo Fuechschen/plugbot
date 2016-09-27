@@ -81,7 +81,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 |!soundcloudguard|!scguard| | |Toggles SoundCloudGuard|
 |!titleguard| | | |Toggles TitleGuard|
 |!togglecustomcommands|!togglecc| | |Toggles CustomCommands|
-|!customcommands|!cc|add(trigger)(message)/enable(trigger)/disable(trigger)/senderenable(trigger)/senderdisable(trigger)| |Edits a CustomCommand|
+|!customcommands|!cc|add(trigger)(message)/ enable(trigger)/ disable(trigger)/ senderenable(trigger)/ senderdisable(trigger)| |Edits a CustomCommand|
 |!woot|!w| |[-s/-d]|Let's the bot woot. Use -s to save the vote|
 |!meh|!m| |[-s/-d]|Let's the bot meh. Use -s to save the vote|
 |!lottery| |[time]| |Starts a lottery|
