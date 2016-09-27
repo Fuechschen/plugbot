@@ -77,57 +77,60 @@ if (config.web.enabled) {
 module.exports = {
     app: app,
     wsGet: function (type) {
-        switch (type) {
-            case 'advance':
-                return function (update) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'adv', d: update}));
-                };
-                break;
-            case 'chat':
-                return function (msg) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'chat', d: msg}));
-                };
-                break;
-            case 'skip':
-                return function (user) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'skip', d: user}));
-                };
-                break;
-            case 'userban':
-                return function (ban) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'ban', d: ban}));
-                };
-                break;
-            case 'join':
-                return function (user) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'join', d: user}));
-                };
-                break;
-            case 'leave':
-                return function (user) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'leave', d: user}));
-                };
-                break;
-            case 'waitlist':
-                return function (wl) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'wl', d: wl}));
-                };
-                break;
-            case 'vote':
-                return function (votes) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'v', d: votes}));
-                };
-                break;
-            case 'chatDelete':
-                return function (data) {
-                    if (ws !== null)ws.broadcast(JSON.stringify({t: 'chatDelete', d: data}));
-                };
-                break;
-            default:
-                return function () {
+        if (ws !== null) {
+            switch (type) {
+                case 'advance':
+                    return function (update) {
+                        ws.broadcast(JSON.stringify({t: 'adv', d: update}));
+                    };
+                    break;
+                case 'chat':
+                    return function (msg) {
+                        ws.broadcast(JSON.stringify({t: 'chat', d: msg}));
+                    };
+                    break;
+                case 'skip':
+                    return function (user) {
+                        ws.broadcast(JSON.stringify({t: 'skip', d: user}));
+                    };
+                    break;
+                case 'userban':
+                    return function (ban) {
+                       ws.broadcast(JSON.stringify({t: 'ban', d: ban}));
+                    };
+                    break;
+                case 'join':
+                    return function (user) {
+                        ws.broadcast(JSON.stringify({t: 'join', d: user}));
+                    };
+                    break;
+                case 'leave':
+                    return function (user) {
+                        ws.broadcast(JSON.stringify({t: 'leave', d: user}));
+                    };
+                    break;
+                case 'waitlist':
+                    return function (wl) {
+                        ws.broadcast(JSON.stringify({t: 'wl', d: wl}));
+                    };
+                    break;
+                case 'vote':
+                    return function (votes) {
+                        ws.broadcast(JSON.stringify({t: 'v', d: votes}));
+                    };
+                    break;
+                case 'chatDelete':
+                    return function (data) {
+                        ws.broadcast(JSON.stringify({t: 'chatDelete', d: data}));
+                    };
+                    break;
+                default:
+                    return function () {
 
-                };
-                break;
-        }
+                    };
+                    break;
+            }
+        } else return ()=> {
+        };
     }
 };
