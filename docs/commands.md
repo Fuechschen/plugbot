@@ -3,7 +3,7 @@
 ## User Commands
 
 |Command|Alias|Arguments|Flags|Description|
-|---|---|---|---|
+|---|---|---|---|---|
 |!link| | | |Gives a link to the current song|
 |!define| | |(word)|Defines the given word|
 |!songinfo|!sinfo|[format:cid / media-url]| |Gives information about the song|
@@ -16,7 +16,7 @@
 RDj commands include user commands
 
 |Command|Alias|Arguments|Flags|Description|
-|---|---|---|---|
+|---|---|---|---|---|
 |!demote| | | |Removes you as staff|
 |!promote| | | |Adds you back as staff|
 |!ping| | | |Pong!|
@@ -28,7 +28,7 @@ RDj commands include user commands
 Bouncer commands include Rdj commands
 
 |Command|Alias|Arguments|Flags|Description|
-|---|---|---|---|
+|---|---|---|---|---|
 |!skip|!fs|[reason]| |Skips the current song and sends an optional reason.|
 |!lockskip|!ls|[reason]| |Skips the current songs, moves the dj back and sends an optional reason|
 |!blacklist|!bl|[reason]| |Skips the curent song, adds it to the blacklist and sends an optional reason|
@@ -49,7 +49,7 @@ Bouncer commands include Rdj commands
 These commands are only available for bouncers when bouncer+ is enabled.
 
 |Command|Alias|Arguments|Flags|Description|
-|---|---|---|---|
+|---|---|---|---|---|
 |!add|!addwl|(@user)| |Adds the given user to the waitlist|
 |!move|!mv|(@user)(position)| |Moves the given user to the given position|
 |!swap| |(@user)(@user)|-nl|Swap the waitlist-positions of the specified users. -nl will prevent waitlsit-locking|
@@ -94,7 +94,7 @@ These commands are only available for bouncers when bouncer+ is enabled.
 Manager commands include bouncer and bouncer+ commands
 
 |Command|Alias|Arguments|Flags|Description|
-|---|---|---|---|
+|---|---|---|---|---|
 |!setstaff| |(role)(@user)| |Sets the given user to the given role|
 |!bouncer+| | | |Toggles bouncer+|
 |!welcomemsg| | | |Sets the room welcome message|
