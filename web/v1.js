@@ -7,42 +7,47 @@ var db = require('../lib/db/sql_db');
 var utils = require('../lib/utils');
 var config = require('../lib/load_config');
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.json({
         plug_data: {
-            all: config.web.path + '/v1/all',
-            users: config.web.path + '/v1/users',
-            media: config.web.path + '/v1/media',
-            history: config.web.path + '/v1/history',
-            room: config.web.path + '/v1/room',
-            waitlist: config.web.path + '/v1/waitlist'
+            all: `${config.web.path}/v1/all`,
+            users: `${config.web.path}/v1/users`,
+            media: `${config.web.path}/v1/media`,
+            history: `${config.web.path}/v1/history`,
+            room: `${config.web.path}/v1/room`,
+            waitlist: `${config.web.path}/v1/waitlist`
         },
         bot_data: {
-            customCommands: config.web.path + '/v1/customcommands',
-            bestVotedSongs: config.web.path + '/v1/highscore',
-            blacklist: config.web.path + '/v1/blacklist',
-            channelblacklist: config.web.path + '/v1/channelblacklist',
-            check: config.web.path + '/v1/check?s={string}',
-            user: config.web.path + '/v1/user?id={userid}&name={username}'
+            customCommands: `${config.web.path}/v1/customcommands`,
+            bestVotedSongs: `${config.web.path}/v1/highscore`,
+            blacklist: `${config.web.path}/v1/blacklist`,
+            channelblacklist: `${config.web.path}/v1/channelblacklist`,
+            check: `${config.web.path}/v1/check?s={string}`,
+            user: `${config.web.path}/v1/user?id={userid}&name={username}`
         },
-        socket: config.web.path + '/v1/socket'
+        socket: `${config.web.path}/v1/socket`
     })
 });
 
-app.get('/users', function (req, res) {
-    res.json(plugged.getUsers().map(function (e) {
-        return {id: e.id, username: e.username, slug: e.slug, gRole: e.gRole, role: e.role, level: e.level}
-    }));
+app.get('/users', (req, res) => {
+    res.json(plugged.getUsers().map(e => ({
+        id: e.id,
+        username: e.username,
+        slug: e.slug,
+        gRole: e.gRole,
+        role: e.role,
+        level: e.level
+    })));
 });
 
-app.get('/media', function (req, res) {
+app.get('/media', (req, res) => {
     res.json({data: (plugged.getMedia().id !== -1 ? plugged.getMedia() : null)});
 });
 
-app.get('/history', function (req, res) {
-    plugged.getRoomHistory(function (err, history) {
+app.get('/history', (req, res) => {
+    plugged.getRoomHistory((err, history) => {
         if (err)res.status(500).end();
-        else res.json(history.map(function (e) {
+        else res.json(history.map(e => {
                 e.room = undefined;
                 return e;
             })
@@ -50,40 +55,41 @@ app.get('/history', function (req, res) {
     });
 });
 
-app.get('/room', function (req, res) {
-    res.json(function () {
+app.get('/room', (req, res) => {
+    res.json((() => {
         var meta = plugged.getRoomMeta();
         meta.favorite = undefined;
         meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
         return meta;
-    }());
+    })());
 });
 
-app.get('/waitlist', function (req, res) {
+app.get('/waitlist', (req, res) => {
     res.json({
-        data: plugged.getWaitlist().map(function (id) {
-            return plugged.getUserByID(id);
-        })
+        data: plugged.getWaitlist().map(id => plugged.getUserByID(id))
     });
 });
 
-app.get('/all', function (req, res) {
-    plugged.getRoomHistory(function (err, history) {
+app.get('/all', (req, res) => {
+    plugged.getRoomHistory((err, history) => {
         res.json({
-            room: function () {
+            room: (() => {
                 var meta = plugged.getRoomMeta();
                 meta.favorite = undefined;
                 meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
                 return meta;
-            }(),
+            })(),
             media: (plugged.getMedia().id !== -1 ? plugged.getMedia() : null),
-            users: plugged.getUsers().map(function (e) {
-                return {id: e.id, username: e.username, slug: e.slug, gRole: e.gRole, role: e.role, level: e.level};
-            }),
-            waitlist: plugged.getWaitlist().map(function (id) {
-                return plugged.getUserByID(id);
-            }),
-            history: (err ? null : history.map(function (e) {
+            users: plugged.getUsers().map(e => ({
+                id: e.id,
+                username: e.username,
+                slug: e.slug,
+                gRole: e.gRole,
+                role: e.role,
+                level: e.level
+            })),
+            waitlist: plugged.getWaitlist().map(id => plugged.getUserByID(id)),
+            history: (err ? null : history.map(e => {
                 e.room = undefined;
                 return e;
             }))
@@ -91,31 +97,30 @@ app.get('/all', function (req, res) {
     });
 });
 
-app.get('/customcommands', function (req, res) {
+app.get('/customcommands', (req, res) => {
     //noinspection JSUnresolvedFunction
-    db.models.CustomCommand.findAll().map(function (e) {
-        return {id: e.id, trigger: e.trigger, message: e.message, enabled: e.status};
-    }).then(function (ccs) {
+    db.models.CustomCommand.findAll().map(e => ({
+        id: e.id,
+        trigger: e.trigger,
+        message: e.message,
+        enabled: e.status
+    })).then(ccs => {
         res.json({data: ccs});
-    }).catch(function (err) {
+    }).catch(err => {
         story.warn('web', 'Error getting CustomCommands', {attach: err});
         res.status(500).end();
     });
 });
 
-app.get('/highscore', function (req, res) {
+app.get('/highscore', (req, res) => {
     var limit = parseInt(req.query.limit) || 10;
     //noinspection JSUnresolvedFunction
-    db.models.Play.findAll({order: [['woots', 'DESC']], limit: limit}).then(function (plays) {
-        Promise.all(plays.map(function (e) {
-            return e.getUser();
-        })).then(function (users) {
-            Promise.all(plays.map(function (e) {
-                //noinspection JSUnresolvedFunction
-                return e.getSong();
-            })).then(function (songs) {
+    db.models.Play.findAll({order: [['woots', 'DESC']], limit}).then(plays => {
+        Promise.all(plays.map(e => e.getUser())).then(users => {
+            Promise.all(plays.map(e => //noinspection JSUnresolvedFunction
+            e.getSong())).then(songs => {
                 var data = [];
-                plays.forEach(function (play, i) {
+                plays.forEach((play, i) => {
                     var p = {
                         id: play.id,
                         score: {woots: play.woots, mehs: play.mehs, grabs: play.grabs},
@@ -133,57 +138,53 @@ app.get('/highscore', function (req, res) {
                     } : null);
                     data.push(p);
                 });
-                res.json({data: data});
+                res.json({data});
             });
         });
     });
 });
 
-app.get('/blacklist', function (req, res) {
+app.get('/blacklist', (req, res) => {
     //noinspection JSUnresolvedFunction
-    db.models.Song.findAll({where: {is_banned: true}}).then(function (songs) {
+    db.models.Song.findAll({where: {is_banned: true}}).then(songs => {
         res.json({
-            data: songs.map(function (song) {
-                return {
-                    id: song.id,
-                    author: song.author,
-                    title: song.title,
-                    format: song.format,
-                    cid: song.cid,
-                    image: song.image,
-                    isBanned: song.is_banned,
-                    banReason: song.ban_reason
-                };
-            })
+            data: songs.map(song => ({
+                id: song.id,
+                author: song.author,
+                title: song.title,
+                format: song.format,
+                cid: song.cid,
+                image: song.image,
+                isBanned: song.is_banned,
+                banReason: song.ban_reason
+            }))
         });
-    }).catch(function () {
+    }).catch(() => {
         res.status(500).json({error: 'SQL Error'});
     });
 });
 
-app.get('/channelblacklist', function (req, res) {
+app.get('/channelblacklist', (req, res) => {
     //noinspection JSUnresolvedFunction
-    db.models.Channel.findAll({where: {is_banned: true}}).then(function (channels) {
+    db.models.Channel.findAll({where: {is_banned: true}}).then(channels => {
         res.json({
-            data: channels.map(function (c) {
-                return {
-                    name: c.name,
-                    channel_id: c.cid,
-                    is_banned: c.is_banned,
-                    ban_reason: c.ban_reason
-                };
-            })
+            data: channels.map(c => ({
+                name: c.name,
+                channel_id: c.cid,
+                is_banned: c.is_banned,
+                ban_reason: c.ban_reason
+            }))
         });
-    }).catch(function () {
+    }).catch(() => {
         res.status(500).json({error: 'SQL Error'});
     });
 });
 
-app.get('/check', function (req, res) {
+app.get('/check', (req, res) => {
     if (req.query.s !== undefined) {
-        utils.resolveCID(req.query.s).then(function (cid) {
+        utils.resolveCID(req.query.s).then(cid => {
             var split = cid.split(':');
-            db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(function (song) {
+            db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(song => {
                 if (song !== undefined && song !== null) {
                     res.json({
                         data: {
@@ -198,23 +199,23 @@ app.get('/check', function (req, res) {
                         }
                     });
                 } else res.status(404).json({error: 'song not found'});
-            }).catch(function () {
+            }).catch(() => {
                 res.status(500).json({error: 'SQL Error'});
             });
-        }).catch(function (error) {
+        }).catch(error => {
             res.json({error: error.message});
         });
     } else res.status(400).json({error: 'invalid query'});
 });
 
-app.get('/user', function (req, res) {
+app.get('/user', (req, res) => {
     var search = {};
     if (req.query.id !== undefined) search.id = req.query.id;
     if (req.query.name !== undefined && req.query.id === undefined) search.username = req.query.name;
 
     if (req.query.id === undefined && req.query.name === undefined) res.status(400).json({error: 'invalid query'});
     else {
-        db.models.User.find({where: search}).then(function (user) {
+        db.models.User.find({where: search}).then(user => {
             if (user !== undefined && user !== null) {
                 res.json({
                     data: {
@@ -229,7 +230,7 @@ app.get('/user', function (req, res) {
                     }
                 });
             } else res.statusCode(404).json({error: 'User not found'});
-        }).catch(function () {
+        }).catch(() => {
             res.status(500).json({error: 'SQL Error'});
         })
     }
