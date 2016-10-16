@@ -6,7 +6,7 @@ see all functions here: [functions.md](/docs/functions.md)
 ## Installation
 0. Be sure to have node 6.x.x or higher installed.
 1. Run ```npm install```.
-2. Copy config.example.js to config.js and insert your data (Redis, SQL-Database, Roomname, [apiKeys](/docs/apikeys.md) and Login-Credentials are required.)
+2. Copy config.example.js to config.js and insert your data (Redis, [SQL-Database](/docs/database.md), Roomname, [apiKeys](/docs/apikeys.md) and Login-Credentials are required.)
 3. Start the bot ```npm start```
 
 ## PM2

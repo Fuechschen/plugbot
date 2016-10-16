@@ -414,5 +414,8 @@ module.exports = {
             warn: '@&{username}, you name doesn\'t fit the room rules. Please change it or you will be banned within 60 seconds.',
             ban: '@&{username} was banned for using a name against the room rules.'
         }
+    },
+    staff:{
+        default:'[&{username}: @staff ]'
     }
 };
