@@ -4,14 +4,13 @@ var fs = require('fs');
 
 var config = require('./lib/load_config.js');
 var langfile = require('./langfile.js');
-var db = require('./lib/db/sql_db');
 var plugged = require('./lib/client');
 var redis = require('./lib/db/redis_db');
 var story = storyboard.mainStory;
 
 storyboard.config({filter: `*:${config.options.loglevel}`});
 storyboard.addListener(require('storyboard/lib/listeners/console').default);
-storyboard.mainStory.info(`Starting plugbot version ${require('./package.json').version}`);
+story.info(`Starting plugbot version ${require('./package.json').version}`);
 
 moment.locale(langfile.moment_locale);
 
