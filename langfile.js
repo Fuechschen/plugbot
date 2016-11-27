@@ -91,9 +91,14 @@ module.exports = {
         error: '[&{mod}: Kick] You can\'t kick that user.'
     },
     ban: {
-        default: '[&{mod}: Banned &{username}]',
+        default: '[&{mod}: Banned &{username}&{duration}]',
         no_staff_ban: '@&{username}, please let our staff decide, who should be permanently banned. (Duration changed to 1 day)',
-        staff_ban: '@&{username}, you are not allowed to ban staff memebers. Remove them from the staff list before baning.'
+        staff_ban: '@&{username}, you are not allowed to ban staff memebers. Remove them from the staff list before baning.',
+        duration: {
+            h: ' for one hour',
+            d: ' for one day',
+            f: ' permanently'
+        }
     },
     setstaff: {
         default: '[&{mod}: Set &{username} as &{role}]',
@@ -136,7 +141,7 @@ module.exports = {
         language: {
             warn: '@&{username}, please have look at our rules. You are speaking the wrong language!'
         },
-        link:{
+        link: {
             warn: '@&{username}, please stop sending these links.',
             mute: '@&{username} didn\'t stop to send links, now he can\'t...'
         }
@@ -190,9 +195,9 @@ module.exports = {
     youtubeGuard: {
         skip: '/me [YouTubeGuard]',
         api_unreachable: '@staff, I couldn\'t reach YouTube to check the avability of the current song. Please check.',
-        block:'@&{username}, YouTube is currently blocked in this room.',
-        block_enabled:'[&{username}: YouTubeBlock enabled]',
-        block_disabled:'[&{username}: YouTubeBlock disabled]',
+        block: '@&{username}, YouTube is currently blocked in this room.',
+        block_enabled: '[&{username}: YouTubeBlock enabled]',
+        block_disabled: '[&{username}: YouTubeBlock disabled]',
         blocked: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
             bl_reason: 'Blocked in the following countries: &{countries}'
@@ -224,8 +229,8 @@ module.exports = {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
             bl_reason: 'Video not embeddable'
         },
-        ytUnavailable:{
-          default:'@&{username}, YouTube seems to be unavailable. Your song "&{song}" has therefore be skipped.'
+        ytUnavailable: {
+            default: '@&{username}, YouTube seems to be unavailable. Your song "&{song}" has therefore be skipped.'
         },
         enabled: '[&{username}: YouTubeGuard enabled]',
         disabled: '[&{username}: YouTubeGuard disabled]'
@@ -233,9 +238,9 @@ module.exports = {
     soundcloudGuard: {
         skip: '/me [SoundCloudGuard]',
         api_unreachable: '@staff, I couldn\'t reach SoundCloud to check the avability of the current song. Please check.',
-        block:'@&{username}, SoundCloud is currently blocked in this room.',
-        block_enabled:'[&{username}: SoundCloudBlock enabled]',
-        block_disabled:'[&{username}: SoundCloudBlock disabled]',
+        block: '@&{username}, SoundCloud is currently blocked in this room.',
+        block_enabled: '[&{username}: SoundCloudBlock enabled]',
+        block_disabled: '[&{username}: SoundCloudBlock disabled]',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
             bl_reason: 'Song was deleted.'
@@ -402,12 +407,15 @@ module.exports = {
     clearghosts: {
         default: '[&{username}: ClearGhosts] We will now be kicking all possible ghost-users out of the room to increase performance for the others. Be sure to have at least used the chat within the 50 hours @everyone'
     },
-    userfilter:{
+    userfilter: {
         enabled: '[&{username}: UserFilter enabled]',
         disabled: '[&{username}: UserFilter disabled]',
         username: {
             warn: '@&{username}, you name doesn\'t fit the room rules. Please change it or you will be banned within 60 seconds.',
             ban: '@&{username} was banned for using a name against the room rules.'
         }
+    },
+    staff:{
+        default:'[&{username}: @staff ]'
     }
 };

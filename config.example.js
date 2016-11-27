@@ -116,6 +116,7 @@ module.exports = {
     titleguard: {
         enabled: true,
         not_contain: ['big dick'],
+        regex_match: null,
         lockskip: false
     },
     playlists: {
@@ -174,6 +175,7 @@ module.exports = {
     },
     userfilter: {
         enabled: false,
-        username_disallowed: []
+        username_disallowed: [],
+        regex:null
     }
 };

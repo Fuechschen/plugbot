@@ -56,6 +56,8 @@
 |titleguard|object|settings for titleguard|
 |titleguard.enabled|boolean|Sets the default value for titleguard|
 |titleguard.not_contain|array[string]|Words titles are forbidden to contain|
+|titleguard.regex_match|RegEx|Regular expression to test against. Set to null to disable this|
+|titleguard.lockskip|boolean|Enables lockskip if titleguard is triggerd|
 |playlists.play|number|A playlist-id for the bot to play when in the waitlist|
 |playlists.none|number|A playlist-id for the bot to activate when not in waitlist to avoid being acidentially added|
 |afk|object|Settings for the afk-function|
@@ -80,4 +82,8 @@
 |web.useUWS|boolean|Enable this to use a more performant websocket-library which requires a c++-compiler on you machine. Disable it, if your bot throws an error at startup concerning uWebsocket|
 |web.path|string|the path the api runs under|
 |defaultCC|object|Contains multiple objects with default customcommands, see config.example.js for their properties|
+|userfilter|object|Settings for the userfilter|
+|userfilter.enabled|boolean|Enables the userfilter|
+|userfilter.username_disallowed|array[string]|array of disallowed usernames|
+|userfilter.regex|RegEx|RegEx to test usernames. Triggers the filter when a match is found. Set to null to disable|
 
