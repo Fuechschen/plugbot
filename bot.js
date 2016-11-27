@@ -1,12 +1,12 @@
-var moment = require('moment');
-var storyboard = require('storyboard');
-var fs = require('fs');
+let moment = require('moment');
+let storyboard = require('storyboard');
+let fs = require('fs');
 
-var config = require('./lib/load_config.js');
-var langfile = require('./langfile.js');
-var plugged = require('./lib/client');
-var redis = require('./lib/db/redis_db');
-var story = storyboard.mainStory;
+const config = require('./lib/load_config.js');
+const langfile = require('./langfile.js');
+let plugged = require('./lib/client');
+let redis = require('./lib/db/redis_db');
+let story = storyboard.mainStory;
 
 storyboard.config({filter: `*:${config.options.loglevel}`});
 storyboard.addListener(require('storyboard/lib/listeners/console').default);
@@ -28,7 +28,7 @@ fs.readdir('./lib/eventhandlers', (err, files) => {
     } else {
         files.forEach(file => {
             try {
-                var h = require(`./lib/eventhandlers/${file}`);
+                let h = require(`./lib/eventhandlers/${file}`);
                 if (Array.isArray(h.event)) {
                     h.event.forEach(event => {
                         plugged.on(event, h.handler);

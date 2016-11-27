@@ -1,11 +1,11 @@
-var app = require('express').Router();
-var story = require('storyboard').mainStory;
-var Promise = require('bluebird');
+let app = require('express').Router();
+let story = require('storyboard').mainStory;
+let Promise = require('bluebird');
 
-var plugged = require('../lib/client');
-var db = require('../lib/db/sql_db');
-var utils = require('../lib/utils');
-var config = require('../lib/load_config');
+let plugged = require('../lib/client');
+let db = require('../lib/db/sql_db');
+let utils = require('../lib/utils');
+const config = require('../lib/load_config');
 
 app.get('/', (req, res) => {
     res.json({
@@ -57,7 +57,7 @@ app.get('/history', (req, res) => {
 
 app.get('/room', (req, res) => {
     res.json((() => {
-        var meta = plugged.getRoomMeta();
+        let meta = plugged.getRoomMeta();
         meta.favorite = undefined;
         meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
         return meta;
@@ -74,7 +74,7 @@ app.get('/all', (req, res) => {
     plugged.getRoomHistory((err, history) => {
         res.json({
             room: (() => {
-                var meta = plugged.getRoomMeta();
+                let meta = plugged.getRoomMeta();
                 meta.favorite = undefined;
                 meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
                 return meta;
@@ -113,15 +113,15 @@ app.get('/customcommands', (req, res) => {
 });
 
 app.get('/highscore', (req, res) => {
-    var limit = parseInt(req.query.limit) || 10;
+    let limit = parseInt(req.query.limit) || 10;
     //noinspection JSUnresolvedFunction
     db.models.Play.findAll({order: [['woots', 'DESC']], limit}).then(plays => {
         Promise.all(plays.map(e => e.getUser())).then(users => {
             Promise.all(plays.map(e => //noinspection JSUnresolvedFunction
             e.getSong())).then(songs => {
-                var data = [];
+                let data = [];
                 plays.forEach((play, i) => {
-                    var p = {
+                    let p = {
                         id: play.id,
                         score: {woots: play.woots, mehs: play.mehs, grabs: play.grabs},
                         time: play.time
@@ -183,7 +183,7 @@ app.get('/channelblacklist', (req, res) => {
 app.get('/check', (req, res) => {
     if (req.query.s !== undefined) {
         utils.resolveCID(req.query.s).then(cid => {
-            var split = cid.split(':');
+            let split = cid.split(':');
             db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(song => {
                 if (song !== undefined && song !== null) {
                     res.json({
@@ -209,7 +209,7 @@ app.get('/check', (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-    var search = {};
+    let search = {};
     if (req.query.id !== undefined) search.id = req.query.id;
     if (req.query.name !== undefined && req.query.id === undefined) search.username = req.query.name;
 
