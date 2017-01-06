@@ -1,7 +1,6 @@
 let express = require('express');
 let story = require('storyboard').mainStory;
 let logger = require('morgan');
-let S = require('string');
 
 const config = require('../lib/load_config');
 
@@ -22,7 +21,7 @@ if (config.web.enabled) {
         stream: {
             write: (toLog) => {
                 //noinspection JSUnresolvedFunction
-                story.info('web', S(toLog).chompRight('\n').s);
+                story.info('web', (toLog).replace(new RegExp('\n', 'g'), ''));
             }
         }
     }));

@@ -46,7 +46,7 @@ app.get('/media', (req, res) => {
 
 app.get('/history', (req, res) => {
     plugged.getRoomHistory((err, history) => {
-        if (err)res.status(500).end();
+        if (err) res.status(500).end();
         else res.json(history.map(e => {
                 e.room = undefined;
                 return e;
@@ -59,7 +59,7 @@ app.get('/room', (req, res) => {
     res.json((() => {
         let meta = plugged.getRoomMeta();
         meta.favorite = undefined;
-        meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
+        meta.dj = (plugged.getDJ() ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
         return meta;
     })());
 });
@@ -76,7 +76,7 @@ app.get('/all', (req, res) => {
             room: (() => {
                 let meta = plugged.getRoomMeta();
                 meta.favorite = undefined;
-                meta.dj = (plugged.getDJ() !== undefined ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
+                meta.dj = (plugged.getDJ() ? (plugged.getDJ().id !== -1 ? plugged.getDJ() : null) : null);
                 return meta;
             })(),
             media: (plugged.getMedia().id !== -1 ? plugged.getMedia() : null),
@@ -90,9 +90,9 @@ app.get('/all', (req, res) => {
             })),
             waitlist: plugged.getWaitlist().map(id => plugged.getUserByID(id)),
             history: (err ? null : history.map(e => {
-                e.room = undefined;
-                return e;
-            }))
+                    e.room = undefined;
+                    return e;
+                }))
         })
     });
 });
@@ -118,7 +118,7 @@ app.get('/highscore', (req, res) => {
     db.models.Play.findAll({order: [['woots', 'DESC']], limit}).then(plays => {
         Promise.all(plays.map(e => e.getUser())).then(users => {
             Promise.all(plays.map(e => //noinspection JSUnresolvedFunction
-            e.getSong())).then(songs => {
+                e.getSong())).then(songs => {
                 let data = [];
                 plays.forEach((play, i) => {
                     let p = {
@@ -127,15 +127,15 @@ app.get('/highscore', (req, res) => {
                         time: play.time
                     };
                     p.user = {id: users[i].id, username: users[i].username};
-                    p.song = (songs[i] !== null ? {
-                        id: songs[i].plug_id,
-                        author: songs[i].author,
-                        title: songs[i].title,
-                        format: songs[i].format,
-                        cid: songs[i].cid,
-                        duration: songs[i].duration,
-                        image: songs[i].image
-                    } : null);
+                    p.song = (songs[i]? {
+                            id: songs[i].plug_id,
+                            author: songs[i].author,
+                            title: songs[i].title,
+                            format: songs[i].format,
+                            cid: songs[i].cid,
+                            duration: songs[i].duration,
+                            image: songs[i].image
+                        } : null);
                     data.push(p);
                 });
                 res.json({data});
@@ -181,11 +181,11 @@ app.get('/channelblacklist', (req, res) => {
 });
 
 app.get('/check', (req, res) => {
-    if (req.query.s !== undefined) {
+    if (req.query.s) {
         utils.resolveCID(req.query.s).then(cid => {
             let split = cid.split(':');
             db.models.Song.find({where: {format: split[0], cid: split[1]}}).then(song => {
-                if (song !== undefined && song !== null) {
+                if (song) {
                     res.json({
                         data: {
                             id: song.id,
@@ -210,13 +210,13 @@ app.get('/check', (req, res) => {
 
 app.get('/user', (req, res) => {
     let search = {};
-    if (req.query.id !== undefined) search.id = req.query.id;
-    if (req.query.name !== undefined && req.query.id === undefined) search.username = req.query.name;
+    if (req.query.id) search.id = req.query.id;
+    if (req.query.name && req.query.id === undefined) search.username = req.query.name;
 
     if (req.query.id === undefined && req.query.name === undefined) res.status(400).json({error: 'invalid query'});
     else {
         db.models.User.find({where: search}).then(user => {
-            if (user !== undefined && user !== null) {
+            if (user) {
                 res.json({
                     data: {
                         id: user.id,
