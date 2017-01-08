@@ -1,12 +1,13 @@
-let moment = require('moment');
-let storyboard = require('storyboard');
-let fs = require('fs');
+let moment = require('moment'),
+    storyboard = require('storyboard'),
+    fs = require('fs');
 
-const config = require('./lib/load_config.js');
-const langfile = require('./langfile.js');
-let plugged = require('./lib/client');
-let redis = require('./lib/db/redis_db');
-let story = storyboard.mainStory;
+const config = require('./lib/load_config.js'),
+    langfile = require('./langfile.js');
+
+let plugged = require('./lib/client'),
+    redis = require('./lib/db/redis_db'),
+    story = storyboard.mainStory;
 
 storyboard.config({filter: `*:${config.options.loglevel}`});
 storyboard.addListener(require('storyboard/lib/listeners/console').default);  //eslint-disable-line global-require

@@ -1,12 +1,13 @@
-let express = require('express');
-let story = require('storyboard').mainStory;
-let logger = require('morgan');
-let httpServer = require('http');
+let express = require('express'),
+    story = require('storyboard').mainStory,
+    logger = require('morgan'),
+    httpServer = require('http');
 
 const config = require('../lib/load_config');
 
-let ws = null;
-let app = null;
+let ws = null,
+    app = null;
+
 if (config.web.enabled) {
     let Ws = require(`${config.web.useUWS ? 'u' : ''}ws`).Server;  //eslint-disable-line global-require
 

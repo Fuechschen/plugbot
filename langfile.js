@@ -180,7 +180,7 @@ module.exports = {
     },
     move: {
         default: '/me [&{username}: Move]',
-        addqueue: '[&{mod}: Move] &{username} will be added to position &{pos} as soon as a spot is available.'
+        addQueue: '[&{mod}: Move] &{username} will be added to position &{pos} as soon as a spot is available.'
     },
     superuser: {
         add: '[&{mod}: SuperUser] Set &{username} as Super-User.',
@@ -294,10 +294,10 @@ module.exports = {
         enabled: '[&{username}: DCMoveback enabled]',
         disabled: '[&{username}: DCMoveback disabled]',
         move: 'You should be at position &{pos}.',
-        addqueue: 'You should be at position &{pos} and will be added as soon there is a spot free.',
+        addQueue: 'You should be at position &{pos} and will be added as soon there is a spot free.',
         command: {
             move: '[&{username}: DCMoveback] You should be at position &{pos}.',
-            addqueue: '[&{username}: DCMoveback] You should be at position &{pos}. You will be added as soon as there is a free spot.',
+            addQueue: '[&{username}: DCMoveback] You should be at position &{pos}. You will be added as soon as there is a free spot.',
             noDc: '[&{username}: DCMoveback] I haven\'t seen you disconnect.',
             onWl: '[&{username}: DCMoveback] You are already on a higher position than when you disconnected.'
         }
@@ -383,14 +383,14 @@ module.exports = {
         contained: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s title contained a blacklisted phrase.',
         blReason: 'Title contains blacklisted phrase.'
     },
-    addqueue: {
+    addQueue: {
         default: '[Adding &{username} to waitlist since he is in the AddQueue]'
     },
     commands: {
         reloadCommands: '[&{username}: Reloaded Commands]'
     },
     joinmode: {
-        addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.',
+        addQueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.',
         wlban: '[&{username}: Play] You are not allowed to join the waitlist.',
         enabled: '[&{username}: Joinmode enabled]',
         disabled: '[&{username}: Joinmode disabled]'

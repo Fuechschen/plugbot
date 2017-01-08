@@ -1,10 +1,11 @@
-let app = require('express').Router();
-let story = require('storyboard').mainStory;
-let Promise = require('bluebird');
+let app = require('express').Router(),
+    story = require('storyboard').mainStory,
+    Promise = require('bluebird');
 
-let plugged = require('../lib/client');
-let db = require('../lib/db/sql_db');
-let utils = require('../lib/utils');
+let plugged = require('../lib/client'),
+    db = require('../lib/db/sql_db'),
+    utils = require('../lib/utils');
+
 const config = require('../lib/load_config');
 
 app.get('/', (req, res) => {
