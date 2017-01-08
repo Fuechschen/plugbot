@@ -11,8 +11,8 @@
 |options.bouncerPlus|boolean|Default setting for Bouncer+|
 |options.loglevel|string|Sets the bot's loglevel. Defaults to INFO, use DEBUG to for extended output|
 |options.dcmoveback|boolean|Default setting for DCMoveBack|
-|options.command_prefix|string|Sets the commandprefix, defaults to !|
-|options.disable_emote|boolean|Sets if the bot should automatically delete all /me-messages from non-staff|
+|options.commandPrefix|string|Sets the commandprefix, defaults to !|
+|options.disableEmote|boolean|Sets if the bot should automatically delete all /me-messages from non-staff|
 |options.welcome|object|welcome settings|
 |options.welcome.new|boolean|Sets if the bot should welcome new users|
 |options.welcome.old|boolean|Sets if the bot should welcome old users|
@@ -55,8 +55,8 @@
 |soundcloudGuard.enabled|boolean|Sets the default value for soundcloudGuard|
 |titleguard|object|settings for titleguard|
 |titleguard.enabled|boolean|Sets the default value for titleguard|
-|titleguard.not_contain|array[string]|Words titles are forbidden to contain|
-|titleguard.regex_match|RegEx|Regular expression to test against. Set to null to disable this|
+|titleguard.notContain|array[string]|Words titles are forbidden to contain|
+|titleguard.regexMatch|RegEx|Regular expression to test against. Set to null to disable this|
 |titleguard.lockskip|boolean|Enables lockskip if titleguard is triggerd|
 |playlists.play|number|A playlist-id for the bot to play when in the waitlist|
 |playlists.none|number|A playlist-id for the bot to activate when not in waitlist to avoid being acidentially added|
@@ -69,7 +69,7 @@
 |pm2.pid|string|Sets the pm2-processid to rstart the bot|
 |rdjskip|object|Settings for rdjskip|
 |rdjskip.enabled|boolean|Sets the default value for rdjskip|
-|rdjskip.max_staff_active|number|Sets the amount of active staff (bouncer and higher) before rdjskip is disabled|
+|rdjskip.maxStaffActive|number|Sets the amount of active staff (bouncer and higher) before rdjskip is disabled|
 |rdjskip.votes|number|Sets the mumber of required votes before a song is skipped|
 |customcommands|object|Settings for customcommands|
 |customcommands.enabled|boolean|Sets the default value for customcommands|

@@ -1,12 +1,12 @@
 module.exports = {
-    moment_locale: 'en',
+    momentLocale: 'en',
     blacklist: {
         default: '/me [&{username}: Blacklist]',
-        with_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}: &{reason}',
-        without_reason: '@&{username}, your song "&{song}" was blacklisted by &{mod}.',
-        skip_reason: '@&{username}, your song "&{song}" is blacklisted: &{reason}',
+        withReason: '@&{username}, your song "&{song}" was blacklisted by &{mod}: &{reason}',
+        withoutReason: '@&{username}, your song "&{song}" was blacklisted by &{mod}.',
+        skipReason: '@&{username}, your song "&{song}" is blacklisted: &{reason}',
         skip: '@&{username}, your song "&{song}" is blacklisted',
-        skip_first: '/me [Blacklist]',
+        skipFirst: '/me [Blacklist]',
         reload: '[&{username}: Reloaded Blacklist with &{count} items]',
         reasons: {
             u: 'Song unavailable.',
@@ -23,7 +23,7 @@ module.exports = {
             enabled: '[&{username}: ChannelBlacklist enabled]',
             disabled: '[&{username}: ChannelBlacklist disabled]',
             skip: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room.',
-            skip_reason: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room: &{reason}',
+            skipReason: '@&{username}, your song "&{song}" was skipped because the uploaders channel is blacklisted in this room: &{reason}',
             add: '[&{username}: ChannelBlacklist] Added "&{cid}" to the channelblacklist.',
             remove: '[&{username}: ChannelBlacklist] Removed "&{cid}" from the channelblacklist.'
         }
@@ -61,21 +61,21 @@ module.exports = {
             enabled: '[&{username}: Timeguard enabled]',
             disabled: '[&{username}: Timeguard disabled]'
         },
-        no_mod_skip: '@&{username} but why?'
+        noModSkip: '@&{username} but why?'
     },
     error: {
-        user_not_found: 'User wasn\'t found!',
+        userNotFound: 'User wasn\'t found!',
         argument: '[&{username}: &{cmd}] Error on arguments, please check command syntax.',
         eventmode: '[&{username}: &{cmd}] This command isn\'t available in eventmode.',
-        wl_banned: '[&{username}: &{cmd}] Cannot execute the command since the user isn\t allowed to join the waitlist'
+        wlBanned: '[&{username}: &{cmd}] Cannot execute the command since the user isn\t allowed to join the waitlist'
     },
     bouncerPlus: {
         enabled: '[&{username}: Bouncer+ enabled]',
         disabled: '[&{username}: Bouncer+ disabled]'
     },
-    bp_actions: {
+    bpActions: {
         add: '/me [&{username}: Add]',
-        add_queue: '/me [&{mod}: Add] &{username} has been added to the AddQueue',
+        addQueue: '/me [&{mod}: Add] &{username} has been added to the AddQueue',
         remove: '/me [&{username}: Remove]',
         lock: '/me [&{username}: Lock]',
         unlock: '/me [&{username}: Unlock]',
@@ -92,8 +92,8 @@ module.exports = {
     },
     ban: {
         default: '[&{mod}: Banned &{username}&{duration}]',
-        no_staff_ban: '@&{username}, please let our staff decide, who should be permanently banned. (Duration changed to 1 day)',
-        staff_ban: '@&{username}, you are not allowed to ban staff memebers. Remove them from the staff list before baning.',
+        noStaffBan: '@&{username}, please let our staff decide, who should be permanently banned. (Duration changed to 1 day)',
+        staffBan: '@&{username}, you are not allowed to ban staff members. Remove them from the staff list before baning.',
         duration: {
             h: ' for one hour',
             d: ' for one day',
@@ -102,7 +102,7 @@ module.exports = {
     },
     setstaff: {
         default: '[&{mod}: Set &{username} as &{role}]',
-        no_power: '@&{username}, you are not allowed to set staff here.',
+        noPower: '@&{username}, you are not allowed to set staff here.',
         roles: {
             user: 'user',
             rdj: 'resident dj',
@@ -119,7 +119,7 @@ module.exports = {
     },
     link: {
         default: '[&{username}: Link] &{link}',
-        no_media: '[&{username}: Link] For what should i give you a link? There\'s nothing playing...',
+        noMedia: '[&{username}: Link] For what should i give you a link? There\'s nothing playing...',
         error: '[&{username}: Link] Error while resolving link...'
     },
     chatfilter: {
@@ -128,7 +128,7 @@ module.exports = {
         spam: {
             warn: '@&{username}, please stop spamming!',
             mute: '@&{username} was muted for spamming.',
-            hard_mute: '@&{username} refused to stop spamming, now hard muting him...'
+            hardMute: '@&{username} refused to stop spamming, now hard muting him...'
         },
         repeat: {
             warn: '@&{username}, please don\'t repeat yourself.',
@@ -148,11 +148,11 @@ module.exports = {
     },
     unmute: {
         default: '[&{mod}: Unmuted &{username}]',
-        not_muted: '[&{mod}: Unmute] &{username} isn\'t muted.'
+        notMuted: '[&{mod}: Unmute] &{username} isn\'t muted.'
     },
     mute: {
         default: '[&{mod}: Muted &{username}]',
-        already_muted: '[&{mod}: Unmute] &{username} is already muted.'
+        alreadyMuted: '[&{mod}: Unmute] &{username} is already muted.'
     },
     lockdown: {
         enabled: '[&{username}: Lockdown enabled]',
@@ -194,10 +194,10 @@ module.exports = {
     },
     youtubeGuard: {
         skip: '/me [YouTubeGuard]',
-        api_unreachable: '@staff, I couldn\'t reach YouTube to check the avability of the current song. Please check.',
+        apiUnreachable: '@staff, I couldn\'t reach YouTube to check the avability of the current song. Please check.',
         block: '@&{username}, YouTube is currently blocked in this room.',
-        block_enabled: '[&{username}: YouTubeBlock enabled]',
-        block_disabled: '[&{username}: YouTubeBlock disabled]',
+        blockEnabled: '[&{username}: YouTubeBlock enabled]',
+        blockDisabled: '[&{username}: YouTubeBlock disabled]',
         blocked: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
             blReason: 'Blocked in the following countries: &{countries}'
@@ -237,10 +237,10 @@ module.exports = {
     },
     soundcloudGuard: {
         skip: '/me [SoundCloudGuard]',
-        api_unreachable: '@staff, I couldn\'t reach SoundCloud to check the avability of the current song. Please check.',
+        apiUnreachable: '@staff, I couldn\'t reach SoundCloud to check the avability of the current song. Please check.',
         block: '@&{username}, SoundCloud is currently blocked in this room.',
-        block_enabled: '[&{username}: SoundCloudBlock enabled]',
-        block_disabled: '[&{username}: SoundCloudBlock disabled]',
+        blockEnabled: '[&{username}: SoundCloudBlock enabled]',
+        blockDisabled: '[&{username}: SoundCloudBlock disabled]',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
             blReason: 'Song was deleted.'
@@ -274,14 +274,14 @@ module.exports = {
         default: '[&{mod}: FilterReset] Reset spamscore for &{username}.'
     },
     afk: {
-        warn_1: '&{usernames} Looks like you are afk. Please chat within the next 4 minutes or you will be removed from the waitlist.',
-        warn_2: '&{usernames} You are still inactive. This is your last warning. Chat or you will be removed from the waitlist.',
+        warn1: '&{usernames} Looks like you are afk. Please chat within the next 4 minutes or you will be removed from the waitlist.',
+        warn2: '&{usernames} You are still inactive. This is your last warning. Chat or you will be removed from the waitlist.',
         remove: '&{usernames} You will now be removed from the waitlist for being afk.',
         kick: '[Kicking @&{username} for autojoining the waitlist]',
         usernames: '@&{username} ',
         afkMsg: {
             default: '@&{username}, &{user} is AFK [&{msg}]',
-            no_msg: '@&{username}, &{user} is AFK.'
+            noMsg: '@&{username}, &{user} is AFK.'
         },
         enabled: '[&{username}: AFKRemoval enabled]',
         disabled: '[&{username}: AFKR disabled]'
@@ -298,14 +298,14 @@ module.exports = {
         command: {
             move: '[&{username}: DCMoveback] You should be at position &{pos}.',
             addqueue: '[&{username}: DCMoveback] You should be at position &{pos}. You will be added as soon as there is a free spot.',
-            no_dc: '[&{username}: DCMoveback] I haven\'t seen you disconnect.',
-            on_wl: '[&{username}: DCMoveback] You are already on a higher position than when you disconnected.'
+            noDc: '[&{username}: DCMoveback] I haven\'t seen you disconnect.',
+            onWl: '[&{username}: DCMoveback] You are already on a higher position than when you disconnected.'
         }
     },
     restart: {
         error: '[&{username}: Restart] Error while restarting...',
         default: '[&{username}: Restart]',
-        back_up: '[Restart done]'
+        backUp: '[Restart done]'
     },
     cleanwl: {
         default: '[&{username}: Clean Waitlist] @djs, the waitlist will now be cleared and rebuilt afterwards to remove ghost djs.'
@@ -316,7 +316,7 @@ module.exports = {
         unban: '[&{mod}: WLUnban] @&{username} was unbanned from the waitlist.'
     },
     define: {
-        no_definition_found: "[&{username}: Define] No definition for &{word} found",
+        noDefinitionFound: "[&{username}: Define] No definition for &{word} found",
         default: "[&{username}: Define] [ &{word} ] &{definition}"
     },
     rdjskip: {
@@ -331,10 +331,10 @@ module.exports = {
         enabled: '[&{username}: CustomCommands enabled]',
         disabled: '[&{username}: CustomCommands disabled]',
         created: '[&{username}: CustomCommand "&{trigger}" created]',
-        cc_enabled: '[&{username}: CustomCommand "&{trigger}" enabled]',
-        cc_disabled: '[&{username}: CustomCommand "&{trigger}" disabled]',
-        senderinfo_enabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]',
-        senderinfo_disabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]'
+        ccEnabled: '[&{username}: CustomCommand "&{trigger}" enabled]',
+        ccDisabled: '[&{username}: CustomCommand "&{trigger}" disabled]',
+        senderinfoEnabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]',
+        senderinfoDisabled: '[&{username}: Enabled senderinfo for CustomCommand "&{trigger}"]'
     },
     chatlevel: {
         default: '/me [&{username}: Chatlevel]'
@@ -357,20 +357,20 @@ module.exports = {
     },
     lottery: {
         default: '[&{username}: Lottery] Lottery in &{time} minutes. Join the waitlist and be active in chat to have a chance to be moved to #1. @djs',
-        one_minute: '[&{username}: Lottery] Lottery in one minute! @djs',
+        oneMinute: '[&{username}: Lottery] Lottery in one minute! @djs',
         winner: '[&{mod}: Lottery] Our lucky winner is @&{username}.',
-        no_winner: '[&{username}: Lottery] No winner could be selected. Get active you little shits @djs'
+        noWinner: '[&{username}: Lottery] No winner could be selected. Get active you little shits @djs'
     },
     roulette: {
         default: '[&{username}: Roulette] A roulette was was started with &{moves} moves. Type !join to join. @djs',
         join: '[&{username}: Join] Type !leave if you regret it.',
-        already_joined: '[&{username}: Join] You can\'t join twice.',
+        alreadyJoined: '[&{username}: Join] You can\'t join twice.',
         leave: '[&{username}: Leave]',
-        not_joined: '[&{username}: Leave] You haven\'t joined any roulette.',
-        no_roulette: '[&{username}: Join] There is nothing to join.',
-        no_joins: '[&{username}: Roulette] Nobody wants to play roulette? Okay...',
+        notJoined: '[&{username}: Leave] You haven\'t joined any roulette.',
+        noRoulette: '[&{username}: Join] There is nothing to join.',
+        reloadCommands: '[&{username}: Roulette] Nobody wants to play roulette? Okay...',
         started: '[&{username}: Roulette] Starting roulette with &{users} users...',
-        lucky_winners: 'And our lucky winners are....',
+        luckyWinners: 'And our lucky winners are....',
         winner: '&{username}'
     },
     everyone: {
@@ -387,7 +387,7 @@ module.exports = {
         default: '[Adding &{username} to waitlist since he is in the AddQueue]'
     },
     commands: {
-        reload_commands: '[&{username}: Reloaded Commands]'
+        reloadCommands: '[&{username}: Reloaded Commands]'
     },
     joinmode: {
         addqueue: '[&{username}: Play] You are now in the queue and will be added when a spot is free.',
@@ -401,7 +401,7 @@ module.exports = {
     },
     swap: {
         default: '[&{username}: Swaping &{u1} with &{u2}]',
-        no_wl: '[&{username}: Swap] None of the specified users are in the waitlist.',
+        noWl: '[&{username}: Swap] None of the specified users are in the waitlist.',
         usage: '[&{username}: Swap] !swap @user1 @user2'
     },
     clearghosts: {
