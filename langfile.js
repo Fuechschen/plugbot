@@ -69,7 +69,7 @@ module.exports = {
         eventmode: '[&{username}: &{cmd}] This command isn\'t available in eventmode.',
         wl_banned: '[&{username}: &{cmd}] Cannot execute the command since the user isn\t allowed to join the waitlist'
     },
-    bouncer_plus: {
+    bouncerPlus: {
         enabled: '[&{username}: Bouncer+ enabled]',
         disabled: '[&{username}: Bouncer+ disabled]'
     },
@@ -200,15 +200,15 @@ module.exports = {
         block_disabled: '[&{username}: YouTubeBlock disabled]',
         blocked: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s blocked in the following countries: "&{countries}"',
-            bl_reason: 'Blocked in the following countries: &{countries}'
+            blReason: 'Blocked in the following countries: &{countries}'
         },
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
-            bl_reason: 'Video was deleted.'
+            blReason: 'Video was deleted.'
         },
         rejected: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been rejected by YouTube with the following reason: &{reason}',
-            bl_reason: 'Rejected by YouTube: &{reason}',
+            blReason: 'Rejected by YouTube: &{reason}',
             reasons: {
                 claim: 'The video was claimed.',
                 copyright: 'The video contained content with copyright.',
@@ -223,11 +223,11 @@ module.exports = {
         },
         private: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because the publisher made it private. Contact a staffmemeber when you think it\'s available again to remove it from the blacklist.',
-            bl_reason: 'Video is set to private.'
+            blReason: 'Video is set to private.'
         },
         embeddable: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s set as not embeddable on plug.dj.',
-            bl_reason: 'Video not embeddable'
+            blReason: 'Video not embeddable'
         },
         ytUnavailable: {
             default: '@&{username}, YouTube seems to be unavailable. Your song "&{song}" has therefore be skipped.'
@@ -243,11 +243,11 @@ module.exports = {
         block_disabled: '[&{username}: SoundCloudBlock disabled]',
         deleted: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it has been deleted.',
-            bl_reason: 'Song was deleted.'
+            blReason: 'Song was deleted.'
         },
         private: {
             default: '@&{username}, your song "&{song}" was automatically added to the blacklist because it was set to private.',
-            bl_reason: 'Song is private.'
+            blReason: 'Song is private.'
         },
         enabled: '[&{username}: SoundCloudGuard enabled]',
         disabled: '[&{username}: SoundCloudGuard disabled]'
@@ -261,7 +261,7 @@ module.exports = {
             voteskip: 'Voteskip',
             timeguard: 'Timeguard',
             chatfilter: 'Chatfilter',
-            bouncer_plus: 'Bouncer+',
+            bouncerPlus: 'Bouncer+',
             cleverbot: 'Cleverbot',
             lockdown: 'Lockdown',
             lockskippos: 'LockSkipPos',
@@ -279,7 +279,7 @@ module.exports = {
         remove: '&{usernames} You will now be removed from the waitlist for being afk.',
         kick: '[Kicking @&{username} for autojoining the waitlist]',
         usernames: '@&{username} ',
-        afk_msg: {
+        afkMsg: {
             default: '@&{username}, &{user} is AFK [&{msg}]',
             no_msg: '@&{username}, &{user} is AFK.'
         },
@@ -344,7 +344,7 @@ module.exports = {
     },
     songinfo: {
         default: '[&{username}: SongInfo] &{title} - ID: &{sid} - blacklisted: &{bl} - history: &{his}',
-        bl_reason: '[&{reason}]'
+        blReason: '[&{reason}]'
     },
     catfact: {
         default: '[&{username}: CatFact] &{fact}'
@@ -381,7 +381,7 @@ module.exports = {
         disabled: '[&{username}: TitleGuard disabled]',
         skip: '[TitleGuard]',
         contained: '@&{username}, your song "&{song}" was automatically added to the blacklist because it\'s title contained a blacklisted phrase.',
-        bl_reason: 'Title contains blacklisted phrase.'
+        blReason: 'Title contains blacklisted phrase.'
     },
     addqueue: {
         default: '[Adding &{username} to waitlist since he is in the AddQueue]'

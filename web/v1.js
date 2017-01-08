@@ -9,7 +9,7 @@ const config = require('../lib/load_config');
 
 app.get('/', (req, res) => {
     res.json({
-        plug_data: {
+        plugData: {
             all: `${config.web.path}/v1/all`,
             users: `${config.web.path}/v1/users`,
             media: `${config.web.path}/v1/media`,
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
             room: `${config.web.path}/v1/room`,
             waitlist: `${config.web.path}/v1/waitlist`
         },
-        bot_data: {
+        botData: {
             customCommands: `${config.web.path}/v1/customcommands`,
             bestVotedSongs: `${config.web.path}/v1/highscore`,
             blacklist: `${config.web.path}/v1/blacklist`,
@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
             user: `${config.web.path}/v1/user?id={userid}&name={username}`
         },
         socket: `${config.web.path}/v1/socket`
-    })
+    });
 });
 
 app.get('/users', (req, res) => {
@@ -93,7 +93,7 @@ app.get('/all', (req, res) => {
                     e.room = undefined;
                     return e;
                 }))
-        })
+        });
     });
 });
 
@@ -127,8 +127,8 @@ app.get('/highscore', (req, res) => {
                         time: play.time
                     };
                     p.user = {id: users[i].id, username: users[i].username};
-                    p.song = (songs[i]? {
-                            id: songs[i].plug_id,
+                    p.song = (songs[i] ? {
+                            id: songs[i].plugId,
                             author: songs[i].author,
                             title: songs[i].title,
                             format: songs[i].format,
@@ -146,7 +146,7 @@ app.get('/highscore', (req, res) => {
 
 app.get('/blacklist', (req, res) => {
     //noinspection JSUnresolvedFunction
-    db.models.Song.findAll({where: {is_banned: true}}).then(songs => {
+    db.models.Song.findAll({where: {isBanned: true}}).then(songs => {
         res.json({
             data: songs.map(song => ({
                 id: song.id,
@@ -155,8 +155,8 @@ app.get('/blacklist', (req, res) => {
                 format: song.format,
                 cid: song.cid,
                 image: song.image,
-                isBanned: song.is_banned,
-                banReason: song.ban_reason
+                isBanned: song.isBanned,
+                banReason: song.banReason
             }))
         });
     }).catch(() => {
@@ -166,13 +166,13 @@ app.get('/blacklist', (req, res) => {
 
 app.get('/channelblacklist', (req, res) => {
     //noinspection JSUnresolvedFunction
-    db.models.Channel.findAll({where: {is_banned: true}}).then(channels => {
+    db.models.Channel.findAll({where: {isBanned: true}}).then(channels => {
         res.json({
             data: channels.map(c => ({
                 name: c.name,
-                channel_id: c.cid,
-                is_banned: c.is_banned,
-                ban_reason: c.ban_reason
+                channelId: c.cid,
+                isBanned: c.isBanned,
+                banReason: c.banReason
             }))
         });
     }).catch(() => {
@@ -194,8 +194,8 @@ app.get('/check', (req, res) => {
                             format: song.format,
                             cid: song.cid,
                             image: song.image,
-                            is_banned: song.is_banned,
-                            banReason: (song.is_banned ? song.ban_reason : null)
+                            isBanned: song.isBanned,
+                            banReason: (song.isBanned ? song.banReason : null)
                         }
                     });
                 } else res.status(404).json({error: 'song not found'});
@@ -221,10 +221,10 @@ app.get('/user', (req, res) => {
                     data: {
                         id: user.id,
                         username: user.username,
-                        avatar: user.avatar_id,
+                        avatar: user.avatarId,
                         badge: user.badge,
-                        grole: user.global_role,
-                        role: user.s_role,
+                        grole: user.globalRole,
+                        role: user.sRole,
                         level: user.level,
                         status: user.status
                     }
@@ -232,7 +232,7 @@ app.get('/user', (req, res) => {
             } else res.statusCode(404).json({error: 'User not found'});
         }).catch(() => {
             res.status(500).json({error: 'SQL Error'});
-        })
+        });
     }
 });
 

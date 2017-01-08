@@ -5,9 +5,9 @@ module.exports = {
     },
     options: {
         room: '',
-        bouncer_plus: true,
+        bouncerPlus: true,
         loglevel: 'INFO',
-        sql_debug: true,
+        sqlDebug: true,
         dcmoveback: true,
         command_prefix: '!',
         disable_emote: true,
@@ -42,7 +42,7 @@ module.exports = {
         lockskip: true
     },
     lockskip: {
-        move_pos: 1
+        movePos: 1
     },
     voteskip: {
         enabled: true,
@@ -175,7 +175,7 @@ module.exports = {
     },
     userfilter: {
         enabled: false,
-        username_disallowed: [],
+        usernameDisallowed: [],
         regex:null
     }
 };

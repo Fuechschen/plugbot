@@ -1,0 +1,3 @@
+node_modules
+*.json
+lib/db/sql_init.js

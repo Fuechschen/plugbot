@@ -8,7 +8,7 @@
 |login.password|string|Password to login|
 |options|object|Some general settings for the bot|
 |options.room|string|The room to join|
-|options.bouncer_plus|boolean|Default setting for Bouncer+|
+|options.bouncerPlus|boolean|Default setting for Bouncer+|
 |options.loglevel|string|Sets the bot's loglevel. Defaults to INFO, use DEBUG to for extended output|
 |options.dcmoveback|boolean|Default setting for DCMoveBack|
 |options.command_prefix|string|Sets the commandprefix, defaults to !|
@@ -23,7 +23,7 @@
 |histoy|object|History settings|
 |history.skipenabled|boolean|Sets default value for historyskip|
 |histoy.time|number|Sets the time in minutes a song stays on the history|
-|lockskip.move_pos|number|Sets the default position for lockskip|
+|lockskip.movePos|number|Sets the default position for lockskip|
 |voteskip|object|Settings for voteskip|
 |voteskip.enabled|boolean|Sets the default value for VoteSkip|
 |voteskip.condition|various|Number for a fixed number of mehs, function to decide based on a custom function or object with min/max/ratio properties to decide when to skip a song based on votes|
@@ -84,6 +84,6 @@
 |defaultCC|object|Contains multiple objects with default customcommands, see config.example.js for their properties|
 |userfilter|object|Settings for the userfilter|
 |userfilter.enabled|boolean|Enables the userfilter|
-|userfilter.username_disallowed|array[string]|array of disallowed usernames|
+|userfilter.usernameDisallowed|array[string]|array of disallowed usernames|
 |userfilter.regex|RegEx|RegEx to test usernames. Triggers the filter when a match is found. Set to null to disable|
 
