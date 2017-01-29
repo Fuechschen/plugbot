@@ -1,18 +1,19 @@
-let moment = require('moment');
-let storyboard = require('storyboard');
-let fs = require('fs');
+let moment = require('moment'),
+    storyboard = require('storyboard'),
+    fs = require('fs');
 
-const config = require('./lib/load_config.js');
-const langfile = require('./langfile.js');
-let plugged = require('./lib/client');
-let redis = require('./lib/db/redis_db');
-let story = storyboard.mainStory;
+const config = require('./lib/load_config.js'),
+    langfile = require('./langfile.js');
+
+let plugged = require('./lib/client'),
+    redis = require('./lib/db/redis_db'),
+    story = storyboard.mainStory;
 
 storyboard.config({filter: `*:${config.options.loglevel}`});
-storyboard.addListener(require('storyboard/lib/listeners/console').default);
-story.info(`Starting plugbot version ${require('./package.json').version}`);
+storyboard.addListener(require('storyboard/lib/listeners/console').default);  //eslint-disable-line global-require
+story.info(`Starting plugbot version ${require('./package.json').version}`);  //eslint-disable-line global-require
 
-moment.locale(langfile.moment_locale);
+moment.locale(langfile.momentLocale);
 
 //noinspection JSUnresolvedFunction
 redis.del('user:roles');
@@ -28,7 +29,7 @@ fs.readdir('./lib/eventhandlers', (err, files) => {
     } else {
         files.forEach(file => {
             try {
-                let h = require(`./lib/eventhandlers/${file}`);
+                let h = require(`./lib/eventhandlers/${file}`); //eslint-disable-line global-require
                 if (Array.isArray(h.event)) {
                     h.event.forEach(event => {
                         plugged.on(event, h.handler);
@@ -43,4 +44,4 @@ fs.readdir('./lib/eventhandlers', (err, files) => {
     }
 });
 
-module.exports = {plugged, app: (config.web.enabled ? require('./web/index').app : null)};
+module.exports = {plugged, app: (config.web.enabled ? require('./web/index').app : null)};  //eslint-disable-line global-require

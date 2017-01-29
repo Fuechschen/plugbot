@@ -1,12 +1,13 @@
 {
   "name": "plugbot",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "main": "bot.js",
   "description": "A simple bot for plug.dj",
   "author": "Fuechschen <johannes@diehl.io>",
   "license": "MIT",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "test": "eslint \"**/*.js\""
   },
   "repository": {
     "type": "git+https",
@@ -33,7 +34,7 @@
   },
   "optionalDependencies": {
     "cld": "^2.4.7",
-    "cleverbot-node": "github:avatarkava/cleverbot-node",
+    "cleverbot-node": "^0.2.5",
     "express": "^4.14.0",
     "hiredis": "^0.5.0",
     "morgan": "^1.7.0",
@@ -44,5 +45,35 @@
     "tedious": "^1.14.0",
     "uws": "^0.9.0",
     "ws": "^1.1.1"
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+      "semi": [2, "always", {"omitLastInOneLineBlock": true}],
+      "no-unused-vars": [2, {"argsIgnorePattern": "^_", "caughtErrors": "none"}],
+      "no-control-regex": 0,
+      "global-require": 1,
+      "camelcase": 1,
+      "dot-notation": 1,
+      "no-else-return": 2,
+      "no-plusplus": 2,
+      "constructor-super": 2,
+      "prefer-arrow-callback": 1,
+      "object-shorthand": 2,
+      "object-curly-spacing": 1,
+      "object-property-newline": [1, {"allowMultiplePropertiesPerLine": true}],
+      "no-var": 2,
+      "no-inner-declarations": 0
+    }
+  },
+  "devDependencies": {
+    "eslint": "^3.13.0"
   }
 }

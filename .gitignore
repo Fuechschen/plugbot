@@ -78,5 +78,3 @@ crashlytics-build.properties
 # Created by .ignore support plugin (hsz.mobi)
 
 config.js
-
-sql_init.js

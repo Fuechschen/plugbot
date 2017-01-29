@@ -5,12 +5,12 @@ module.exports = {
     },
     options: {
         room: '',
-        bouncer_plus: true,
+        bouncerPlus: true,
         loglevel: 'INFO',
-        sql_debug: true,
+        sqlDebug: true,
         dcmoveback: true,
-        command_prefix: '!',
-        disable_emote: true,
+        commandPrefix: '!',
+        disableEmote: true,
         joinmode: true,
         welcome: {
             new: true,
@@ -42,7 +42,7 @@ module.exports = {
         lockskip: true
     },
     lockskip: {
-        move_pos: 1
+        movePos: 1
     },
     voteskip: {
         enabled: true,
@@ -78,8 +78,8 @@ module.exports = {
         spam: {
             points: 30,
             warns: 2,
-            mute_violation: 4,
-            mute_duration: 4000
+            muteViolation: 4,
+            muteDuration: 4000
         },
         links: {
             enabled: true,
@@ -89,7 +89,7 @@ module.exports = {
             plugdj: {
                 enabled: true,
                 hosts: ['plug.dj', 'support.plug.dj', 'cdn.plug.dj', 'stg.plug.dj', 'blog.plug.dj'],
-                allowed_paths: ['/subscribe', '/', '/support', '/about', '/ba', '/press', '/terms', '/privacy']
+                allowedPaths: ['/subscribe', '/', '/support', '/about', '/ba', '/press', '/terms', '/privacy']
             }
         },
         words: {
@@ -115,8 +115,8 @@ module.exports = {
     },
     titleguard: {
         enabled: true,
-        not_contain: ['big dick'],
-        regex_match: null,
+        notContain: ['big dick'],
+        regexMatch: null,
         lockskip: false
     },
     playlists: {
@@ -135,7 +135,7 @@ module.exports = {
     },
     rdjskip: {
         enabled: true,
-        max_staff_active: 2,
+        maxStaffActive: 2,
         votes: 3
     },
     customcommands: {
@@ -175,7 +175,7 @@ module.exports = {
     },
     userfilter: {
         enabled: false,
-        username_disallowed: [],
+        usernameDisallowed: [],
         regex:null
     }
 };

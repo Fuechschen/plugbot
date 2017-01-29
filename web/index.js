@@ -1,18 +1,19 @@
-let express = require('express');
-let story = require('storyboard').mainStory;
-let logger = require('morgan');
-let S = require('string');
+let express = require('express'),
+    story = require('storyboard').mainStory,
+    logger = require('morgan'),
+    httpServer = require('http');
 
 const config = require('../lib/load_config');
 
-let ws = null;
-let app = null;
+let ws = null,
+    app = null;
+
 if (config.web.enabled) {
-    let Ws = require(`${config.web.useUWS ? 'u' : ''}ws`).Server;
+    let Ws = require(`${config.web.useUWS ? 'u' : ''}ws`).Server;  //eslint-disable-line global-require
 
     app = express();
 
-    let http = require('http').createServer(app);
+    let http = httpServer.createServer(app);
 
 
     app.set('trust proxy', 'loopback');
@@ -22,7 +23,7 @@ if (config.web.enabled) {
         stream: {
             write: (toLog) => {
                 //noinspection JSUnresolvedFunction
-                story.info('web', S(toLog).chompRight('\n').s);
+                story.info('web', (toLog).replace(new RegExp('\n', 'g'), ''));
             }
         }
     }));
@@ -32,7 +33,7 @@ if (config.web.enabled) {
         next();
     });
 
-    app.use('/v1', require('./v1'));
+    app.use('/v1', require('./v1'));   //eslint-disable-line global-require
 
     app.get('/', (req, res) => {
         res.json({
@@ -54,7 +55,7 @@ if (config.web.enabled) {
                     ws.clients.forEach(client => {
                         client.send(data);
                     });
-                }
+                };
             }
             ws.on('connection', socket => {
                 let h = setInterval(() => {
@@ -82,52 +83,42 @@ module.exports = {
                 return update => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'adv', d: update}));
                 };
-                break;
             case 'chat':
                 return msg => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'chat', d: msg}));
                 };
-                break;
             case 'skip':
                 return user => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'skip', d: user}));
                 };
-                break;
             case 'userban':
                 return ban => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'ban', d: ban}));
                 };
-                break;
             case 'join':
                 return user => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'join', d: user}));
                 };
-                break;
             case 'leave':
                 return user => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'leave', d: user}));
                 };
-                break;
             case 'waitlist':
                 return wl => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'wl', d: wl}));
                 };
-                break;
             case 'vote':
                 return votes => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'v', d: votes}));
                 };
-                break;
             case 'chatDelete':
                 return data => {
                     if (ws !== null) ws.broadcast(JSON.stringify({t: 'chatDelete', d: data}));
                 };
-                break;
             default:
                 return () => {
 
                 };
-                break;
         }
     }
 };
